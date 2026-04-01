@@ -1,0 +1,43 @@
+services:
+  # PostgreSQL
+  db:
+    image: postgres:15-alpine
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POATGRES_DB: my_database
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  # PGAdmin Panel
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_container
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+  # Backend (Node.js)
+  backend:
+    build: ./backend
+    container_name: node_backend
+    volumes:
+      - ./backend:/app # maps local code to the container
+      - /app/node_modules # this will keep modules inside the container
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      NODE_ENV: development
+    depends_on:
+      - db
+
+volumes:
+  pgdata:
