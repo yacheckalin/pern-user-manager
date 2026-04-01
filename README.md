@@ -7,7 +7,7 @@ A modern fullstack web application built with Express.js backend, React frontend
 This is a complete fullstack application with:
 
 - **Backend**: Express.js REST API with PostgreSQL
-- **Frontend**: React application (Not yet implemented)
+- **Frontend**: React application
 - **Database**: PostgreSQL with migrations
 - **Admin Panel**: pgAdmin for database management
 - **Containerization**: Docker and Docker Compose
@@ -102,6 +102,23 @@ npm run dev
 
 The backend will run on `http://localhost:5000`
 
+### 2. Setup Frontend
+
+In another terminal:
+
+```bash
+# Navigate to frontend directory
+cd frontend
+
+# Install dependencies
+npm install
+
+# Start development server
+npm start
+```
+
+The frontend will open at `http://localhost:3000`
+
 ### 3. Setup Database (if not using Docker)
 
 You need a PostgreSQL database running locally. You can:
@@ -135,6 +152,24 @@ npm start
 npm test
 ```
 
+### Frontend Scripts
+
+Navigate to `frontend/` directory:
+
+```bash
+# Start development server
+npm start
+
+# Build for production
+npm build
+
+# Run tests
+npm test
+
+# Eject configuration (not recommended)
+npm eject
+```
+
 ## ✅ Testing
 
 ### Backend Tests
@@ -153,6 +188,18 @@ npm test -- --coverage
 ```
 
 Test files are located alongside source files with `.test.js` extension.
+
+### Frontend Tests
+
+```bash
+cd frontend
+
+# Run tests
+npm test
+
+# Run tests with coverage
+npm test -- --coverage
+```
 
 ## 🔧 Environment Variables
 
@@ -229,6 +276,13 @@ netstat -an | grep LISTEN
 - **jest** - Testing framework
 - **nodemon** - Development auto-reload
 - **supertest** - HTTP testing
+
+### Frontend
+
+- **react** - UI library
+- **react-dom** - React DOM rendering
+- **react-scripts** - Create React App scripts
+- **@testing-library/react** - React testing utilities
 
 ## 🤝 Contributing
 
