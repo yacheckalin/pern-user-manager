@@ -38,6 +38,15 @@ services:
       NODE_ENV: development
     depends_on:
       - db
+  frontend:
+    build: ./frontend
+    container_name: react_frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    stdin_open: true
+    depends_on:
+      - backend
 
 volumes:
   pgdata:
