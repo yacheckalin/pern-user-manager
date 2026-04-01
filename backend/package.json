@@ -4,6 +4,7 @@
   "description": "Full-stack user management system build with PERN stack",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Yaroslav Chekalin",
