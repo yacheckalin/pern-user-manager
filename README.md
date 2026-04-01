@@ -58,8 +58,8 @@ Once running, access the following URLs:
 In pgAdmin, add a new server with:
 
 - **Hostname**: `db`
-- **Username**: `user`
-- **Password**: `password`
+- **Username**: `postgres`
+- **Password**: `secret_password`
 - **Database**: `my_database`
 
 ### Stopping Services
@@ -127,7 +127,7 @@ You need a PostgreSQL database running locally. You can:
 
 - Download from [postgresql.org](https://www.postgresql.org/download/)
 - Create database: `my_database`
-- Create user: `user` with password `password`
+- Create user: `postgres` with password `secret_password`
 
 **Option B: Run PostgreSQL in Docker only**
 
@@ -241,7 +241,7 @@ docker compose -f docker-compose.yml -p custom_name up
 
 ```bash
 # Test database connection
-psql -U user -h localhost -d my_database -c "SELECT 1"
+psql -U postgres -h localhost -d my_database -c "SELECT 1"
 
 # View Docker logs
 docker compose logs db
