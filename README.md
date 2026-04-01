@@ -102,23 +102,6 @@ npm run dev
 
 The backend will run on `http://localhost:5000`
 
-### 2. Setup Frontend
-
-In another terminal:
-
-```bash
-# Navigate to frontend directory
-cd frontend
-
-# Install dependencies
-npm install
-
-# Start development server
-npm start
-```
-
-The frontend will open at `http://localhost:3000`
-
 ### 3. Setup Database (if not using Docker)
 
 You need a PostgreSQL database running locally. You can:
@@ -254,13 +237,6 @@ netstat -an | grep LISTEN
 3. Write or update tests
 4. Ensure all tests pass
 5. Create a pull request
-
-## 📝 Notes
-
-- The application uses a dependency injection pattern in the backend (see `src/container.js`)
-- Error handling is centralized in `src/shared/errors/error-handler.js`
-- Database connection is managed in `src/db.js`
-- Hot reload is enabled for both backend (nodemon) and frontend (React scripts)
 
 ## 🆘 Support
 
