@@ -42,3 +42,5 @@ class User {
     return rows.map((row) => new User(row));
   }
 }
+
+export default User;

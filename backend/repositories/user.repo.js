@@ -1,3 +1,5 @@
+import User from "../models/user.model.js";
+
 class UserRepository {
   constructor(pool) {
     this.pool = pool;
@@ -6,7 +8,7 @@ class UserRepository {
 
   async findAll() {
     const { rows } = await this.pool.query(`SELECT * FROM ${this.table}`);
-    return rows;
+    return User.fromDatabaseArray(rows);
   }
 
   /**
@@ -17,13 +19,11 @@ class UserRepository {
     const values = Object.values(data);
     const placeholders = values.map((_, i) => `$${i + 1}`).join(", ");
 
-    console.log(placeholders);
-
     const { rows } = await this.pool.query(
       `INSERT INTO ${this.table} (${keys.join(", ")}) VALUES (${placeholders}) RETURNING ${returning}`,
       values,
     );
-    return rows[0];
+    return User.fromDatabase(rows[0]);
   }
 }
 
