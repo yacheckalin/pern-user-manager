@@ -25,7 +25,21 @@ class UserRepository {
   async findUserByName(username) {
     const { rows } = await this.pool.query(
       `SELECT * FROM ${this.table} WHERE username = $1`,
-      username,
+      [username],
+    );
+    return User.fromDatabase(rows[0]);
+  }
+
+  /**
+   * Find user by email
+   *
+   * @param {email} email
+   * @returns User | null
+   */
+  async findUserByEmail(email) {
+    const { rows } = await this.pool.query(
+      `SELECT * FROM ${this.table} WHERE email = $1`,
+      [email],
     );
     return User.fromDatabase(rows[0]);
   }

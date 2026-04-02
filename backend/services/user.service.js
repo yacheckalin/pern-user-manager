@@ -15,12 +15,16 @@ class UserService {
   async createUser(data) {
     //TODO: validate input here
 
-    //TODO: check if username | email exists
     const existingUsername = await this.userRepository.findUserByName(
       data.username,
     );
     if (existingUsername) {
       throw new Error("Username already exists");
+    }
+
+    const existingEmail = await this.userRepository.findUserByEmail(data.email);
+    if (existingEmail) {
+      throw new Error("Email already exists");
     }
 
     // Hash password
