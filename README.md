@@ -90,7 +90,7 @@ cd backend
 npm install
 
 # Create .env file
-echo "DATABASE_URL=postgres://user:password@localhost:5432/my_database" > .env
+echo "DATABASE_URL=postgres://postgres:secret_password@db:5432/my_database" > .env
 echo "NODE_ENV=development" >> .env
 
 # Run migrations
@@ -150,6 +150,18 @@ npm start
 
 # Run tests
 npm test
+
+# Apply all new migrations
+npm run migrate
+
+# Create a new migration
+npm run migrate:create "your-migration-name"
+
+# Apply pending migrations
+npm run migrate:up
+
+# Rollback last migration
+npm run migrate:down
 ```
 
 ### Frontend Scripts
@@ -169,6 +181,73 @@ npm test
 # Eject configuration (not recommended)
 npm eject
 ```
+
+## 🏗️ Project Structure
+
+```
+root/
+├── backend/                    # Express.js backend
+│   ├── config
+│   │   ├── database.js         # Database connection wrapper
+│   ├── migrations/             # Database migrations
+|   ├── controllers             # Controllers
+|   |   ├── user.controller.js
+|   ├── repositories            # Repositories
+|   |   ├── user.repo.js
+|   ├── routes                  # Routes
+|   |   ├── user-routes.js
+|   ├── services                # Services (Dependency injection)
+|   |   ├── user.service.js
+|   ├── shared                  # Shared utils (middleware, etc.)
+|   |   ├── error-handler.js
+|   ├── .gitignore
+|   ├── Dockerfile
+|   ├── package.json
+|   ├── index.js                # Entry point
+│
+├── frontend/                   # React frontend
+│   ├── src/
+│   │   ├── App.js
+│   │   ├── App.css
+│   │   └── index.js
+│   ├── public/
+│   ├── package.json
+│   └── Dockerfile
+│
+├── docker-compose.yml         # Docker Compose configuration
+└── README.md
+```
+
+## 🗄️ Database Schema
+
+### Users Table
+
+The application comes with a `users` table with the following structure:
+
+```sql
+CREATE TABLE IF NOT EXISTS users(
+      id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+      email VARCHAR(255) NOT NULL UNIQUE,
+      username VARCHAR(255) NOT NULL UNIQUE,
+      password_hash VARCHAR(255) NOT NULL,
+      is_active BOOLEAN NOT NULL DEFAULT FALSE,
+      created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+      activated_at TIMESTAMPTZ DEFAULT NULL,
+      last_login TIMESTAMPTZ DEFAULT NULL,
+      age INT CHECK(age >=13 AND age <=150)
+    );
+```
+
+## 🔌 API Endpoints
+
+### Users API
+
+Base URL: `http://localhost:5000/users`
+
+**Available endpoints:**
+
+- `GET /users` - Get all users
 
 ## ✅ Testing
 
@@ -201,6 +280,31 @@ npm test
 npm test -- --coverage
 ```
 
+## 🔄 Database Migrations
+
+Migrations are managed using `node-pg-migrate`. Migrations are automatically run on Docker startup.
+
+### Create a New Migration
+
+```bash
+cd backend
+npm run migrate:create -- --name "migration-name"
+```
+
+This creates a new migration file in `backend/migrations/`
+
+### Apply Migrations
+
+```bash
+cd backend
+
+# Apply all pending migrations
+npm run migrate:up
+
+# Rollback last migration
+npm run migrate:down
+```
+
 ## 🔧 Environment Variables
 
 ### Backend
@@ -208,7 +312,7 @@ npm test -- --coverage
 Create a `.env` file in the `backend/` directory:
 
 ```env
-DATABASE_URL=postgres://user:password@localhost:5432/my_database
+DATABASE_URL=postgres://postgres:secret_password@localhost:5432/my_database
 NODE_ENV=development
 ```
 
@@ -262,6 +366,25 @@ docker compose up --build
 
 # Check if ports are available
 netstat -an | grep LISTEN
+```
+
+### Migrations Not Running
+
+```bash
+# Check migration status
+cd backend && npm run migrate:up
+
+# Run migration inside docker container
+docker exec node_backend npm run migrate
+docker exec node_backend npm run migrate:up
+docker exec node_backend npm run migrate:down
+
+# View Docker backend logs
+docker compose logs backend
+
+# Reset database (careful - deletes all data)
+docker compose down -v
+docker compose up
 ```
 
 ## 📚 Dependencies
