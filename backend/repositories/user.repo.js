@@ -8,3 +8,5 @@ class UserRepository {
     return rows;
   }
 }
+
+module.exports = UserRepository;
