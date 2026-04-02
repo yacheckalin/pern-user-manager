@@ -5,7 +5,7 @@ class Database {
     const {
       DB_CONNECTION,
       DB_PORT,
-      DB_DATABASE,
+      DB_NAME,
       DB_USERNAME,
       DB_PASSWORD,
       DB_MAX_CLIENTS,
@@ -16,7 +16,7 @@ class Database {
     this.pool = new Pool({
       host: DB_CONNECTION,
       port: DB_PORT,
-      database: DB_DATABASE,
+      database: DB_NAME,
       user: DB_USERNAME,
       password: DB_PASSWORD,
       max: DB_MAX_CLIENTS,

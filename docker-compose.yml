@@ -8,6 +8,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: secret_password
       POSTGRES_DB: my_database
+      DATABASE_URL: postgres://postgres:secret_password@db:5432/my_database
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d my_database"]
       interval: 5s

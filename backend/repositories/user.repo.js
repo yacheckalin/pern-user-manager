@@ -4,7 +4,7 @@ class UserRepository {
   }
 
   async findAll() {
-    const { rows } = await this.pool.query("SELECT * FROM users;");
+    const { rows } = await this.pool.query("SELECT * FROM users");
     return rows;
   }
 }
