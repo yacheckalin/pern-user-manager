@@ -192,6 +192,8 @@ root/
 │   ├── migrations/             # Database migrations
 |   ├── controllers             # Controllers
 |   |   ├── user.controller.js
+|   ├── models                  # Models
+|   |   ├── user.model.js
 |   ├── repositories            # Repositories
 |   |   ├── user.repo.js
 |   ├── routes                  # Routes
