@@ -254,6 +254,7 @@ Base URL: `http://localhost:5000/users`
 **Available endpoints:**
 
 - `GET /users` - Get all users
+- `POST /users` - Create new user
 
 ## ✅ Testing
 
