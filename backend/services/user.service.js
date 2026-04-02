@@ -16,6 +16,12 @@ class UserService {
     //TODO: validate input here
 
     //TODO: check if username | email exists
+    const existingUsername = await this.userRepository.findUserByName(
+      data.username,
+    );
+    if (existingUsername) {
+      throw new Error("Username already exists");
+    }
 
     // Hash password
     const passwordHash = await bcrypt.hash(data.password, 10);

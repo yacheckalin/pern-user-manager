@@ -30,7 +30,8 @@ class UserController {
         data: user,
       });
     } catch (error) {
-      res.status(500).json({
+      const statusCode = error.message === "User not found" ? 404 : 500;
+      res.status(statusCode).json({
         success: false,
         message: error.message,
       });

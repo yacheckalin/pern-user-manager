@@ -6,9 +6,28 @@ class UserRepository {
     this.table = "users";
   }
 
+  /**
+   * Find all users
+   *
+   * @returns User[]
+   */
   async findAll() {
     const { rows } = await this.pool.query(`SELECT * FROM ${this.table}`);
     return User.fromDatabaseArray(rows);
+  }
+
+  /**
+   * Find user by username
+   *
+   * @param {username} user name
+   * @returns User | null
+   */
+  async findUserByName(username) {
+    const { rows } = await this.pool.query(
+      `SELECT * FROM ${this.table} WHERE username = $1`,
+      username,
+    );
+    return User.fromDatabase(rows[0]);
   }
 
   /**
