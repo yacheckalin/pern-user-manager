@@ -1,4 +1,4 @@
-const { Pool } = require("pg");
+import { Pool } from "pg";
 
 class Database {
   constructor() {
@@ -71,4 +71,4 @@ class Database {
   }
 }
 
-module.exports = new Database();
+export default new Database();

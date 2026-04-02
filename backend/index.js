@@ -1,8 +1,8 @@
-const express = require("express");
-const cors = require("cors");
-require("dotenv").config();
-const errorHandler = require("./shared/error-handler");
-const userRoutes = require("./routes/user-routes");
+import "dotenv/config";
+import express from "express";
+import cors from "cors";
+import userRoutes from "./routes/user-routes.js";
+import errorHandler from "./shared/error-handler.js";
 
 const { PORT } = process.env;
 

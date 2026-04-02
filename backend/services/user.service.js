@@ -1,5 +1,5 @@
-const UserRepository = require("../repositories/user.repo");
-const db = require("../config/database");
+import UserRepository from "../repositories/user.repo.js";
+import db from "../config/database.js";
 
 class UserService {
   constructor() {
@@ -12,4 +12,4 @@ class UserService {
   }
 }
 
-module.exports = UserService;
+export default UserService;
