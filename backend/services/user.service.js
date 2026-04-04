@@ -13,7 +13,7 @@ class UserService {
   }
 
   async createUser(data) {
-    //TODO: validate input here
+    this.validateUserData(data);
 
     const existingUsername = await this.userRepository.findUserByName(
       data.username,
@@ -39,6 +39,24 @@ class UserService {
     });
 
     return result;
+  }
+
+  validateUserData(data) {
+    if (!data.username || data.username.length < 3) {
+      throw new Error("Username must be at least 3 characters");
+    }
+
+    if (!data.email || !data.email.includes("@")) {
+      throw new Error("Valid email is required");
+    }
+
+    if (!data.password_hash || data.password_hash.length < 6) {
+      throw new Error("Password must be at least 6 characters");
+    }
+
+    if (data.age && (data.age < 13 || data.age > 150)) {
+      throw new Error("Age mest be between 13 and 150");
+    }
   }
 }
 
