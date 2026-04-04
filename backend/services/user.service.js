@@ -50,7 +50,7 @@ class UserService {
       throw new Error("Valid email is required");
     }
 
-    if (!data.password_hash || data.password_hash.length < 6) {
+    if (!data.password || data.password.length < 6) {
       throw new Error("Password must be at least 6 characters");
     }
 

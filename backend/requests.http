@@ -6,9 +6,9 @@ POST http://localhost:5000/users
 Content-Type: application/json
 
 {
-  "username": "test_user222",
-  "email": "test222",
+  "username": "tes11",
+  "email": "test22211@tes.tt",
   "password": "some_secret_password",
   "age": 18,
-  "is_active": false
+  "is_active": true
 }
