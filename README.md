@@ -194,14 +194,16 @@ root/
 |   |   ├── user.controller.js
 |   ├── models                  # Models
 |   |   ├── user.model.js
+|   |   ├── user.schema.js       # Joi schema object
 |   ├── repositories            # Repositories
 |   |   ├── user.repo.js
 |   ├── routes                  # Routes
 |   |   ├── user-routes.js
 |   ├── services                # Services (Dependency injection)
 |   |   ├── user.service.js
-|   ├── shared                  # Shared utils (middleware, etc.)
+|   ├── middlewares             # Middlewares (middleware, etc.)
 |   |   ├── error-handler.js
+|   |   ├── validation.js       # validation middleware
 |   ├── .gitignore
 |   ├── Dockerfile
 |   ├── package.json
