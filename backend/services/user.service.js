@@ -13,7 +13,7 @@ class UserService {
   }
 
   async createUser(data) {
-    this.validateUserData(data);
+    this.validateUserData(data, "create");
 
     const existingUsername = await this.userRepository.findUserByName(
       data.username,
@@ -41,7 +41,26 @@ class UserService {
     return result;
   }
 
-  validateUserData(data) {
+  async updateUser(id, data) {
+    // validate data
+    this.validateUserData(data, "update");
+    // check if user exists
+    const user = await this.userRepository.findUserById(id);
+    if (!user) {
+      throw new Error("User not found!");
+    }
+    // if email changed, check if this email doesn't exist in the DB
+    if (data.email && user.email !== data.email) {
+      const emailExists = await this.userRepository.findUserByEmail(data.email);
+      if (emailExists && emailExists.id !== id) {
+        throw new Error("This email has already taken!");
+      }
+    }
+    const result = await this.userRepository.updateUser(id, data);
+    return result;
+  }
+
+  validateUserData(data, flag = "create") {
     if (!data.username || data.username.length < 3) {
       throw new Error("Username must be at least 3 characters");
     }
@@ -50,7 +69,7 @@ class UserService {
       throw new Error("Valid email is required");
     }
 
-    if (!data.password || data.password.length < 6) {
+    if (flag === "create" && (!data.password || data.password.length < 6)) {
       throw new Error("Password must be at least 6 characters");
     }
 

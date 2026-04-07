@@ -12,3 +12,12 @@ Content-Type: application/json
   "age": 18,
   "is_active": false
 }
+
+### Update user by id
+PUT http://localhost:5000/users/1
+Content-Type: application/json
+
+{
+  "username": "newUsername",
+  "email":"test@test.tt"
+}

@@ -14,4 +14,10 @@ router.post(
   userController.createUser.bind(userController),
 );
 
+router.put(
+  "/:id",
+  validate(userSchemas.updateUser),
+  userController.updateUser.bind(userController),
+);
+
 export default router;
