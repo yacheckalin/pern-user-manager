@@ -8,7 +8,7 @@ class UserService {
   }
 
   async getAllUsers() {
-    const result = this.userRepository.findAll();
+    const result = await this.userRepository.findAll();
     return result;
   }
 
@@ -30,7 +30,7 @@ class UserService {
     // Hash password
     const passwordHash = await bcrypt.hash(data.password, 10);
 
-    const result = this.userRepository.createUser({
+    const result = await this.userRepository.createUser({
       username: data.username,
       email: data.email,
       password_hash: passwordHash,
@@ -89,7 +89,7 @@ class UserService {
 
     const newPasswordHash = await bcrypt.hash(data.new_password, 10);
 
-    const result = this.userRepository.updateUserPassword(id, {
+    const result = await this.userRepository.updateUserPassword(id, {
       password: newPasswordHash,
     });
     return result;
