@@ -11,6 +11,24 @@ const userSchemas = {
   id: Joi.object({
     id: Joi.number().integer().positive().required(),
   }),
+
+  updateUser: Joi.object({
+    id: Joi.number().integer().required(),
+    username: Joi.string().alphanum().min(3).max(50),
+    email: Joi.string().email(),
+    age: Joi.number().integer().min(13).max(150),
+  }),
+
+  chagePassword: Joi.object({
+    id: Joi.number().integer().required(),
+    old_password: Joi.string().min(6).required(),
+    new_password: Joi.string().min(6).messages({
+      "string.min": "Password must be at least 6 characters long",
+    }),
+    confirm_password: Joi.any().equal(Joi.ref("new_password")).messages({
+      "any.only": "Password do not match",
+    }),
+  }).with("new_password", "confirm_password"),
 };
 
 export { userSchemas };

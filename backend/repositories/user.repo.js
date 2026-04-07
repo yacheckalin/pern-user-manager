@@ -17,6 +17,20 @@ class UserRepository {
   }
 
   /**
+   * Find user by id
+   *
+   * @param {*} id
+   * @returns
+   */
+  async findUserById(id) {
+    const { rows } = await this.pool.query(
+      `SELECT * FROM ${this.table} WHERE id = $1`,
+      [id],
+    );
+    return User.fromDatabase(rows[0]);
+  }
+
+  /**
    * Find user by username
    *
    * @param {username} user name
@@ -57,6 +71,48 @@ class UserRepository {
       values,
     );
     return User.fromDatabase(rows[0]);
+  }
+
+  /**
+   * Update user by id
+   *
+   *
+   * @param {*} id
+   * @param {*} data
+   * @param {*} returning
+   * @returns
+   */
+  async updateUser(id, data, returning = "*") {
+    const keys = Object.keys(data);
+    const values = Object.values(data);
+    const placeholders = keys
+      .map((column, index) => `${column} = $${index + 2}`)
+      .join(", ");
+
+    const query = `UPDATE ${this.table}
+       SET ${placeholders}, updated_at = CURRENT_TIMESTAMP
+       WHERE id = $1
+       RETURNING ${returning}`;
+
+    const result = await this.pool.query(query, [id, ...values]);
+    return User.fromDatabase(result.rows[0]);
+  }
+
+  /**
+   * Update user password by id
+   *
+   * @param {*} id
+   * @param {*} data - new password
+   * @param {*} returning
+   * @returns
+   */
+  async updateUserPassword(id, data, returning = "*") {
+    const query = `UPDATE ${this.table} SET password_hash = $1, updated_at = CURRENT_TIMESTAMP
+    WHERE id = $2
+    RETURNING ${returning}`;
+
+    const result = await this.pool.query(query, [data.password, id]);
+    return User.fromDatabase(result.rows[0]);
   }
 }
 

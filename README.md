@@ -194,7 +194,7 @@ root/
 |   |   ├── user.controller.js
 |   ├── models                  # Models
 |   |   ├── user.model.js
-|   |   ├── user.schema.js       # Joi schema object
+|   |   ├── user.schema.js      # Joi schema object
 |   ├── repositories            # Repositories
 |   |   ├── user.repo.js
 |   ├── routes                  # Routes
@@ -259,6 +259,8 @@ Base URL: `http://localhost:5000/users`
 
 - `GET /users` - Get all users
 - `POST /users` - Create new user
+- `PUT /users/:id` - Update user by ID
+- `PATCH /users/:id/password` - Change user password by ID
 
 ## ✅ Testing
 

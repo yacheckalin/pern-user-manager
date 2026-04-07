@@ -14,4 +14,16 @@ router.post(
   userController.createUser.bind(userController),
 );
 
+router.put(
+  "/:id",
+  validate(userSchemas.updateUser),
+  userController.updateUser.bind(userController),
+);
+
+router.patch(
+  "/:id/password",
+  validate(userSchemas.chagePassword),
+  userController.updateUserPassword.bind(userController),
+);
+
 export default router;
