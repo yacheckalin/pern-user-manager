@@ -21,13 +21,14 @@ const userSchemas = {
 
   chagePassword: Joi.object({
     id: Joi.number().integer().required(),
-    password: Joi.string().min(6).messages({
+    old_password: Joi.string().min(6).required(),
+    new_password: Joi.string().min(6).messages({
       "string.min": "Password must be at least 6 characters long",
     }),
-    confirm_password: Joi.any().equal(Joi.ref("password")).messages({
+    confirm_password: Joi.any().equal(Joi.ref("new_password")).messages({
       "any.only": "Password do not match",
     }),
-  }).with("password", "confirm_password"),
+  }).with("new_password", "confirm_password"),
 };
 
 export { userSchemas };

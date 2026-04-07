@@ -20,4 +20,10 @@ router.put(
   userController.updateUser.bind(userController),
 );
 
+router.patch(
+  "/:id",
+  validate(userSchemas.chagePassword),
+  userController.updateUserPassword.bind(userController),
+);
+
 export default router;

@@ -95,7 +95,24 @@ class UserRepository {
        RETURNING ${returning}`;
 
     const result = await this.pool.query(query, [id, ...values]);
-    return result.rows[0];
+    return User.fromDatabase(result.rows[0]);
+  }
+
+  /**
+   * Update user password by id
+   *
+   * @param {*} id
+   * @param {*} data - new password
+   * @param {*} returning
+   * @returns
+   */
+  async updateUserPassword(id, data, returning = "*") {
+    const query = `UPDATE ${this.table} SET password_hash = $1, updated_at = CURRENT_TIMESTAMP
+    WHERE id = $2
+    RETURNING ${returning}`;
+
+    const result = await this.pool.query(query, [data.password, id]);
+    return User.fromDatabase(result.rows[0]);
   }
 }
 
