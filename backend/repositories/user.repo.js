@@ -58,6 +58,30 @@ class UserRepository {
     );
     return User.fromDatabase(rows[0]);
   }
+
+  /**
+   * Update user by id
+   *
+   *
+   * @param {*} id
+   * @param {*} data
+   * @param {*} returning
+   * @returns
+   */
+  async updateUser(id, data, returning = "*") {
+    const keys = Object.keys(data);
+    const values = Object.values(data);
+    const placeholders = values.map((_, i) => `$${i + 2}`).join(", ");
+
+    const query = await this.pool.query(
+      `UPDATE ${this.table}
+       SET (${placeholders}), updated_at = CURRENT_TIMESTAMP
+       WHERE id = $1
+       RETURNING ${returning}`,
+    );
+    const result = await this.db.query(query, [id, ...values]);
+    return result.rows[0];
+  }
 }
 
 export default UserRepository;
