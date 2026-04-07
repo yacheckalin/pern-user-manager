@@ -20,6 +20,24 @@ class UserController {
       next(error);
     }
   }
+
+  async createUser(req, res, next) {
+    try {
+      const user = await this.userService.createUser(req.body);
+      res.status(201).json({
+        success: true,
+        message: "User created succesfully",
+        data: user,
+      });
+    } catch (error) {
+      const statusCode = error.message === "User not found" ? 404 : 500;
+      res.status(statusCode).json({
+        success: false,
+        message: error.message,
+      });
+      next(error);
+    }
+  }
 }
 
 export default UserController;

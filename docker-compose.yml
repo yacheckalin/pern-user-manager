@@ -41,9 +41,12 @@ services:
     ports:
       - "5000:5000"
     environment:
-      NODE_ENV: development
+      - NODE_ENV=development
+      - DATABASE_URL=postgres://postgres:secret_password@db:5432/my_database
+
     depends_on:
       - db
+    command: sh -c "npm run migrate && npm start"
   frontend:
     build: ./frontend
     container_name: react_frontend

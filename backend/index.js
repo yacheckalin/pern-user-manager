@@ -2,7 +2,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import userRoutes from "./routes/user-routes.js";
-import errorHandler from "./shared/error-handler.js";
+import errorHandler from "./middleware/error-handler.js";
 
 const { PORT } = process.env;
 

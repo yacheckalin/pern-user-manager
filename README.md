@@ -192,6 +192,8 @@ root/
 │   ├── migrations/             # Database migrations
 |   ├── controllers             # Controllers
 |   |   ├── user.controller.js
+|   ├── models                  # Models
+|   |   ├── user.model.js
 |   ├── repositories            # Repositories
 |   |   ├── user.repo.js
 |   ├── routes                  # Routes
@@ -254,6 +256,7 @@ Base URL: `http://localhost:5000/users`
 **Available endpoints:**
 
 - `GET /users` - Get all users
+- `POST /users` - Create new user
 
 ## ✅ Testing
 
