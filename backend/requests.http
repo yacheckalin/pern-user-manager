@@ -23,7 +23,7 @@ Content-Type: application/json
 }
 
 ### Update user password by id
-PATCH http://localhost:5000/users/1
+PATCH http://localhost:5000/users/1/password
 Content-Type: application/json
 
 {

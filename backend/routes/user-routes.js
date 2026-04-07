@@ -21,7 +21,7 @@ router.put(
 );
 
 router.patch(
-  "/:id",
+  "/:id/password",
   validate(userSchemas.chagePassword),
   userController.updateUserPassword.bind(userController),
 );
