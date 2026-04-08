@@ -32,4 +32,10 @@ router.delete(
   userController.deleteUser.bind(userController),
 );
 
+router.patch(
+  "/:id/activate",
+  validate(userSchemas.activateUser),
+  userController.activateUser.bind(userController),
+);
+
 export default router;

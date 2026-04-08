@@ -116,6 +116,21 @@ class UserService {
     return result;
   }
 
+  async activateUser(id) {
+    // check if user exists
+    const user = await this.userRepository.findUserById(id);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // check if user has already activated
+    if (user.activatedAt && user.isActive) {
+      throw new Error("User has already activated");
+    }
+    const result = await this.userRepository.activateUserById(id);
+    return result;
+  }
+
   validateCreateUserData(data) {
     if (!data.username || data.username.length < 3) {
       throw new Error("Username must be at least 3 characters");

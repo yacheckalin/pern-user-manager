@@ -33,6 +33,10 @@ const userSchemas = {
   deleteUser: Joi.object({
     id: Joi.number().integer().required(),
   }),
+
+  activateUser: Joi.object({
+    id: Joi.number().integer().required(),
+  }),
 };
 
 export { userSchemas };
