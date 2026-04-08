@@ -10,7 +10,7 @@ jest.unstable_mockModule("../../repositories/user.repo.js", () => ({
     updateUser: jest.fn(),
     updateUserPassword: jest.fn(),
     deleteUserById: jest.fn(),
-    activateUser: jest.fn(),
+    activateUserById: jest.fn(),
     findUserByEmail: jest.fn(),
     findUserById: jest.fn(),
     findUserByName: jest.fn(),
@@ -37,7 +37,7 @@ describe("UserService - Unit Tests", () => {
       updateUser: jest.fn(),
       updateUserPassword: jest.fn(),
       deleteUserById: jest.fn(),
-      activateUser: jest.fn(),
+      activateUserById: jest.fn(),
       findUserByEmail: jest.fn(),
       findUserById: jest.fn(),
       findUserByName: jest.fn(),
@@ -255,6 +255,38 @@ describe("UserService - Unit Tests", () => {
 
       await expect(userService.deleteUser(1)).rejects.toThrow(
         USER_ERRORS.NOT_FOUND,
+      );
+    });
+  });
+
+  describe("Activate User", () => {
+    it(`should activate user`, async () => {
+      mockUserRepository.findUserById.mockResolvedValue({ id: 1 });
+      mockUserRepository.activateUserById.mockResolvedValue({ id: 1 });
+
+      const result = await userService.activateUser(1);
+
+      expect(result).toHaveProperty("id");
+      expect(mockUserRepository.activateUserById).toHaveBeenCalled();
+    });
+
+    it(`should return [${USER_ERRORS.NOT_FOUND}]`, async () => {
+      mockUserRepository.findUserById.mockResolvedValue(null);
+
+      await expect(userService.activateUser(1)).rejects.toThrow(
+        USER_ERRORS.NOT_FOUND,
+      );
+    });
+
+    it(`should return [${USER_ERRORS.ALREADY_ACTIVATED}]`, async () => {
+      mockUserRepository.findUserById.mockResolvedValue({
+        id: 1,
+        isActive: true,
+        activatedAt: new Date(),
+      });
+
+      await expect(userService.activateUser(1)).rejects.toThrow(
+        USER_ERRORS.ALREADY_ACTIVATED,
       );
     });
   });
