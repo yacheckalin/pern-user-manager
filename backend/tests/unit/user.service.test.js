@@ -1,5 +1,6 @@
-import { USER_ERRORS } from "../../constants";
+import { BCRYPT_ROUNDS, USER_ERRORS } from "../../constants";
 import { jest } from "@jest/globals";
+import bcrypt from "bcrypt";
 
 // Mock the repository
 jest.unstable_mockModule("../../repositories/user.repo.js", () => ({
@@ -162,6 +163,79 @@ describe("UserService - Unit Tests", () => {
       await expect(userService.updateUser(1, validUserData)).rejects.toThrow(
         USER_ERRORS.EMAIL_TAKEN,
       );
+    });
+  });
+
+  describe("Update Password", () => {
+    const validUserData = {
+      old_password: "some_secret_password",
+      new_password: "new_secret_password",
+      confirm_password: "new_secret_password",
+    };
+
+    const mockValidUser = {
+      passwordHash:
+        "$2b$10$YhoyGnzRZL8Ex0PTrFHd5elaqZgMe5UoolgHqzoTqDJFzU3r36eRK",
+      email: "test@tt.tt",
+      id: 1,
+    };
+
+    it("should update user password", async () => {
+      mockUserRepository.findUserById.mockResolvedValue(mockValidUser);
+
+      // Ensure the mock actually returns the user object
+      mockUserRepository.updateUserPassword.mockResolvedValue(mockValidUser);
+
+      // Act
+      const result = await userService.updateUserPassword(1, {
+        ...validUserData,
+      });
+
+      // Assert
+      expect(result).toHaveProperty("id");
+      expect(mockUserRepository.updateUserPassword).toHaveBeenCalled();
+    });
+
+    it(`should return [${USER_ERRORS.NOT_FOUND}]`, async () => {
+      mockUserRepository.findUserById.mockResolvedValue(null);
+
+      await expect(
+        userService.updateUserPassword(1, validUserData),
+      ).rejects.toThrow(USER_ERRORS.NOT_FOUND);
+    });
+
+    it(`should return [${USER_ERRORS.OLD_PASSWORD_INVALID}]`, async () => {
+      mockUserRepository.findUserById.mockResolvedValue(mockValidUser);
+
+      await expect(
+        userService.updateUserPassword(1, {
+          ...validUserData,
+          old_password: "some_wrong_password",
+        }),
+      ).rejects.toThrow(USER_ERRORS.OLD_PASSWORD_INVALID);
+    });
+
+    it(`should return [${USER_ERRORS.NEW_PASSWORD_THE_SAME}]`, async () => {
+      mockUserRepository.findUserById.mockResolvedValue(mockValidUser);
+
+      await expect(
+        userService.updateUserPassword(1, {
+          ...validUserData,
+          new_password: "some_secret_password",
+          confirm_password: "some_secret_password",
+        }),
+      ).rejects.toThrow(USER_ERRORS.NEW_PASSWORD_THE_SAME);
+    });
+
+    it(`should return [${USER_ERRORS.INVALID_CONFIRM_PASSWORD}]`, async () => {
+      mockUserRepository.findUserById.mockResolvedValue(mockValidUser);
+
+      await expect(
+        userService.updateUserPassword(1, {
+          ...validUserData,
+          new_password: "some_other_password",
+        }),
+      ).rejects.toThrow(USER_ERRORS.INVALID_CONFIRM_PASSWORD);
     });
   });
 });
