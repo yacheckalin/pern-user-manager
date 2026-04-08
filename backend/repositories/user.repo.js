@@ -129,6 +129,24 @@ class UserRepository {
     );
     return User.fromDatabase(rows[0]);
   }
+
+  /**
+   * Activate user by id
+   *
+   * @param {*} id
+   * @param {*} returning
+   * @returns
+   */
+  async activateUserById(id, returning = "*") {
+    const { rows } = await this.pool.query(
+      `UPDATE ${this.table}
+        SET is_active=TRUE, updated_at = CURRENT_TIMESTAMP, activated_at = CURRENT_TIMESTAMP
+        WHERE id = $1
+        RETURNING ${returning}`,
+      [id],
+    );
+    return User.fromDatabase(rows[0]);
+  }
 }
 
 export default UserRepository;
