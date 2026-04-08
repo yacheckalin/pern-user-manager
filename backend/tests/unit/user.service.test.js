@@ -9,7 +9,7 @@ jest.unstable_mockModule("../../repositories/user.repo.js", () => ({
     createUser: jest.fn(),
     updateUser: jest.fn(),
     updateUserPassword: jest.fn(),
-    deleteUser: jest.fn(),
+    deleteUserById: jest.fn(),
     activateUser: jest.fn(),
     findUserByEmail: jest.fn(),
     findUserById: jest.fn(),
@@ -36,7 +36,7 @@ describe("UserService - Unit Tests", () => {
       createUser: jest.fn(),
       updateUser: jest.fn(),
       updateUserPassword: jest.fn(),
-      deleteUser: jest.fn(),
+      deleteUserById: jest.fn(),
       activateUser: jest.fn(),
       findUserByEmail: jest.fn(),
       findUserById: jest.fn(),
@@ -236,6 +236,26 @@ describe("UserService - Unit Tests", () => {
           new_password: "some_other_password",
         }),
       ).rejects.toThrow(USER_ERRORS.INVALID_CONFIRM_PASSWORD);
+    });
+  });
+
+  describe("Delete User", () => {
+    it(`should delete user`, async () => {
+      mockUserRepository.findUserById.mockResolvedValue({ id: 1 });
+      mockUserRepository.deleteUserById.mockResolvedValue({ id: 1 });
+
+      const result = await userService.deleteUser(1);
+
+      expect(result).toHaveProperty("id");
+      expect(mockUserRepository.deleteUserById).toHaveBeenCalled();
+    });
+
+    it(`should return [${USER_ERRORS.NOT_FOUND}]`, async () => {
+      mockUserRepository.findUserById.mockResolvedValue(null);
+
+      await expect(userService.deleteUser(1)).rejects.toThrow(
+        USER_ERRORS.NOT_FOUND,
+      );
     });
   });
 });
