@@ -1,9 +1,8 @@
-import { BCRYPT_ROUNDS, USER_ERRORS } from "../../constants";
+import { USER_ERRORS } from "../../../constants/index.js";
 import { jest } from "@jest/globals";
-import bcrypt from "bcrypt";
 
 // Mock the repository
-jest.unstable_mockModule("../../repositories/user.repo.js", () => ({
+jest.unstable_mockModule("../../../repositories/user.repo.js", () => ({
   default: jest.fn().mockImplementation(() => ({
     getAllUsers: jest.fn(),
     createUser: jest.fn(),
@@ -18,9 +17,10 @@ jest.unstable_mockModule("../../repositories/user.repo.js", () => ({
   })),
 }));
 
-const { default: UserService } = await import("../../services/user.service.js");
+const { default: UserService } =
+  await import("../../../services/user.service.js");
 const { default: UserRepository } =
-  await import("../../repositories/user.repo.js");
+  await import("../../../repositories/user.repo.js");
 
 describe("UserService - Unit Tests", () => {
   let userService;
