@@ -1,0 +1,16 @@
+export default {
+  testEnvironment: "node",
+  testMatch: ["<rootDir>/tests/e2e/**/*.e2e.test.js"],
+  roots: ["<rootDir>/tests/e2e"],
+  transform: {},
+  // extensionsToTreatAsEsm: [".js"],
+  globalSetup: "<rootDir>/tests/setup/global.setup.js",
+  globalTeardown: "<rootDir>/tests/setup/global.teardown.js",
+  testTimeout: 30000,
+  verbose: true,
+  bail: false,
+  maxWorkers: 1,
+  forceExit: true,
+  detectOpenHandles: true,
+  collectCoverage: false,
+};
