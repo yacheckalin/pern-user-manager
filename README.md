@@ -192,6 +192,12 @@ root/
 │   ├── migrations/             # Database migrations
 |   ├── controllers             # Controllers
 |   |   ├── user.controller.js
+|   ├── constants
+|   |   ├── index.js            # Export all constants
+|   |   ├── app.constants.js    # Application constants
+|   |   ├── http.constants.js   # HTTP status constants
+|   |   ├── error.constants.js  # Errors constants
+|   |   ├── user.constants.js   # User domain constants
 |   ├── models                  # Models
 |   |   ├── user.model.js
 |   |   ├── user.schema.js      # Joi schema object
@@ -262,6 +268,7 @@ Base URL: `http://localhost:5000/users`
 - `PUT /users/:id` - Update user by ID
 - `PATCH /users/:id/password` - Change user password by ID
 - `DELETE /users/:id` - Delete user by ID
+- `PATCH /users/:id/activate` - Activate user by ID
 
 ## ✅ Testing
 
