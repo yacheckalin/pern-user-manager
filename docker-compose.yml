@@ -46,7 +46,7 @@ services:
 
     depends_on:
       - db
-    command: sh -c "npm run migrate && npm start"
+    command: sh -c "npm run migrate && npm run dev"
   frontend:
     build: ./frontend
     container_name: react_frontend

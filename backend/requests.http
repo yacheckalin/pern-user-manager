@@ -6,24 +6,24 @@ POST http://localhost:5000/users
 Content-Type: application/json
 
 {
-  "username": "tes112ww",
-  "email": "test2w22211@tt.tt",
+  "username": "test2",
+  "email": "test2@tt.tt",
   "password": "some_secret_password",
   "age": 18,
   "is_active": false
 }
 
 ### Update user by id
-PUT http://localhost:5000/users/1
+PUT http://localhost:5000/users/4
 Content-Type: application/json
 
 {
-  "username": "newUsername",
-  "email":"test@test.tt"
+  "username": "newUsername2",
+  "email":"test2@test.tt"
 }
 
 ### Update user password by id
-PATCH http://localhost:5000/users/1/password
+PATCH http://localhost:5000/users/4/password
 Content-Type: application/json
 
 {

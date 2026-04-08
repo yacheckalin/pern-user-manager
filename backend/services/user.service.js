@@ -13,7 +13,7 @@ class UserService {
   }
 
   async createUser(data) {
-    this.validateUserData(data, "create");
+    this.validateCreateUserData(data);
 
     const existingUsername = await this.userRepository.findUserByName(
       data.username,
@@ -43,12 +43,22 @@ class UserService {
 
   async updateUser(id, data) {
     // validate data
-    this.validateUserData(data, "update");
+    this.validateUpdateUserData(data);
+
     // check if user exists
     const user = await this.userRepository.findUserById(id);
     if (!user) {
       throw new Error("User not found!");
     }
+
+    // check if userName is empty
+    const userNameExists = await this.userRepository.findUserByName(
+      data.username,
+    );
+    if (userNameExists && userNameExists.id !== id) {
+      throw new Error("This username has already taken!");
+    }
+
     // if email changed, check if this email doesn't exist in the DB
     if (data.email && user.email !== data.email) {
       const emailExists = await this.userRepository.findUserByEmail(data.email);
@@ -61,7 +71,7 @@ class UserService {
   }
 
   async updateUserPassword(id, data) {
-    this.validateUserData(data, "update_password");
+    this.validateUpdateUserPasswordData(data);
 
     const user = await this.userRepository.findUserById(id);
     if (!user) {
@@ -95,41 +105,43 @@ class UserService {
     return result;
   }
 
-  validateUserData(data, flag = "create") {
-    if (flag === "create" && (!data.username || data.username.length < 3)) {
+  validateCreateUserData(data) {
+    if (!data.username || data.username.length < 3) {
       throw new Error("Username must be at least 3 characters");
     }
-
-    if (flag === "create" && (!data.email || !data.email.includes("@"))) {
-      throw new Error("Valid email is required");
+    if (!data.email || !data.email.includes("@")) {
+      throw new Error("Valid email is required!");
     }
-
-    if (flag === "create" && (!data.password || data.password.length < 6)) {
+    if (!data.password || data.password.length < 6) {
       throw new Error("Password must be at least 6 characters");
     }
-    if (
-      (flag === "update_password" && !data.new_password) ||
-      data.new_password.length < 6
-    ) {
+    if (data.age && (data.age < 13 || data.age > 150)) {
+      throw new Error("Age mest be between 13 and 150");
+    }
+  }
+
+  validateUpdateUserData(data) {
+    if (!data.username || data.username.length < 3) {
+      throw new Error("Username must be at least 3 characters");
+    }
+    if (!data.email || !data.email.includes("@")) {
+      throw new Error("Valid email is required!");
+    }
+    if (data.age && (data.age < 13 || data.age > 150)) {
+      throw new Error("Age mest be between 13 and 150");
+    }
+  }
+
+  validateUpdateUserPasswordData(data) {
+    if (!data.new_password || data.new_password.length < 6) {
       throw new Error("New password must be at least 6 characters");
     }
-    if (
-      (flag === "update_password" && !data.old_password) ||
-      data.old_password.length < 6
-    ) {
+    if (!data.old_password || data.old_password.length < 6) {
       throw new Error("Old password must be at least 6 characters!");
     }
 
-    if (
-      flag === "update_password" &&
-      data.confirm_password &&
-      data.confirm_password !== data.new_password
-    ) {
+    if (data.confirm_password && data.confirm_password !== data.new_password) {
       throw new Error("Confirm password is not valid");
-    }
-
-    if (data.age && (data.age < 13 || data.age > 150)) {
-      throw new Error("Age mest be between 13 and 150");
     }
   }
 }
