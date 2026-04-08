@@ -111,4 +111,57 @@ describe("UserService - Unit Tests", () => {
       );
     });
   });
+
+  describe("updateUser", () => {
+    const validUserData = {
+      username: "jane_doe",
+      email: "jane@example.com",
+      password: "SecurePass123",
+      age: 25,
+    };
+
+    it("should update user successfully", async () => {
+      // Arrange
+      mockUserRepository.findUserById.mockResolvedValue({ id: 1 });
+      mockUserRepository.findUserByEmail.mockResolvedValue(null);
+      mockUserRepository.findUserByName.mockResolvedValue(null);
+      mockUserRepository.updateUser.mockResolvedValue({
+        id: 1,
+        ...validUserData,
+      });
+
+      // Act
+      const result = await userService.updateUser(1, validUserData);
+
+      // Assert
+      expect(result).toHaveProperty("id");
+      expect(mockUserRepository.updateUser).toHaveBeenCalled();
+    });
+
+    it(`should return [${USER_ERRORS.NOT_FOUND}]`, async () => {
+      mockUserRepository.findUserById.mockResolvedValue(null);
+
+      await expect(userService.updateUser(1, validUserData)).rejects.toThrow(
+        USER_ERRORS.NOT_FOUND,
+      );
+    });
+
+    it(`should return [${USER_ERRORS.USERNAME_TAKEN}]`, async () => {
+      mockUserRepository.findUserByName.mockResolvedValue({ id: 2 });
+      mockUserRepository.findUserById.mockResolvedValue({ id: 1 });
+      await expect(userService.updateUser(1, validUserData)).rejects.toThrow(
+        USER_ERRORS.USERNAME_TAKEN,
+      );
+    });
+
+    it(`should return [${USER_ERRORS.EMAIL_TAKEN}]`, async () => {
+      mockUserRepository.findUserById.mockResolvedValue({ id: 1 });
+      mockUserRepository.findUserByName.mockResolvedValue(null);
+      mockUserRepository.findUserByEmail.mockResolvedValue({ id: 2 });
+
+      await expect(userService.updateUser(1, validUserData)).rejects.toThrow(
+        USER_ERRORS.EMAIL_TAKEN,
+      );
+    });
+  });
 });
