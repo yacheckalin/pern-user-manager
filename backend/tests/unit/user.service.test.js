@@ -14,6 +14,7 @@ jest.unstable_mockModule("../../repositories/user.repo.js", () => ({
     findUserByEmail: jest.fn(),
     findUserById: jest.fn(),
     findUserByName: jest.fn(),
+    findAll: jest.fn(),
   })),
 }));
 
@@ -41,6 +42,7 @@ describe("UserService - Unit Tests", () => {
       findUserByEmail: jest.fn(),
       findUserById: jest.fn(),
       findUserByName: jest.fn(),
+      findAll: jest.fn(),
     };
 
     UserRepository.mockImplementation(() => mockUserRepository);
@@ -49,7 +51,7 @@ describe("UserService - Unit Tests", () => {
     userService = new UserService();
   });
 
-  describe("createUser", () => {
+  describe("Create User", () => {
     const validUserData = {
       username: "jane_doe",
       email: "jane@example.com",
@@ -113,7 +115,7 @@ describe("UserService - Unit Tests", () => {
     });
   });
 
-  describe("updateUser", () => {
+  describe("Update User", () => {
     const validUserData = {
       username: "jane_doe",
       email: "jane@example.com",
@@ -288,6 +290,145 @@ describe("UserService - Unit Tests", () => {
       await expect(userService.activateUser(1)).rejects.toThrow(
         USER_ERRORS.ALREADY_ACTIVATED,
       );
+    });
+  });
+  describe("Get All Users", () => {
+    it(`should return all users`, async () => {
+      mockUserRepository.findAll.mockResolvedValue([{ id: 1 }]);
+
+      const result = await userService.getAllUsers();
+      expect(result[0]).toHaveProperty("id");
+      expect(mockUserRepository.findAll).toHaveBeenCalled();
+    });
+  });
+
+  describe("validateCreateUserData()", () => {
+    const validData = {
+      username: "username",
+      email: "user_email@gmail.com",
+      password: "some_secret_password",
+      age: 20,
+    };
+
+    it(`validate create user data`, () => {
+      expect(() => userService.validateCreateUserData(validData)).not.toThrow();
+    });
+    it(`should return [${USER_ERRORS.INVALID_USERNAME}]`, () => {
+      expect(() =>
+        userService.validateCreateUserData({ username: "u" }),
+      ).toThrow(USER_ERRORS.INVALID_USERNAME);
+    });
+
+    it(`should return [${USER_ERRORS.INVALID_EMAIL}]`, () => {
+      expect(() =>
+        userService
+          .validateCreateUserData({
+            username: "username",
+            email: "email",
+          })
+          .toThrow(USER_ERRORS.INVALID_EMAIL),
+      );
+    });
+
+    it(`should return [${USER_ERRORS.INVALID_PASSWORD}]`, () => {
+      expect(() =>
+        userService.validateCreateUserData({
+          username: "username",
+          email: "some_email@email.com",
+          password: "12345",
+        }),
+      ).toThrow(USER_ERRORS.INVALID_PASSWORD);
+    });
+
+    it(`should return [${USER_ERRORS.INVALID_AGE}]`, () => {
+      expect(() =>
+        userService.validateCreateUserData({ ...validData, age: 10 }),
+      ).toThrow(USER_ERRORS.INVALID_AGE);
+      expect(() =>
+        userService.validateCreateUserData({ ...validData, age: 151 }),
+      ).toThrow(USER_ERRORS.INVALID_AGE);
+    });
+  });
+
+  describe("validateUpdateUserData", () => {
+    const validData = {
+      username: "valid_username",
+      email: "valid_email@email.com",
+      age: 20,
+    };
+    it(`should validate update user data`, () => {
+      expect(() => userService.validateUpdateUserData(validData)).not.toThrow();
+    });
+
+    it(`should return [${USER_ERRORS.INVALID_USERNAME}]`, () => {
+      expect(() =>
+        userService.validateUpdateUserData({ username: "u" }),
+      ).toThrow(USER_ERRORS.INVALID_USERNAME);
+    });
+
+    it(`should return [${USER_ERRORS.INVALID_EMAIL}]`, () => {
+      expect(() =>
+        userService.validateUpdateUserData({
+          username: "username",
+          email: "mmmm",
+        }),
+      ).toThrow(USER_ERRORS.INVALID_EMAIL);
+    });
+
+    it(`should return [${USER_ERRORS.INVALID_AGE}]`, () => {
+      expect(() =>
+        userService.validateUpdateUserData({
+          username: "username",
+          email: "some_email@mail.com",
+          age: 10,
+        }),
+      ).toThrow(USER_ERRORS.INVALID_AGE);
+      expect(() =>
+        userService.validateUpdateUserData({
+          username: "username",
+          email: "some_email@mail.com",
+          age: 151,
+        }),
+      ).toThrow(USER_ERRORS.INVALID_AGE);
+    });
+  });
+
+  describe("validateUpdateUserPasswordData", () => {
+    const validData = {
+      old_password: "some_old_password",
+      new_password: "some_new_password",
+      confirm_password: "some_new_password",
+    };
+
+    it(`validate update user password data`, () => {
+      expect(() =>
+        userService.validateUpdateUserPasswordData(validData),
+      ).not.toThrow();
+    });
+
+    it(`should return [${USER_ERRORS.INVALID_NEW_PASSWORD}]`, () => {
+      expect(() =>
+        userService.validateUpdateUserPasswordData({ new_password: "weak" }),
+      ).toThrow(USER_ERRORS.INVALID_NEW_PASSWORD);
+    });
+
+    it(`should return [${USER_ERRORS.INVALID_OLD_PASSWORD}]`, () => {
+      expect(() =>
+        userService.validateUpdateUserPasswordData({
+          old_password: "weak",
+          new_password: "somw_strong_new_password",
+        }),
+      ).toThrow(USER_ERRORS.INVALID_OLD_PASSWORD);
+    });
+
+    it(`should return [${USER_ERRORS.INVALID_CONFIRM_PASSWORD}]`, () => {
+      expect(() =>
+        userService.validateUpdateUserPasswordData({
+          new_password: "some_new_password",
+          old_password: "some_old_password",
+          confirm_password: "some_other_password",
+        }),
+      ).toThrow(USER_ERRORS.INVALID_CONFIRM_PASSWORD);
     });
   });
 });
