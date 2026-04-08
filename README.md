@@ -261,6 +261,7 @@ Base URL: `http://localhost:5000/users`
 - `POST /users` - Create new user
 - `PUT /users/:id` - Update user by ID
 - `PATCH /users/:id/password` - Change user password by ID
+- `DELETE /users/:id` - Delete user by ID
 
 ## ✅ Testing
 

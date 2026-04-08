@@ -26,4 +26,10 @@ router.patch(
   userController.updateUserPassword.bind(userController),
 );
 
+router.delete(
+  "/:id",
+  validate(userSchemas.deleteUser),
+  userController.deleteUser.bind(userController),
+);
+
 export default router;

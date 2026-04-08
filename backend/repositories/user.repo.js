@@ -114,6 +114,21 @@ class UserRepository {
     const result = await this.pool.query(query, [data.password, id]);
     return User.fromDatabase(result.rows[0]);
   }
+
+  /**
+   * Delete user by id
+   *
+   *
+   * @param {*} id
+   * @returns
+   */
+  async deleteUserById(id) {
+    const { rows } = await this.pool.query(
+      `DELETE FROM ${this.table} WHERE id = $1 RETURNING id`,
+      [id],
+    );
+    return User.fromDatabase(rows[0]);
+  }
 }
 
 export default UserRepository;

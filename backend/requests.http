@@ -32,3 +32,5 @@ Content-Type: application/json
   "confirm_password": "some_password"
 }
 
+### Delete user by id
+DELETE http://localhost:5000/users/1
