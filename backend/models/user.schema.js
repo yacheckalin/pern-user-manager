@@ -29,6 +29,10 @@ const userSchemas = {
       "any.only": "Password do not match",
     }),
   }).with("new_password", "confirm_password"),
+
+  deleteUser: Joi.object({
+    id: Joi.number().integer().required(),
+  }),
 };
 
 export { userSchemas };
