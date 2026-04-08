@@ -1,6 +1,11 @@
 import UserRepository from "../repositories/user.repo.js";
 import db from "../config/database.js";
 import bcrypt from "bcrypt";
+import {
+  BCRYPT_ROUNDS,
+  USER_ERRORS,
+  USER_VALIDATION,
+} from "../constants/index.js";
 
 class UserService {
   constructor() {
@@ -19,16 +24,16 @@ class UserService {
       data.username,
     );
     if (existingUsername) {
-      throw new Error("Username already exists");
+      throw new Error(USER_ERRORS.USERNAME_TAKEN);
     }
 
     const existingEmail = await this.userRepository.findUserByEmail(data.email);
     if (existingEmail) {
-      throw new Error("Email already exists");
+      throw new Error(USER_ERRORS.EMAIL_TAKEN);
     }
 
     // Hash password
-    const passwordHash = await bcrypt.hash(data.password, 10);
+    const passwordHash = await bcrypt.hash(data.password, BCRYPT_ROUNDS);
 
     const result = await this.userRepository.createUser({
       username: data.username,
@@ -48,7 +53,7 @@ class UserService {
     // check if user exists
     const user = await this.userRepository.findUserById(id);
     if (!user) {
-      throw new Error("User not found!");
+      throw new Error(USER_ERRORS.NOT_FOUND);
     }
 
     // check if userName is empty
@@ -56,14 +61,14 @@ class UserService {
       data.username,
     );
     if (userNameExists && userNameExists.id !== id) {
-      throw new Error("This username has already taken!");
+      throw new Error(USER_ERRORS.USERNAME_TAKEN);
     }
 
     // if email changed, check if this email doesn't exist in the DB
     if (data.email && user.email !== data.email) {
       const emailExists = await this.userRepository.findUserByEmail(data.email);
       if (emailExists && emailExists.id !== id) {
-        throw new Error("This email has already taken!");
+        throw new Error(USER_ERRORS.EMAIL_TAKEN);
       }
     }
     const result = await this.userRepository.updateUser(id, data);
@@ -75,7 +80,7 @@ class UserService {
 
     const user = await this.userRepository.findUserById(id);
     if (!user) {
-      throw new Error("User not found!");
+      throw new Error(USER_ERRORS.NOT_FOUND);
     }
 
     // check old password
@@ -84,7 +89,7 @@ class UserService {
       user.passwordHash,
     );
     if (!isValidPassword) {
-      throw new Error("Old password is not valid!");
+      throw new Error(USER_ERRORS.OLD_PASSWORD_INVALID);
     }
 
     // check new password
@@ -94,10 +99,10 @@ class UserService {
     );
 
     if (isSameNewPassword) {
-      throw new Error("New password should be different from old one!");
+      throw new Error(USER_ERRORS.NEW_PASSWORD_THE_SAME);
     }
 
-    const newPasswordHash = await bcrypt.hash(data.new_password, 10);
+    const newPasswordHash = await bcrypt.hash(data.new_password, BCRYPT_ROUNDS);
 
     const result = await this.userRepository.updateUserPassword(id, {
       password: newPasswordHash,
@@ -109,7 +114,7 @@ class UserService {
     // check if user exists
     const user = await this.userRepository.findUserById(id);
     if (!user) {
-      throw new Error("User not found");
+      throw new Error(USER_ERRORS.NOT_FOUND);
     }
 
     const result = await this.userRepository.deleteUserById(id);
@@ -120,54 +125,75 @@ class UserService {
     // check if user exists
     const user = await this.userRepository.findUserById(id);
     if (!user) {
-      throw new Error("User not found");
+      throw new Error(USER_ERRORS.NOT_FOUND);
     }
 
     // check if user has already activated
     if (user.activatedAt && user.isActive) {
-      throw new Error("User has already activated");
+      throw new Error(USER_ERRORS.ALREADY_ACTIVATED);
     }
     const result = await this.userRepository.activateUserById(id);
     return result;
   }
 
   validateCreateUserData(data) {
-    if (!data.username || data.username.length < 3) {
-      throw new Error("Username must be at least 3 characters");
+    if (
+      !data.username ||
+      data.username.length < USER_VALIDATION.USERNAME_MIN_LENGTH
+    ) {
+      throw new Error(USER_ERRORS.INVALID_USERNAME);
     }
     if (!data.email || !data.email.includes("@")) {
-      throw new Error("Valid email is required!");
+      throw new Error(USER_ERRORS.INVALID_EMAIL);
     }
-    if (!data.password || data.password.length < 6) {
-      throw new Error("Password must be at least 6 characters");
+    if (
+      !data.password ||
+      data.password.length < USER_VALIDATION.PASSWORD_MIN_LENGTH
+    ) {
+      throw new Error(USER_ERRORS.INVALID_PASSWORD);
     }
-    if (data.age && (data.age < 13 || data.age > 150)) {
-      throw new Error("Age mest be between 13 and 150");
+    if (
+      data.age &&
+      (data.age < USER_VALIDATION.AGE_MIN || data.age > USER_VALIDATION.AGE_MAX)
+    ) {
+      throw new Error(USER_ERRORS.INVALID_AGE);
     }
   }
 
   validateUpdateUserData(data) {
-    if (!data.username || data.username.length < 3) {
-      throw new Error("Username must be at least 3 characters");
+    if (
+      !data.username ||
+      data.username.length < USER_VALIDATION.USERNAME_MIN_LENGTH
+    ) {
+      throw new Error(USER_ERRORS.INVALID_USERNAME);
     }
     if (!data.email || !data.email.includes("@")) {
-      throw new Error("Valid email is required!");
+      throw new Error(USER_ERRORS.INVALID_EMAIL);
     }
-    if (data.age && (data.age < 13 || data.age > 150)) {
-      throw new Error("Age mest be between 13 and 150");
+    if (
+      data.age &&
+      (data.age < USER_VALIDATION.AGE_MIN || data.age > USER_VALIDATION.AGE_MAX)
+    ) {
+      throw new Error(USER_ERRORS.INVALID_AGE);
     }
   }
 
   validateUpdateUserPasswordData(data) {
-    if (!data.new_password || data.new_password.length < 6) {
-      throw new Error("New password must be at least 6 characters");
+    if (
+      !data.new_password ||
+      data.new_password.length < USER_VALIDATION.PASSWORD_MIN_LENGTH
+    ) {
+      throw new Error(USER_ERRORS.INVALID_NEW_PASSWORD);
     }
-    if (!data.old_password || data.old_password.length < 6) {
-      throw new Error("Old password must be at least 6 characters!");
+    if (
+      !data.old_password ||
+      data.old_password.length < USER_VALIDATION.PASSWORD_MIN_LENGTH
+    ) {
+      throw new Error(USER_ERRORS.INVALID_OLD_PASSWORD);
     }
 
     if (data.confirm_password && data.confirm_password !== data.new_password) {
-      throw new Error("Confirm password is not valid");
+      throw new Error(USER_ERRORS.INVALID_CONFIRM_PASSWORD);
     }
   }
 }

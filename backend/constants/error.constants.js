@@ -1,0 +1,23 @@
+// User errors
+export const USER_ERRORS = {
+  NOT_FOUND: "User not found",
+  ALREADY_EXISTS: "User already exists",
+  EMAIL_TAKEN: "Email is already registered",
+  USERNAME_TAKEN: "Username is already taken",
+  INVALID_AGE: "Age must be between 13 and 150",
+  INVALID_EMAIL: "Please provide a valid email address",
+  INVALID_USERNAME: "Username must be at least 3 characters",
+  INVALID_PASSWORD: "Password must be at least 6 characters",
+  INVALID_NEW_PASSWORD: "New password must be at least 6 characters",
+  INVALID_OLD_PASSWORD: "Old password must be at least 6 characters",
+  INVALID_CONFIRM_PASSWORD: "Confirm password is not valid",
+  OLD_PASSWORD_INVALID: "Old password is not valid",
+  NEW_PASSWORD_THE_SAME: "New password is the same as old one",
+  ALREADY_ACTIVATED: "User has already activated",
+};
+
+// Database errors
+export const DB_ERRORS = {
+  CONNECTION_FAILED: "Database connection failed",
+  QUERY_FAILED: "Database query failed",
+};

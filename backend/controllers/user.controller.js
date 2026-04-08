@@ -1,4 +1,12 @@
 import UserService from "../services/user.service.js";
+import {
+  HTTP_OK,
+  HTTP_CREATED,
+  HTTP_NOT_FOUND,
+  HTTP_INTERNAL_SERVER_ERROR,
+  USER_ERRORS,
+  USER_MESSAGES,
+} from "../constants/index.js";
 
 class UserController {
   constructor() {
@@ -8,12 +16,12 @@ class UserController {
   async getAllUsers(req, res, next) {
     try {
       const results = await this.userService.getAllUsers();
-      res.status(200).json({
+      res.status(HTTP_OK).json({
         success: true,
         data: results,
       });
     } catch (error) {
-      res.status(500).json({
+      res.status(HTTP_INTERNAL_SERVER_ERROR).json({
         success: false,
         message: error.message,
       });
@@ -24,13 +32,16 @@ class UserController {
   async createUser(req, res, next) {
     try {
       const user = await this.userService.createUser(req.body);
-      res.status(201).json({
+      res.status(HTTP_CREATED).json({
         success: true,
-        message: "User created succesfully",
+        message: USER_MESSAGES.CREATED,
         data: user,
       });
     } catch (error) {
-      const statusCode = error.message === "User not found" ? 404 : 500;
+      const statusCode =
+        error.message === USER_ERRORS.NOT_FOUND
+          ? HTTP_NOT_FOUND
+          : HTTP_INTERNAL_SERVER_ERROR;
       res.status(statusCode).json({
         success: false,
         message: error.message,
@@ -44,13 +55,16 @@ class UserController {
       const { id } = req.params;
 
       const user = await this.userService.updateUser(id, req.body);
-      res.status(200).json({
+      res.status(HTTP_OK).json({
         success: true,
-        message: "User updated successfully!",
+        message: USER_MESSAGES.UPDATED,
         data: user,
       });
     } catch (error) {
-      const statusCode = error.message === "User not found" ? 404 : 500;
+      const statusCode =
+        error.message === USER_ERRORS.NOT_FOUND
+          ? HTTP_NOT_FOUND
+          : HTTP_INTERNAL_SERVER_ERROR;
       res.status(statusCode).json({
         success: false,
         message: error.message,
@@ -63,13 +77,16 @@ class UserController {
     try {
       const { id } = req.params;
       const user = await this.userService.updateUserPassword(id, req.body);
-      res.status(200).json({
+      res.status(HTTP_OK).json({
         success: true,
-        message: "User password was changed successfully!",
+        message: USER_MESSAGES.PASSWORD_CHANGED,
         data: user,
       });
     } catch (error) {
-      const statusCode = error.message === "User not found" ? 404 : 500;
+      const statusCode =
+        error.message === USER_ERRORS.NOT_FOUND
+          ? HTTP_NOT_FOUND
+          : HTTP_INTERNAL_SERVER_ERROR;
       res.status(statusCode).json({
         success: false,
         message: error.message,
@@ -82,13 +99,16 @@ class UserController {
     try {
       const { id } = req.params;
       const user = await this.userService.deleteUser(id);
-      res.status(200).json({
+      res.status(HTTP_OK).json({
         success: true,
-        message: "User was deleted successfully!",
+        message: USER_MESSAGES.DELETED,
         data: user,
       });
     } catch (error) {
-      const statusCode = error.message === "User not found" ? 404 : 500;
+      const statusCode =
+        error.message === USER_ERRORS.NOT_FOUND
+          ? HTTP_NOT_FOUND
+          : HTTP_INTERNAL_SERVER_ERROR;
       res.status(statusCode).json({
         success: false,
         message: error.message,
@@ -101,13 +121,16 @@ class UserController {
     try {
       const { id } = req.params;
       const user = await this.userService.activateUser(id);
-      res.status(200).json({
+      res.status(HTTP_OK).json({
         success: true,
-        message: "User was activated successfully!",
+        message: USER_MESSAGES.ACTIVATED,
         data: user,
       });
     } catch (error) {
-      const statusCode = error.message === "User not found" ? 404 : 500;
+      const statusCode =
+        error.message === USER_ERRORS.NOT_FOUND
+          ? HTTP_NOT_FOUND
+          : HTTP_INTERNAL_SERVER_ERROR;
       res.status(statusCode).json({
         success: false,
         message: error.message,

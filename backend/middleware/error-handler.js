@@ -1,7 +1,9 @@
+export { HTTP_INTERNAL_SERVER_ERROR } from "../constants/http.constants.js";
+
 const errorHandler = (err, req, res, next) => {
   console.error(`[Error] ${err.message}`);
 
-  const statusCode = err.statusCode || 500;
+  const statusCode = err.statusCode || HTTP_INTERNAL_SERVER_ERROR;
 
   res.status(statusCode).json({
     success: false,

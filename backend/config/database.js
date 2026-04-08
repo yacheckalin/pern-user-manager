@@ -1,4 +1,5 @@
 import { Pool } from "pg";
+import { DB_ERRORS } from "../constants/index.js";
 
 class Database {
   constructor() {
@@ -42,7 +43,7 @@ class Database {
       }
       return result;
     } catch (error) {
-      console.error("Database error:", error);
+      console.error(DB_ERRORS.DB_QUERY_FAILED, error);
       throw error;
     }
   }

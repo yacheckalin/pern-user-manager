@@ -1,11 +1,19 @@
 import Joi from "joi";
+import { USER_VALIDATION } from "../constants/user.constants.js";
 
 const userSchemas = {
   createUser: Joi.object({
-    username: Joi.string().alphanum().min(3).max(50).required(),
+    username: Joi.string()
+      .alphanum()
+      .min(USER_VALIDATION.USERNAME_MIN_LENGTH)
+      .max(USER_VALIDATION.USERNAME_MAX_LENGTH)
+      .required(),
     email: Joi.string().email().required(),
-    password: Joi.string().min(6).required(),
-    age: Joi.number().integer().min(13).max(150),
+    password: Joi.string().min(USER_VALIDATION.PASSWORD_MIN_LENGTH).required(),
+    age: Joi.number()
+      .integer()
+      .min(USER_VALIDATION.AGE_MIN)
+      .max(USER_VALIDATION.AGE_MAX),
     is_active: Joi.boolean(),
   }),
   id: Joi.object({
@@ -14,17 +22,27 @@ const userSchemas = {
 
   updateUser: Joi.object({
     id: Joi.number().integer().required(),
-    username: Joi.string().alphanum().min(3).max(50),
+    username: Joi.string()
+      .alphanum()
+      .min(USER_VALIDATION.USERNAME_MIN_LENGTH)
+      .max(USER_VALIDATION.USERNAME_MAX_LENGTH),
     email: Joi.string().email(),
-    age: Joi.number().integer().min(13).max(150),
+    age: Joi.number()
+      .integer()
+      .min(USER_VALIDATION.AGE_MIN)
+      .max(USER_VALIDATION.AGE_MAX),
   }),
 
   chagePassword: Joi.object({
     id: Joi.number().integer().required(),
-    old_password: Joi.string().min(6).required(),
-    new_password: Joi.string().min(6).messages({
-      "string.min": "Password must be at least 6 characters long",
-    }),
+    old_password: Joi.string()
+      .min(USER_VALIDATION.PASSWORD_MIN_LENGTH)
+      .required(),
+    new_password: Joi.string()
+      .min(USER_VALIDATION.PASSWORD_MIN_LENGTH)
+      .messages({
+        "string.min": "Password must be at least 6 characters long",
+      }),
     confirm_password: Joi.any().equal(Joi.ref("new_password")).messages({
       "any.only": "Password do not match",
     }),
