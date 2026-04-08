@@ -123,6 +123,10 @@ class UserService {
       throw new Error("User not found");
     }
 
+    // check if user has already activated
+    if (user.activatedAt && user.isActive) {
+      throw new Error("User has already activated");
+    }
     const result = await this.userRepository.activateUserById(id);
     return result;
   }

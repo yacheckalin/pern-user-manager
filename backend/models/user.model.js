@@ -29,6 +29,7 @@ class User {
       isActive: this.isActive,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
+      activatedAt: this.activatedAt,
       lastLogin: this.lastLogin,
     };
   }
