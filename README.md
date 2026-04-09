@@ -200,6 +200,7 @@ root/
 |   |   ├── user.constants.js   # User domain constants
 |   ├── models                  # Models
 |   |   ├── user.model.js
+|   ├── schemas                 # Validation Schemas
 |   |   ├── user.schema.js      # Joi schema object
 |   ├── repositories            # Repositories
 |   |   ├── user.repo.js
