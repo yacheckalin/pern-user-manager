@@ -4,7 +4,7 @@ export const APP_VERSION = "1.0.0";
 export const API_VERSION = "v1";
 
 // Pagination
-export const DEFAULT_PAGE_SIZE = 0;
+export const DEFAULT_PAGE_SIZE = 2;
 export const MAX_PAGE_SIZE = 10;
 
 // Time constants (in milliseconds)
