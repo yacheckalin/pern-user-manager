@@ -211,6 +211,26 @@ root/
 |   ├── middlewares             # Middlewares (middleware, etc.)
 |   |   ├── error-handler.js
 |   |   ├── validation.js       # validation middleware
+|   ├── tests                   # Tests
+|   |   ├── unit                # Unit Tests
+|   |   |   ├── constants
+|   |   |   |   ├── app.constants.test.js
+|   |   |   |   ├── error.constants.test.js
+|   |   |   |   ├── http.constants.test.js
+|   |   |   |   ├── user.constants.test.js
+|   |   |   ├── models
+|   |   |   |   ├── user.model.test.js
+|   |   |   ├── controllers
+|   |   |   |   ├── user.controller.test.js
+|   |   |   ├── repositories
+|   |   |   |   ├── user.repo.test.js
+|   |   |   ├── schemas
+|   |   |   |   ├── user.schema.test.js
+|   |   |   ├── services
+|   |   |   |   ├── user.service.test.js
+|   |   ├── integration         # Integration Tests
+|   |   ├── e2e                 # End-2-End Tests
+|   |   ├── setup               # Base Setup for tests
 |   ├── .gitignore
 |   ├── Dockerfile
 |   ├── package.json
