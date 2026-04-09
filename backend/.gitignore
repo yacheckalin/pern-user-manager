@@ -19,3 +19,9 @@ logs
 npm-debug.log*
 
 .DB_Store
+
+
+# Test outputs
+coverage/
+test-results/
+*.test.db

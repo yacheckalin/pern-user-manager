@@ -40,7 +40,7 @@ class User {
   }
 
   static fromDatabaseArray(rows) {
-    return rows.map((row) => new User(row));
+    return rows.length === 0 ? [] : rows.map((row) => new User(row));
   }
 }
 

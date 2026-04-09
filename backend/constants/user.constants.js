@@ -28,6 +28,7 @@ export const USER_EVENTS = {
   LOGIN: "user.login",
   LOGOUT: "user.logout",
   PASSWORD_CHANGED: "user.password.changed",
+  ACTIVATED: "user.activated",
 };
 
 // User success messages

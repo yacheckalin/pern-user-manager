@@ -7,11 +7,17 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "jest --runInBand",
     "migrate": "npm run migrate:up",
     "migrate:up": "node-pg-migrate up",
     "migrate:down": "node-pg-migrate down",
-    "migrate:create": "node-pg-migrate create"
+    "migrate:create": "node-pg-migrate create",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest --coverage",
+    "test:unit": "NODE_OPTIONS=--experimental-vm-modules jest --testPathPatterns=tests/unit",
+    "test:integration": "NODE_OPTIONS=--experimental-vm-modules jest --testPathPatterns=tests/integration",
+    "test:e2e": "NODE_OPTIONS=--experimental-vm-modules jest --config=jest.e2e.config.js --runInBand",
+    "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --watch",
+    "test:ci": "NODE_OPTIONS=--experimental-vm-modules jest --coverage --maxWorkers=2",
+    "test:debug": "NODE_OPTIONS=--experimental-vm-modules node --inspect-brk node_modules/.bin/jest --runInBand"
   },
   "author": "Yaroslav Chekalin",
   "license": "MIT",
