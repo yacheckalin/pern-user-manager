@@ -4,6 +4,7 @@ import crypto from "crypto";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
+import { Pool } from "pg";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -41,12 +42,12 @@ loadEnvFiles();
 
 // Validate required environment variables for tests
 const requiredEnvVars = [
+  "TEST_DB_PORT",
+  "TEST_DB_USERNAME",
+  "TEST_DB_NAME",
+  "TEST_DB_PASSWORD",
   "DB_CONNECTION",
-  "DB_PORT",
-  "DB_USERNAME",
-  "DB_NAME",
-  "DB_PASSWORD",
-  "DB_CONNECTION",
+  "TEST_DB_URL",
 ];
 
 const missingEnvVars = requiredEnvVars.filter(
@@ -138,4 +139,164 @@ export const testUtils = {
       return error;
     }
   },
+};
+
+// ============================================
+// 4. DATABASE HELPERS
+// ============================================
+
+let testPool = null;
+let keepDatabase = process.env.KEEP_TEST_DATABASE === "true";
+
+export const getTestPool = () => {
+  if (!testPool) {
+    testPool = new Pool({
+      host: process.env.DB_CONNECTION,
+      port: parseInt(process.env.TEST_DB_PORT, 10),
+      database: process.env.TEST_DB_NAME,
+      user: process.env.TEST_DB_USERNAME,
+      password: process.env.TEST_DB_PASSWORD,
+      max: 5,
+      idleTimeoutMillis: parseInt(process.env.DB_IDLE_TIMEOUT, 10) || 10000,
+      connectionTimeoutMillis:
+        parseInt(process.env.DB_CONNECTION_TIMEOUT) || 5000,
+    });
+  }
+  return testPool;
+};
+
+export const clearTestDatabase = async () => {
+  const pool = getTestPool();
+
+  try {
+    // Get all tables in app schema
+    const { rows } = await pool.query(`
+            SELECT tablename
+            FROM pg_tables
+            WHERE schemaname = 'app'
+        `);
+
+    // Truncate all tables in reverse order
+    for (const row of rows.reverse()) {
+      await pool.query(`TRUNCATE TABLE app.${row.tablename} CASCADE`);
+    }
+
+    // Reset sequences
+    const { rows: sequences } = await pool.query(`
+            SELECT sequence_name
+            FROM information_schema.sequences
+            WHERE sequence_schema = 'app'
+        `);
+
+    for (const seq of sequences) {
+      await pool.query(
+        `ALTER SEQUENCE app.${seq.sequence_name} RESTART WITH 1`,
+      );
+    }
+  } catch (error) {
+    console.error("Error clearing test database:", error);
+    throw error;
+  }
+};
+
+export const closeTestDatabase = async () => {
+  if (testPool) {
+    if (!keepDatabase) {
+      // Drop the test database
+      const adminPool = new Pool({
+        host: process.env.DB_CONNECTION,
+        port: parseInt(process.env.TEST_DB_PORT, 10),
+        database: process.env.TEST_DB_NAME,
+        user: process.env.TEST_DB_USERNAME,
+        password: process.env.TEST_DB_PASSWORD,
+      });
+
+      try {
+        await adminPool.query(
+          `
+                    SELECT pg_terminate_backend(pg_stat_activity.pid)
+                    FROM pg_stat_activity
+                    WHERE pg_stat_activity.datname = $1
+                    AND pid <> pg_backend_pid()
+                `,
+          [process.env.TEST_DB_NAME],
+        );
+
+        await adminPool.query(
+          `DROP DATABASE IF EXISTS ${process.env.TEST_DB_NAME}`,
+        );
+        console.log(`✅ Dropped test database: ${process.env.DB_NAME}`);
+      } catch (error) {
+        console.warn("Could not drop test database:", error.message);
+      } finally {
+        await adminPool.end();
+      }
+    } else {
+      console.log(`💾 Keeping test database: ${process.env.TEST_DB_NAME}`);
+    }
+
+    await testPool.end();
+    testPool = null;
+  }
+};
+
+// ============================================
+// 5. GLOBAL SETUP/TEARDOWN
+// ============================================
+
+// Global before all tests
+beforeAll(async () => {
+  const pool = getTestPool();
+  await pool.query("SELECT 1");
+  console.log(`✅ Test database connected: ${process.env.TEST_DB_NAME}`);
+
+  // Run migrations if needed
+  if (process.env.RUN_MIGRATIONS === "true") {
+    const { execSync } = await import("child_process");
+    try {
+      execSync("npm run migrate:up", { stdio: "inherit" });
+      console.log("✅ Migrations completed");
+    } catch (error) {
+      console.error("Migration failed:", error.message);
+    }
+  }
+});
+
+// Reset before each test
+beforeEach(async () => {
+  await clearTestDatabase();
+  jest.clearAllMocks();
+  jest.resetModules();
+});
+
+// Cleanup after all tests
+afterAll(async () => {
+  await closeTestDatabase();
+
+  if (process.env.MOCK_DATE === "true") {
+    jest.useRealTimers();
+  }
+
+  console.log("✅ Test setup cleanup complete");
+});
+
+// ============================================
+// 6. EXPORT ALL UTILITIES
+// ============================================
+
+export const getTestConfig = () => ({
+  dbHost: process.env.DB_CONNECTION,
+  dbPort: process.env.TEST_DB_PORT,
+  dbName: process.env.TEST_DB_NAME,
+  dbUserName: process.env.TEST_DB_USERNAME,
+  dbPassword: process.env.TEST_DB_PASSWORD,
+  dbUrl: process.env.TEST_DB_URL,
+  logLevel: process.env.LOG_LEVEL,
+});
+
+export default {
+  getTestPool,
+  clearTestDatabase,
+  closeTestDatabase,
+  getTestConfig,
 };
