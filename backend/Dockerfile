@@ -11,8 +11,8 @@ COPY . .
 RUN apk add --no-cache dos2unix postgresql-client
 
 # Copy scripts and make executable
-COPY ./*.sh /app/scripts/
-RUN dos2unix /app/scripts/*.sh && chmod +x /app/scripts/*.sh
+COPY ./*.sh ./
+RUN dos2unix ./*.sh && chmod +x ./*.sh
 
 EXPOSE 5000
 
