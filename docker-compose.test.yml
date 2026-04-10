@@ -1,0 +1,52 @@
+version: "3.8"
+
+services:
+  app_test:
+    build: ./backend
+    container_name: node_backend_test
+    environment:
+      - NODE_ENV=test
+      - DB_HOST=postgres_test
+      - DB_PORT=${TEST_DB_PORT}
+      - DB_NAME=${TEST_DB_NAME}
+      - DB_USER=${TEST_DB_USERNAME}
+      - DB_PASSWORD=${TEST_DB_PASSWORD}
+      - LOG_LEVEL=error
+    depends_on:
+      postgres_test:
+        condition: service_healthy
+    # Wait for database before running tests
+    command: >
+      sh -c "
+        ./wait-for-test-db.sh &&
+        npm run migrate:up &&
+        npm run test:ci
+      "
+    networks:
+      - test_network
+  postgres_test:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=${TEST_DB_USERNAME}
+      - POSTGRES_PASSWORD=${TEST_DB_PASSWORD}
+      - POSTGRES_DB=${TEST_DB_NAME}
+      - DATABASE_URL=postgres://${TEST_DB_USERNAME}:${TEST_DB_PASSWORD}@postgres_test:${TEST_DB_PORT}/${TEST_DB_NAME}
+    ports:
+      - "${TEST_DB_PORT}:${TEST_DB_PORT}" # Different port to avoid conflict
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+      # - ./scripts/init-test-db.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${TEST_DB_USERNAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - test_network
+
+volumes:
+  postgres_test_data:
+
+networks:
+  test_network:
+    driver: bridge

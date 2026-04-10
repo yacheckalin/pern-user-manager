@@ -46,7 +46,7 @@ const requiredEnvVars = [
   "TEST_DB_USERNAME",
   "TEST_DB_NAME",
   "TEST_DB_PASSWORD",
-  "DB_CONNECTION",
+  "TEST_DB_CONNECTION",
   "TEST_DB_URL",
 ];
 
@@ -151,7 +151,7 @@ let keepDatabase = process.env.KEEP_TEST_DATABASE === "true";
 export const getTestPool = () => {
   if (!testPool) {
     testPool = new Pool({
-      host: process.env.DB_CONNECTION,
+      host: process.env.TEST_DB_CONNECTION,
       port: parseInt(process.env.TEST_DB_PORT, 10),
       database: process.env.TEST_DB_NAME,
       user: process.env.TEST_DB_USERNAME,
@@ -204,7 +204,7 @@ export const closeTestDatabase = async () => {
     if (!keepDatabase) {
       // Drop the test database
       const adminPool = new Pool({
-        host: process.env.DB_CONNECTION,
+        host: process.env.TEST_DB_CONNECTION,
         port: parseInt(process.env.TEST_DB_PORT, 10),
         database: process.env.TEST_DB_NAME,
         user: process.env.TEST_DB_USERNAME,
@@ -285,7 +285,7 @@ afterAll(async () => {
 // ============================================
 
 export const getTestConfig = () => ({
-  dbHost: process.env.DB_CONNECTION,
+  dbHost: process.env.TEST_DB_CONNECTION,
   dbPort: process.env.TEST_DB_PORT,
   dbName: process.env.TEST_DB_NAME,
   dbUserName: process.env.TEST_DB_USERNAME,
