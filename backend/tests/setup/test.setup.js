@@ -57,7 +57,7 @@ const missingEnvVars = requiredEnvVars.filter(
 if (missingEnvVars.length > 0) {
   throw new Error(
     `Missing required environment variables: ${missingEnvVars.join(", ")}\n` +
-      "Make sure .env.test or .env.test.local exists with these values.",
+    "Make sure .env.test or .env.test.local exists with these values.",
   );
 }
 
@@ -202,39 +202,15 @@ export const clearTestDatabase = async () => {
 export const closeTestDatabase = async () => {
   if (testPool) {
     if (!keepDatabase) {
-      // Drop the test database
-      const adminPool = new Pool({
-        host: process.env.TEST_DB_CONNECTION,
-        port: parseInt(process.env.TEST_DB_PORT, 10),
-        database: process.env.TEST_DB_NAME,
-        user: process.env.TEST_DB_USERNAME,
-        password: process.env.TEST_DB_PASSWORD,
-      });
-
-      try {
-        await adminPool.query(
-          `
-                    SELECT pg_terminate_backend(pg_stat_activity.pid)
-                    FROM pg_stat_activity
-                    WHERE pg_stat_activity.datname = $1
-                    AND pid <> pg_backend_pid()
-                `,
-          [process.env.TEST_DB_NAME],
-        );
-
-        await adminPool.query(
-          `DROP DATABASE IF EXISTS ${process.env.TEST_DB_NAME}`,
-        );
-        console.log(`✅ Dropped test database: ${process.env.DB_NAME}`);
-      } catch (error) {
-        console.warn("Could not drop test database:", error.message);
-      } finally {
-        await adminPool.end();
-      }
-    } else {
-      console.log(`💾 Keeping test database: ${process.env.TEST_DB_NAME}`);
+      // Do not drop the shared Docker test database here.
+      // The DB is already isolated in Docker, and dropping it per test file
+      // causes the next test suite to fail when it connects.
+      await testPool.end();
+      testPool = null;
+      return;
     }
 
+    console.log(`💾 Keeping test database: ${process.env.TEST_DB_NAME}`);
     await testPool.end();
     testPool = null;
   }

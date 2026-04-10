@@ -8,7 +8,7 @@ RUN npm install
 
 COPY . .
 
-RUN apk add --no-cache dos2unix
+RUN apk add --no-cache dos2unix postgresql-client
 
 # Copy scripts and make executable
 COPY ./*.sh /app/scripts/

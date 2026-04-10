@@ -3,11 +3,11 @@
 
 set -e
 
-host="${TEST_DB_CONNECTION}"
-port="${TEST_DB_PORT}"
-user="${TEST_DB_USER}"
-password="${TEST_DB_PASSWORD}"
-db="${TEST_DB_NAME}"
+host="${DB_HOST}"
+port="${DB_PORT}"
+user="${DB_USER}"
+password="${DB_PASSWORD}"
+db="${DB_NAME}"
 
 echo "Waiting for test database at $host:$port..."
 
