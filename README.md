@@ -150,6 +150,12 @@ npm start
 
 # Run tests
 npm test
+npm run test:unit
+npm run test:integration
+npm run test:e2e
+npm run test:watch
+npm run test:ci
+npm run test:debug
 
 # Apply all new migrations
 npm run migrate
@@ -298,17 +304,33 @@ Base URL: `http://localhost:5000/users`
 ```bash
 cd backend
 
-# Run all tests
-npm test
+# Run all tests with coverage
+npm run test NODE_OPTIONS=--experimental-vm-modules jest --coverage
 
-# Run tests in watch mode
-npm test -- --watch
+# Run all unit tests
+npm run test:unit NODE_OPTIONS=--experimental-vm-modules jest --testPathPatterns=tests/unit
 
-# Run tests with coverage
-npm test -- --coverage
+# Run all integration tests
+npm run test:integration NODE_OPTIONS=--experimental-vm-modules jest --testPathPatterns=tests/integration
+
+# Run all e2e tests
+npm run test:e2e NODE_OPTIONS=--experimental-vm-modules jest --config=jest.e2e.config.js --runInBand
+
+# Run all tests in watch mode
+npm run test:watch NODE_OPTIONS=--experimental-vm-modules jest --watch
+
+# Run all tests in CI mode (optimized for servers, limiting CPU usage)
+npm run test:ci NODE_OPTIONS=--experimental-vm-modules jest --coverage --maxWorkers=2
+
+# Run all tests in debug mode
+npm run test:debug NODE_OPTIONS=--experimental-vm-modules node --inspect-brk node_modules/.bin/jest --runInBand
 ```
 
 Test files are located alongside source files with `.test.js` extension.
+
+#### NODE_OPTIONS=--experimental-vm-modules?
+
+Jest requires this flag to handle the "Virtual Machine" modules correctly. Without it, Jest would throw errors saying it doesn't recognize the import statement.
 
 ### Frontend Tests
 
