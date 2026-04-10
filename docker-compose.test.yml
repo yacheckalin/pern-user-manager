@@ -12,6 +12,7 @@ services:
       - DB_USERNAME=${TEST_DB_USERNAME}
       - DB_PASSWORD=${TEST_DB_PASSWORD}
       - DATABASE_URL=postgres://${TEST_DB_USERNAME}:${TEST_DB_PASSWORD}@postgres_test:5432/${TEST_DB_NAME}
+      - TEST_DB_HOST=postgres_test
       - TEST_DB_USERNAME=${TEST_DB_USERNAME}
       - TEST_DB_PASSWORD=${TEST_DB_PASSWORD}
       - TEST_DB_NAME=${TEST_DB_NAME}
@@ -27,7 +28,7 @@ services:
       sh -c "
         ./wait-for-test-db.sh &&
         npm run migrate:up &&
-        npm run $${TEST_COMMAND:-test:ci}
+        npm run ${TEST_COMMAND:-test:ci}
       "
     networks:
       - test_network

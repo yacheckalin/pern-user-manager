@@ -310,13 +310,13 @@ npm run test NODE_OPTIONS=--experimental-vm-modules jest --coverage
 # Run all unit tests
 npm run test:unit NODE_OPTIONS=--experimental-vm-modules jest --testPathPatterns=tests/unit
 
-# Run all integration tests
+# Run all integration tests (localy)
 npm run test:integration NODE_OPTIONS=--experimental-vm-modules jest --testPathPatterns=tests/integration
 
-# Run all e2e tests
+# Run all e2e tests (localy)
 npm run test:e2e NODE_OPTIONS=--experimental-vm-modules jest --config=jest.e2e.config.js --runInBand
 
-# Run all tests in watch mode
+# Run all tests in watch mode (localy)
 npm run test:watch NODE_OPTIONS=--experimental-vm-modules jest --watch
 
 # Run all tests in CI mode (optimized for servers, limiting CPU usage)
@@ -324,6 +324,18 @@ npm run test:ci NODE_OPTIONS=--experimental-vm-modules jest --coverage --maxWork
 
 # Run all tests in debug mode
 npm run test:debug NODE_OPTIONS=--experimental-vm-modules node --inspect-brk node_modules/.bin/jest --runInBand
+
+# Run all tests in docker containers
+npm run test:docker cd .. && docker compose -f docker-compose.test.yml up --abort-on-container-exit --exit-code-from app_test
+
+# Run all integration tests in docker containers
+npm run test:integration:docker cd .. && docker compose -f docker-compose.test.yml build --no-cache app_test && TEST_COMMAND=test:integration docker compose -f docker-compose.test.yml up --abort-on-container-exit --exit-code-from app_test
+
+# Run all e2e tests in docker containers
+npm run test:e2e:docker cd .. && docker compose -f docker-compose.test.yml build --no-cache app_test && TEST_COMMAND=test:e2e docker compose -f docker-compose.test.yml up --abort-on-container-exit --exit-code-from app_test
+
+# Remove docker containers for integration/e2e tests
+npm run test:docker:down cd .. && docker compose -f docker-compose.test.yml down -v
 ```
 
 Test files are located alongside source files with `.test.js` extension.
