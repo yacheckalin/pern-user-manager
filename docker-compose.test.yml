@@ -27,7 +27,7 @@ services:
       sh -c "
         ./wait-for-test-db.sh &&
         npm run migrate:up &&
-        npm run test:ci
+        npm run $${TEST_COMMAND:-test:ci}
       "
     networks:
       - test_network
