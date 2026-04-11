@@ -192,16 +192,18 @@ describe("UserRepository - Integration Tests", () => {
 
       const updatedUser = await userRepository.updateUserPassword(
         insertResult.rows[0].id,
-        "new_hashed_password",
+        { password: "new_hashed_password" },
       );
 
       expect(updatedUser).toBeTruthy();
-      expect(updatedUser.password_hash).toBe("new_hashed_password");
+      expect(updatedUser.passwordHash).toBe("new_hashed_password");
     });
   });
 
   it("should return null when updating password for non-existent user", async () => {
-    const updatedUser = await userRepository.updateUserPassword(999999, "hash");
+    const updatedUser = await userRepository.updateUserPassword(999999, {
+      password: "hash",
+    });
 
     expect(updatedUser).toBeNull();
   });
