@@ -101,6 +101,27 @@ describe("UserRepository - Integration Tests", () => {
     });
   });
 
+  describe("findUserByName", () => {
+    it("should find user by username", async () => {
+      await db.query(
+        `INSERT INTO app.users (username, email, password_hash)
+                 VALUES ($1, $2, $3)`,
+        ["testuser", "find@example.com", "hash"],
+      );
+
+      const user = await userRepository.findUserByName("testuser");
+
+      expect(user).toBeTruthy();
+      expect(user.username).toBe("testuser");
+    });
+
+    it("should return null for non-existent username", async () => {
+      const user = await userRepository.findUserByName("nonexistent");
+
+      expect(user).toBeNull();
+    });
+  });
+
   describe("findAll", () => {
     it("should return empty array", async () => {
       const users = await userRepository.findAll();
@@ -133,5 +154,55 @@ describe("UserRepository - Integration Tests", () => {
       expect(users[0].username).toBe("integration_test");
       expect(users[1].username).toBe("integration_test2");
     });
+  });
+
+  describe("updateUser", () => {
+    it("should update user data", async () => {
+      const insertResult = await db.query(
+        `INSERT INTO app.users (username, email, password_hash)
+                 VALUES ($1, $2, $3) RETURNING id`,
+        ["testuser", "update@example.com", "hash"],
+      );
+
+      const updatedUser = await userRepository.updateUser(
+        insertResult.rows[0].id,
+        { username: "updateduser" },
+      );
+
+      expect(updatedUser).toBeTruthy();
+      expect(updatedUser.username).toBe("updateduser");
+    });
+  });
+
+  it("should return null when updating non-existent user", async () => {
+    const updatedUser = await userRepository.updateUser(999999, {
+      username: "updateduser",
+    });
+
+    expect(updatedUser).toBeNull();
+  });
+
+  describe("updateUserPassword", () => {
+    it("should update user password", async () => {
+      const insertResult = await db.query(
+        `INSERT INTO app.users (username, email, password_hash)
+                 VALUES ($1, $2, $3) RETURNING id`,
+        ["testuser", "update@example.com", "hash"],
+      );
+
+      const updatedUser = await userRepository.updateUserPassword(
+        insertResult.rows[0].id,
+        "new_hashed_password",
+      );
+
+      expect(updatedUser).toBeTruthy();
+      expect(updatedUser.password_hash).toBe("new_hashed_password");
+    });
+  });
+
+  it("should return null when updating password for non-existent user", async () => {
+    const updatedUser = await userRepository.updateUserPassword(999999, "hash");
+
+    expect(updatedUser).toBeNull();
   });
 });
