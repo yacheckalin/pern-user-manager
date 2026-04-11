@@ -227,4 +227,41 @@ describe("UserRepository - Integration Tests", () => {
   it("should do nothing when deleting non-existent user", async () => {
     await expect(userRepository.deleteUserById(999999)).resolves.not.toThrow();
   });
+
+  describe("activateUserById", () => {
+    it("should activate user by id", async () => {
+      const insertResult = await db.query(
+        `INSERT INTO app.users (username, email, password_hash)
+        VALUES($1, $2, $3) RETURNING id
+        `,
+        ["testuser", "activate@example.com", "hash"],
+      );
+
+      const activatedUser = await userRepository.activateUserById(
+        insertResult.rows[0].id,
+      );
+      expect(activatedUser.isActive).toBe(true);
+      expect(activatedUser.activatedAt).not.toBeNull();
+    });
+    it("should return null when activating non-existent user", async () => {
+      const activatedUser = await userRepository.activateUserById(999999);
+      expect(activatedUser).toBeNull();
+    });
+    it("should not change activated_at if user is already active", async () => {
+      const insertResult = await db.query(
+        `INSERT INTO app.users (username, email, password_hash, is_active, activated_at)
+        VALUES($1, $2, $3, TRUE, CURRENT_TIMESTAMP) RETURNING id, activated_at
+        `,
+        ["testuser", "activate@example.com", "hash"],
+      );
+
+      const originalActivatedAt = insertResult.rows[0].activated_at;
+
+      const activatedUser = await userRepository.activateUserById(
+        insertResult.rows[0].id,
+      );
+      expect(activatedUser.isActive).toBe(true);
+      expect(activatedUser.activatedAt).toEqual(originalActivatedAt);
+    });
+  });
 });

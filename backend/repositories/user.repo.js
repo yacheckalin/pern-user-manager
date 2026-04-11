@@ -140,7 +140,8 @@ class UserRepository {
   async activateUserById(id, returning = "*") {
     const { rows } = await this.pool.query(
       `UPDATE ${this.table}
-        SET is_active=TRUE, updated_at = CURRENT_TIMESTAMP, activated_at = CURRENT_TIMESTAMP
+        SET is_active=TRUE, updated_at = CURRENT_TIMESTAMP,
+            activated_at = COALESCE(activated_at, CURRENT_TIMESTAMP)
         WHERE id = $1
         RETURNING ${returning}`,
       [id],
