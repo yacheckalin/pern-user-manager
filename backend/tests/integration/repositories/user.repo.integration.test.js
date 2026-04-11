@@ -12,10 +12,23 @@ describe("UserRepository - Integration Tests", () => {
   beforeAll(async () => {
     await setupTestDatabase();
     userRepository = new UserRepository(db);
+
+    console.log("Checking DB connection...");
+    console.log("DB_HOST:", process.env.DB_HOST);
+    console.log("DB_PORT:", process.env.DB_PORT);
+
+    try {
+      // Attempt a simple query to see if the network is alive
+      await db.query("SELECT 1");
+      console.log("Database is REACHABLE!");
+    } catch (err) {
+      console.error("Database is UNREACHABLE:", err.message);
+    }
   });
 
   afterAll(async () => {
     await teardownTestDatabase();
+    await db.end();
   });
 
   beforeEach(async () => {
@@ -65,6 +78,39 @@ describe("UserRepository - Integration Tests", () => {
       );
 
       expect(user).toBeNull();
+    });
+  });
+  describe("findAll", () => {
+    it("should return empty array", async () => {
+      const users = await userRepository.findAll();
+      expect(users.length).toBe(0);
+    });
+
+    it("should return all users", async () => {
+      const usersData = [
+        {
+          username: "integration_test",
+          email: "test@example.com",
+          password_hash: "hashed_password",
+          age: 25,
+        },
+        {
+          username: "integration_test2",
+          email: "test2@example.com",
+          password_hash: "hashed_password",
+          age: 20,
+        },
+      ];
+
+      // Create users sequentially
+      for (const userData of usersData) {
+        await userRepository.createUser(userData);
+      }
+
+      const users = await userRepository.findAll();
+      expect(users.length).toBe(2);
+      expect(users[0].username).toBe("integration_test");
+      expect(users[1].username).toBe("integration_test2");
     });
   });
 });

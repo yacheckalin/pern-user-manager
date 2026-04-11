@@ -42,12 +42,12 @@ loadEnvFiles();
 
 // Validate required environment variables for tests
 const requiredEnvVars = [
-  "TEST_DB_PORT",
-  "TEST_DB_USERNAME",
-  "TEST_DB_NAME",
-  "TEST_DB_PASSWORD",
-  "TEST_DB_CONNECTION",
-  "TEST_DB_URL",
+  "DB_PORT",
+  "DB_USERNAME",
+  "DB_NAME",
+  "DB_PASSWORD",
+  "DB_CONNECTION",
+  "DB_URL",
 ];
 
 const missingEnvVars = requiredEnvVars.filter(
@@ -71,6 +71,10 @@ process.env.NODE_ENV = "test";
 // Set test-specific defaults (can be overridden by .env.test.local)
 process.env.LOG_LEVEL = process.env.LOG_LEVEL || "error";
 process.env.RATE_LIMIT_ENABLED = process.env.RATE_LIMIT_ENABLED || "false";
+
+const testArgs = process.argv.join(" ");
+const isIntegrationTest = testArgs.includes("tests/integration");
+const isE2eTest = testArgs.includes("tests/e2e");
 
 // Create unique test database name if not specified
 if (
@@ -99,8 +103,8 @@ if (process.env.LOG_LEVEL === "error" && !process.env.DEBUG_TESTS) {
   };
 }
 
-// Mock date if configured
-if (process.env.MOCK_DATE === "true") {
+// Mock date if configured for unit tests only
+if (process.env.MOCK_DATE === "true" && !isIntegrationTest && !isE2eTest) {
   const MOCK_DATE = new Date("2024-01-01T00:00:00.000Z");
   jest.useFakeTimers();
   jest.setSystemTime(MOCK_DATE);
@@ -151,13 +155,13 @@ let keepDatabase = process.env.KEEP_TEST_DATABASE === "true";
 export const getTestPool = () => {
   if (!testPool) {
     testPool = new Pool({
-      host: process.env.TEST_DB_CONNECTION,
-      port: parseInt(process.env.TEST_DB_PORT, 10),
-      database: process.env.TEST_DB_NAME,
-      user: process.env.TEST_DB_USERNAME,
-      password: process.env.TEST_DB_PASSWORD,
+      host: process.env.DB_CONNECTION,
+      port: parseInt(process.env.DB_PORT, 10),
+      database: process.env.DB_NAME,
+      user: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
       max: 5,
-      idleTimeoutMillis: parseInt(process.env.DB_IDLE_TIMEOUT, 10) || 10000,
+      idleTimeoutMillis: parseInt(process.env.DB_IDLE_TIMEOUT, 10) || 1000,
       connectionTimeoutMillis:
         parseInt(process.env.DB_CONNECTION_TIMEOUT) || 5000,
     });
@@ -168,31 +172,44 @@ export const getTestPool = () => {
 export const clearTestDatabase = async () => {
   try {
     const pool = getTestPool();
+    console.log("🔄 Clearing test database...");
 
     // Get all tables in app schema
-    const { rows } = await pool.query(`
+    const { rows } = await pool.query({
+      text: `
             SELECT tablename
             FROM pg_tables
             WHERE schemaname = 'app'
-        `);
+        `,
+      statement_timeout: 5000,
+    });
 
     // Truncate all tables in reverse order
     for (const row of rows.reverse()) {
-      await pool.query(`TRUNCATE TABLE app.${row.tablename} CASCADE`);
+      await pool.query({
+        text: `TRUNCATE TABLE app.${row.tablename} CASCADE`,
+        statement_timeout: 5000,
+      });
     }
 
     // Reset sequences
-    const { rows: sequences } = await pool.query(`
+    const { rows: sequences } = await pool.query({
+      text: `
             SELECT sequence_name
             FROM information_schema.sequences
             WHERE sequence_schema = 'app'
-        `);
+        `,
+      statement_timeout: 5000,
+    });
 
     for (const seq of sequences) {
-      await pool.query(
-        `ALTER SEQUENCE app.${seq.sequence_name} RESTART WITH 1`,
-      );
+      await pool.query({
+        text: `ALTER SEQUENCE app.${seq.sequence_name} RESTART WITH 1`,
+        statement_timeout: 5000,
+      });
     }
+
+    console.log("✅ Test database cleared");
   } catch (error) {
     // Silently skip DB clearing for unit tests that don't have a database
     if (!error.message.includes("ENOTFOUND")) {
@@ -213,7 +230,7 @@ export const closeTestDatabase = async () => {
       return;
     }
 
-    console.log(`💾 Keeping test database: ${process.env.TEST_DB_NAME}`);
+    console.log(`💾 Keeping test database: ${process.env.DB_NAME}`);
     await testPool.end();
     testPool = null;
   }
@@ -225,18 +242,16 @@ export const closeTestDatabase = async () => {
 
 // Global before all tests
 beforeAll(async () => {
-  // Only validate DB connection for integration and e2e tests
-  // Unit tests don't require a real database
-  const testPathPattern = process.env.JEST_WORKER_ID
-    ? null
-    : process.argv.join(" ");
-  const isUnitTest = testPathPattern && testPathPattern.includes("tests/unit");
+  const testArgs = process.argv.join(" ");
+  const isUnitTest = testArgs.includes("tests/unit");
+  const isIntegrationTest = testArgs.includes("tests/integration");
+  const isE2eTest = testArgs.includes("tests/e2e");
 
-  if (!isUnitTest) {
+  if (isIntegrationTest || isE2eTest) {
     const pool = getTestPool();
     try {
       await pool.query("SELECT 1");
-      console.log(`✅ Test database connected: ${process.env.TEST_DB_NAME}`);
+      console.log(`✅ Test database connected: ${process.env.DB_NAME}`);
     } catch (error) {
       console.warn(`⚠️  Could not connect to test database: ${error.message}`);
     }
@@ -256,7 +271,14 @@ beforeAll(async () => {
 
 // Reset before each test
 beforeEach(async () => {
-  await clearTestDatabase();
+  const testArgs = process.argv.join(" ");
+  const isIntegrationTest = testArgs.includes("tests/integration");
+  const isE2eTest = testArgs.includes("tests/e2e");
+
+  if (!isIntegrationTest && !isE2eTest) {
+    await clearTestDatabase();
+  }
+
   jest.clearAllMocks();
   jest.resetModules();
 });
@@ -277,12 +299,12 @@ afterAll(async () => {
 // ============================================
 
 export const getTestConfig = () => ({
-  dbHost: process.env.TEST_DB_CONNECTION,
-  dbPort: process.env.TEST_DB_PORT,
-  dbName: process.env.TEST_DB_NAME,
-  dbUserName: process.env.TEST_DB_USERNAME,
-  dbPassword: process.env.TEST_DB_PASSWORD,
-  dbUrl: process.env.TEST_DB_URL,
+  dbHost: process.env.DB_CONNECTION,
+  dbPort: process.env.DB_PORT,
+  dbName: process.env.DB_NAME,
+  dbUserName: process.env.DB_USERNAME,
+  dbPassword: process.env.DB_PASSWORD,
+  dbUrl: process.env.DB_URL,
   logLevel: process.env.LOG_LEVEL,
 });
 

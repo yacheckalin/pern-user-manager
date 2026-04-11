@@ -1,24 +1,21 @@
 services:
   app_test:
+    image: my-app-test:latest
     build: ./backend
     container_name: node_backend_test
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
     environment:
       - NODE_ENV=test
       - DB_HOST=postgres_test
       - DB_CONNECTION=postgres_test
       - DB_PORT=5432
-      - DB_NAME=${TEST_DB_NAME}
-      - DB_USER=${TEST_DB_USERNAME}
-      - DB_USERNAME=${TEST_DB_USERNAME}
-      - DB_PASSWORD=${TEST_DB_PASSWORD}
-      - DATABASE_URL=postgres://${TEST_DB_USERNAME}:${TEST_DB_PASSWORD}@postgres_test:5432/${TEST_DB_NAME}
-      - TEST_DB_HOST=postgres_test
-      - TEST_DB_USERNAME=${TEST_DB_USERNAME}
-      - TEST_DB_PASSWORD=${TEST_DB_PASSWORD}
-      - TEST_DB_NAME=${TEST_DB_NAME}
-      - TEST_DB_PORT=5432
-      - TEST_DB_CONNECTION=postgres_test
-      - TEST_DB_URL=postgres://${TEST_DB_USERNAME}:${TEST_DB_PASSWORD}@postgres_test:5432/${TEST_DB_NAME}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USERNAME}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DATABASE_URL=postgres://${DB_USERNAME}:${DB_PASSWORD}@postgres_test:5432/${DB_NAME}
       - LOG_LEVEL=error
     depends_on:
       postgres_test:
@@ -35,17 +32,17 @@ services:
   postgres_test:
     image: postgres:15-alpine
     environment:
-      - POSTGRES_USER=${TEST_DB_USERNAME}
-      - POSTGRES_PASSWORD=${TEST_DB_PASSWORD}
-      - POSTGRES_DB=${TEST_DB_NAME}
-      - DATABASE_URL=postgres://${TEST_DB_USERNAME}:${TEST_DB_PASSWORD}@postgres_test:5432/${TEST_DB_NAME}
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+      - DATABASE_URL=postgres://${DB_USERNAME}:${DB_PASSWORD}@postgres_test:5432/${DB_NAME}
     ports:
-      - "${TEST_DB_PORT}:5432" # External host port mapped to internal Postgres port
+      - "${DB_PORT}:5432" # External host port mapped to internal Postgres port
     volumes:
       - postgres_test_data:/var/lib/postgresql/data
       # - ./scripts/init-test-db.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${TEST_DB_USERNAME}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME}"]
       interval: 5s
       timeout: 5s
       retries: 5

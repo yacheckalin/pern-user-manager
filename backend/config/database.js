@@ -23,11 +23,7 @@ class Database {
       max: DB_MAX_CLIENTS,
       idleTimeoutMillis: DB_IDLE_TIMEOUT,
       connectionTimeoutMillis: DB_CONNECTION_TIMEOUT,
-    });
-
-    // set search path to use 'app' schema
-    this.pool.on("connect", (client) => {
-      client.query("SET search_path to app,public");
+      options: "-c search_path=app,public",
     });
   }
 
