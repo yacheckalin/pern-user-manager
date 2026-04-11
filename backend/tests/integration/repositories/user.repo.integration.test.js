@@ -80,6 +80,27 @@ describe("UserRepository - Integration Tests", () => {
       expect(user).toBeNull();
     });
   });
+
+  describe("findUserById", () => {
+    it("should find user by id", async () => {
+      const insertResult = await db.query(
+        `INSERT INTO app.users (username, email, password_hash)
+                 VALUES ($1, $2, $3) RETURNING id`,
+        ["testuser", "find@example.com", "hash"],
+      );
+
+      const user = await userRepository.findUserById(insertResult.rows[0].id);
+
+      expect(user).toBeTruthy();
+      expect(user.id).toBe(insertResult.rows[0].id);
+    });
+    it("should return null for non-existent id", async () => {
+      const user = await userRepository.findUserById(999999);
+
+      expect(user).toBeNull();
+    });
+  });
+
   describe("findAll", () => {
     it("should return empty array", async () => {
       const users = await userRepository.findAll();
