@@ -1,0 +1,57 @@
+services:
+  app_test:
+    image: my-app-test:latest
+    build: ./backend
+    container_name: node_backend_test
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=test
+      - DB_HOST=postgres_test
+      - DB_CONNECTION=postgres_test
+      - DB_PORT=5432
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USERNAME}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DATABASE_URL=postgres://${DB_USERNAME}:${DB_PASSWORD}@postgres_test:5432/${DB_NAME}
+      - LOG_LEVEL=error
+    depends_on:
+      postgres_test:
+        condition: service_healthy
+    # Wait for database before running tests
+    command: >
+      sh -c "
+        ./wait-for-test-db.sh &&
+        npm run migrate:up &&
+        npm run ${TEST_COMMAND:-test:ci}
+      "
+    networks:
+      - test_network
+  postgres_test:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+      - DATABASE_URL=postgres://${DB_USERNAME}:${DB_PASSWORD}@postgres_test:5432/${DB_NAME}
+    ports:
+      - "${DB_PORT}:5432" # External host port mapped to internal Postgres port
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+      # - ./scripts/init-test-db.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - test_network
+
+volumes:
+  postgres_test_data:
+
+networks:
+  test_network:
+    driver: bridge
