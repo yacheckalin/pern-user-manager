@@ -207,4 +207,24 @@ describe("UserRepository - Integration Tests", () => {
 
     expect(updatedUser).toBeNull();
   });
+
+  describe("deleteUserById", () => {
+    it("should delete user by id", async () => {
+      const insertResult = await db.query(
+        `INSERT INTO app.users (username, email, password_hash)
+        VALUES($1, $2, $3) RETURNING id`,
+        ["testuser", "delete@example.com", "hash"],
+      );
+
+      await userRepository.deleteUserById(insertResult.rows[0].id);
+
+      const deletedUser = await userRepository.findUserById(
+        insertResult.rows[0].id,
+      );
+      expect(deletedUser).toBeNull();
+    });
+  });
+  it("should do nothing when deleting non-existent user", async () => {
+    await expect(userRepository.deleteUserById(999999)).resolves.not.toThrow();
+  });
 });
