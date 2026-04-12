@@ -161,17 +161,23 @@ class UserService {
   }
 
   validateUpdateUserData(data) {
-    if (
-      !data.username ||
-      data.username.length < USER_VALIDATION.USERNAME_MIN_LENGTH
-    ) {
-      throw new Error(USER_ERRORS.INVALID_USERNAME);
+    if (data.username !== undefined) {
+      if (
+        !data.username ||
+        data.username.length < USER_VALIDATION.USERNAME_MIN_LENGTH
+      ) {
+        throw new Error(USER_ERRORS.INVALID_USERNAME);
+      }
     }
-    if (!data.email || !data.email.includes("@")) {
-      throw new Error(USER_ERRORS.INVALID_EMAIL);
+
+    if (data.email !== undefined) {
+      if (!data.email || !data.email.includes("@")) {
+        throw new Error(USER_ERRORS.INVALID_EMAIL);
+      }
     }
+
     if (
-      data.age &&
+      data.age !== undefined &&
       (data.age < USER_VALIDATION.AGE_MIN || data.age > USER_VALIDATION.AGE_MAX)
     ) {
       throw new Error(USER_ERRORS.INVALID_AGE);

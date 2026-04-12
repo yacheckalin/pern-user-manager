@@ -22,28 +22,23 @@ const userSchemas = {
 
   updateUser: Joi.object({
     id: Joi.number().integer().required(),
-    username: Joi.string()
-      .alphanum()
-      .min(USER_VALIDATION.USERNAME_MIN_LENGTH)
-      .max(USER_VALIDATION.USERNAME_MAX_LENGTH),
-    email: Joi.string().email(),
-    age: Joi.number()
-      .integer()
-      .min(USER_VALIDATION.AGE_MIN)
-      .max(USER_VALIDATION.AGE_MAX),
+    username: Joi.string().alphanum().max(USER_VALIDATION.USERNAME_MAX_LENGTH),
+    email: Joi.string(),
+    age: Joi.number().integer(),
   }),
 
-  chagePassword: Joi.object({
+  changePassword: Joi.object({
     id: Joi.number().integer().required(),
     old_password: Joi.string()
       .min(USER_VALIDATION.PASSWORD_MIN_LENGTH)
       .required(),
     new_password: Joi.string()
       .min(USER_VALIDATION.PASSWORD_MIN_LENGTH)
+      .required()
       .messages({
         "string.min": "Password must be at least 6 characters long",
       }),
-    confirm_password: Joi.any().equal(Joi.ref("new_password")).messages({
+    confirm_password: Joi.any().equal(Joi.ref("new_password")).required().messages({
       "any.only": "Password do not match",
     }),
   }).with("new_password", "confirm_password"),

@@ -3,6 +3,8 @@ import {
   HTTP_OK,
   HTTP_CREATED,
   HTTP_NOT_FOUND,
+  HTTP_CONFLICT,
+  HTTP_BAD_REQUEST,
   HTTP_INTERNAL_SERVER_ERROR,
   USER_ERRORS,
   USER_MESSAGES,
@@ -38,6 +40,33 @@ class UserController {
         data: user,
       });
     } catch (error) {
+      // Handle conflict errors (duplicate username/email)
+      if (
+        error.message === USER_ERRORS.EMAIL_TAKEN ||
+        error.message === USER_ERRORS.USERNAME_TAKEN
+      ) {
+        res.status(HTTP_CONFLICT).json({
+          success: false,
+          message: error.message,
+        });
+        return;
+      }
+
+      // Handle validation errors
+      if (
+        error.message === USER_ERRORS.INVALID_USERNAME ||
+        error.message === USER_ERRORS.INVALID_EMAIL ||
+        error.message === USER_ERRORS.INVALID_PASSWORD ||
+        error.message === USER_ERRORS.INVALID_AGE
+      ) {
+        res.status(HTTP_BAD_REQUEST).json({
+          success: false,
+          message: error.message,
+        });
+        return;
+      }
+
+      // Handle other errors
       const statusCode =
         error.message === USER_ERRORS.NOT_FOUND
           ? HTTP_NOT_FOUND
@@ -61,6 +90,29 @@ class UserController {
         data: user,
       });
     } catch (error) {
+      // Handle conflict errors (duplicate username/email)
+      if (error.message === USER_ERRORS.USERNAME_TAKEN) {
+        res.status(HTTP_CONFLICT).json({
+          success: false,
+          message: error.message,
+        });
+        return;
+      }
+
+      // Handle validation errors
+      if (
+        error.message === USER_ERRORS.INVALID_USERNAME ||
+        error.message === USER_ERRORS.INVALID_EMAIL ||
+        error.message === USER_ERRORS.INVALID_AGE
+      ) {
+        res.status(HTTP_BAD_REQUEST).json({
+          success: false,
+          message: error.message,
+        });
+        return;
+      }
+
+      // Handle other errors
       const statusCode =
         error.message === USER_ERRORS.NOT_FOUND
           ? HTTP_NOT_FOUND
@@ -83,6 +135,22 @@ class UserController {
         data: user,
       });
     } catch (error) {
+      // Handle validation errors
+      if (
+        error.message === USER_ERRORS.INVALID_NEW_PASSWORD ||
+        error.message === USER_ERRORS.INVALID_OLD_PASSWORD ||
+        error.message === USER_ERRORS.INVALID_CONFIRM_PASSWORD ||
+        error.message === USER_ERRORS.OLD_PASSWORD_INVALID ||
+        error.message === USER_ERRORS.NEW_PASSWORD_THE_SAME
+      ) {
+        res.status(HTTP_BAD_REQUEST).json({
+          success: false,
+          message: error.message,
+        });
+        return;
+      }
+
+      // Handle other errors
       const statusCode =
         error.message === USER_ERRORS.NOT_FOUND
           ? HTTP_NOT_FOUND
@@ -127,6 +195,16 @@ class UserController {
         data: user,
       });
     } catch (error) {
+      // Handle conflict error (already activated)
+      if (error.message === USER_ERRORS.ALREADY_ACTIVATED) {
+        res.status(HTTP_CONFLICT).json({
+          success: false,
+          message: error.message,
+        });
+        return;
+      }
+
+      // Handle other errors
       const statusCode =
         error.message === USER_ERRORS.NOT_FOUND
           ? HTTP_NOT_FOUND

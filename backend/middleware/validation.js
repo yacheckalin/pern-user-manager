@@ -1,4 +1,4 @@
-export { HTTP_BAD_REQUEST } from "../constants/http.constants.js";
+import { HTTP_BAD_REQUEST } from "../constants/http.constants.js";
 
 function validate(schema) {
   return (req, res, next) => {

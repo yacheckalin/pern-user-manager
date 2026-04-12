@@ -6,7 +6,7 @@ export default {
   // extensionsToTreatAsEsm: [".js"],
   globalSetup: "<rootDir>/tests/setup/global.setup.js",
   globalTeardown: "<rootDir>/tests/setup/global.teardown.js",
-  testTimeout: 30000,
+  testTimeout: 3000,
   verbose: true,
   bail: false,
   maxWorkers: 1,
