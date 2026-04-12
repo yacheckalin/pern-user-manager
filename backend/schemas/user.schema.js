@@ -22,15 +22,9 @@ const userSchemas = {
 
   updateUser: Joi.object({
     id: Joi.number().integer().required(),
-    username: Joi.string()
-      .alphanum()
-      .min(USER_VALIDATION.USERNAME_MIN_LENGTH)
-      .max(USER_VALIDATION.USERNAME_MAX_LENGTH),
-    email: Joi.string().email(),
-    age: Joi.number()
-      .integer()
-      .min(USER_VALIDATION.AGE_MIN)
-      .max(USER_VALIDATION.AGE_MAX),
+    username: Joi.string().alphanum().max(USER_VALIDATION.USERNAME_MAX_LENGTH),
+    email: Joi.string(),
+    age: Joi.number().integer(),
   }),
 
   chagePassword: Joi.object({
