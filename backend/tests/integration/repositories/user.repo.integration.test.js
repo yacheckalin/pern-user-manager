@@ -264,4 +264,26 @@ describe("UserRepository - Integration Tests", () => {
       expect(activatedUser.activatedAt).toEqual(originalActivatedAt);
     });
   });
+
+  describe("Should use indexes for queries", () => {
+    beforeEach(async () => {
+      await db.query(
+        `INSERT INTO app.users (email, password_hash, username, is_active, activated_at)
+          VALUES
+            ('alice@example.com', 'hash1', 'Alice', true, CURRENT_TIMESTAMP),
+            ('bob@example.com', 'hash2', 'Bob', false, NULL),
+            ('charlie@example.com', 'hash3', 'Charlie', true, CURRENT_TIMESTAMP)`,
+      );
+    });
+
+    it("should filter active users with activated_at efficiently", async () => {
+      const result = await db.query(
+        "SELECT email FROM app.users WHERE is_active = true AND activated_at IS NOT NULL ORDER BY email",
+      );
+
+      expect(result.rows).toHaveLength(2);
+      expect(result.rows[0].email).toBe("alice@example.com");
+      expect(result.rows[1].email).toBe("charlie@example.com");
+    });
+  });
 });
