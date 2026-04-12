@@ -22,7 +22,7 @@ router.put(
 
 router.patch(
   "/:id/password",
-  validate(userSchemas.chagePassword),
+  validate(userSchemas.changePassword),
   userController.updateUserPassword.bind(userController),
 );
 

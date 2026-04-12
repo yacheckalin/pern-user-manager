@@ -139,7 +139,9 @@ class UserController {
       if (
         error.message === USER_ERRORS.INVALID_NEW_PASSWORD ||
         error.message === USER_ERRORS.INVALID_OLD_PASSWORD ||
-        error.message === USER_ERRORS.INVALID_CONFIRM_PASSWORD
+        error.message === USER_ERRORS.INVALID_CONFIRM_PASSWORD ||
+        error.message === USER_ERRORS.OLD_PASSWORD_INVALID ||
+        error.message === USER_ERRORS.NEW_PASSWORD_THE_SAME
       ) {
         res.status(HTTP_BAD_REQUEST).json({
           success: false,
