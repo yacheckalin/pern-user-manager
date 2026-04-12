@@ -5,6 +5,8 @@ import {
 import db from "../../../config/database.js";
 import request from "supertest";
 import app from "../../../index.js";
+import bcrypt from "bcrypt";
+import { BCRYPT_ROUNDS } from "../../../constants";
 
 describe("User Create E2E Flow", () => {
   beforeAll(async () => {
@@ -144,15 +146,15 @@ describe("User Create E2E Flow", () => {
   });
 
   it("should return error when email already exists", async () => {
-    const userData = {
-      username: "firstuser",
-      email: "duplicate@example.com",
-      password: "secure_password_123",
-      age: 25,
-    };
-
-    // Create first user
-    await request(app).post("/users").send(userData);
+    // Create first user directly in database with hashed password
+    const hashedPassword = await bcrypt.hash(
+      "secure_password_123",
+      BCRYPT_ROUNDS,
+    );
+    await db.query(
+      `INSERT INTO app.users(username, email, password_hash, age) VALUES($1, $2, $3, $4)`,
+      ["firstuser", "duplicate@example.com", hashedPassword, 25],
+    );
 
     // Try to create another user with same email
     const secondUserData = {
@@ -170,15 +172,15 @@ describe("User Create E2E Flow", () => {
   });
 
   it("should return error when username already exists", async () => {
-    const userData = {
-      username: "duplicateuser",
-      email: "first@example.com",
-      password: "secure_password_123",
-      age: 25,
-    };
-
-    // Create first user
-    await request(app).post("/users").send(userData);
+    // Create first user directly in database with hashed password
+    const hashedPassword = await bcrypt.hash(
+      "secure_password_123",
+      BCRYPT_ROUNDS,
+    );
+    await db.query(
+      `INSERT INTO app.users(username, email, password_hash, age) VALUES($1, $2, $3, $4)`,
+      ["duplicateuser", "first@example.com", hashedPassword, 25],
+    );
 
     // Try to create another user with same username
     const secondUserData = {
