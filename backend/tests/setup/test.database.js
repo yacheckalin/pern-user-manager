@@ -26,9 +26,9 @@ async function setupTestDatabase() {
             age INT CHECK(age >=13 AND age <=150)
       );
 
-      CREATE INDEX IF NOT EXISTS idx_users_created_at ON users(created_at);
-      CREATE INDEX IF NOT EXISTS idx_users_username_created_at ON users(username, created_at DESC);
-      CREATE INDEX IF NOT EXISTS idx_users_activated_at ON users(activated_at) WHERE activated_at IS NULL;
+      CREATE INDEX IF NOT EXISTS idx_users_created_at ON app.users(created_at);
+      CREATE INDEX IF NOT EXISTS idx_users_username_created_at ON app.users(username, created_at DESC);
+      CREATE INDEX IF NOT EXISTS idx_users_activated_at ON app.users(activated_at) WHERE activated_at IS NULL;
 
     `);
 
