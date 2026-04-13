@@ -7,7 +7,7 @@ import {
   USER_VALIDATION,
 } from "../constants/index.js";
 
-import { sanitizeUserData, sanitizeUpdateUserPassword } from "../utils/users.helpers.js";
+import { sanitizeUserData, sanitizeUpdateUserPassword } from "../utils/user.helpers.js";
 
 class UserService {
   constructor() {
