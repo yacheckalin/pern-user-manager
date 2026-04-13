@@ -474,6 +474,8 @@ docker compose up
 - **dotenv** - Environment variables
 - **node-pg-migrate** - Database migrations
 - **jest** - Testing framework
+- **joi** - Validation request data (Infrastruction Layer)
+- **validator** - Sanitizing request data (Business Layer)
 - **nodemon** - Development auto-reload
 - **supertest** - HTTP testing
 
