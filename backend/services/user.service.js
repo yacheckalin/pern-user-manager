@@ -7,6 +7,8 @@ import {
   USER_VALIDATION,
 } from "../constants/index.js";
 
+import { sanitizeUserData, sanitizeUpdateUserPassword } from "../utils/users.helpers.js";
+
 class UserService {
   constructor() {
     this.userRepository = new UserRepository(db);
@@ -18,7 +20,7 @@ class UserService {
   }
 
   async createUser(data) {
-    this.validateCreateUserData(data);
+    this.validateCreateUserData(sanitizeUserData(data));
 
     const existingUsername = await this.userRepository.findUserByName(
       data.username,
@@ -48,7 +50,7 @@ class UserService {
 
   async updateUser(id, data) {
     // validate data
-    this.validateUpdateUserData(data);
+    this.validateUpdateUserData(sanitizeUserData(data));
 
     // check if user exists
     const user = await this.userRepository.findUserById(id);
@@ -76,7 +78,7 @@ class UserService {
   }
 
   async updateUserPassword(id, data) {
-    this.validateUpdateUserPasswordData(data);
+    this.validateUpdateUserPasswordData(sanitizeUpdateUserPassword(data));
 
     const user = await this.userRepository.findUserById(id);
     if (!user) {
