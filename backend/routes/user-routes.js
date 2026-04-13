@@ -7,6 +7,8 @@ const router = express.Router();
 const userController = new UserController();
 
 router.get("/", userController.getAllUsers.bind(userController));
+router.get("/:id", validate(userSchemas.id), userController.getUser.bind(userController))
+
 
 router.post(
   "/",

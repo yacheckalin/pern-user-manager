@@ -22,6 +22,9 @@ Content-Type: application/json
   "email":"test2@test.tt"
 }
 
+### Get user by id
+GET http://localhost:5000/users/1
+
 ### Update user password by id
 PATCH http://localhost:5000/users/4/password
 Content-Type: application/json

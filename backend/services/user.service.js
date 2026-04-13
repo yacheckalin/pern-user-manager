@@ -19,6 +19,14 @@ class UserService {
     return result;
   }
 
+  async getUser(id) {
+    const user = await this.userRepository.findUserById(id);
+    if (!user) {
+      throw new Error(USER_ERRORS.NOT_FOUND)
+    }
+    return user;
+  }
+
   async createUser(data) {
     this.validateCreateUserData(sanitizeUserData(data));
 
