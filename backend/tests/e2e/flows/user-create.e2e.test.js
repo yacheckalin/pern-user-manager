@@ -1,12 +1,12 @@
 import {
   teardownTestDatabase,
   setupTestDatabase,
-} from "../../setup/test.database";
+} from "../../setup/test.database.js";
 import db from "../../../config/database.js";
 import request from "supertest";
 import app from "../../../index.js";
 import bcrypt from "bcrypt";
-import { BCRYPT_ROUNDS } from "../../../constants";
+import { BCRYPT_ROUNDS } from "../../../constants/index.js";
 
 describe("User Create E2E Flow", () => {
   beforeAll(async () => {

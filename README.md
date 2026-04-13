@@ -291,6 +291,7 @@ Base URL: `http://localhost:5000/users`
 **Available endpoints:**
 
 - `GET /users` - Get all users
+- `GET /users/:id` - Get user by ID
 - `POST /users` - Create new user
 - `PUT /users/:id` - Update user by ID
 - `PATCH /users/:id/password` - Change user password by ID

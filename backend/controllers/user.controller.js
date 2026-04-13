@@ -27,6 +27,23 @@ class UserController {
     }
   }
 
+  async getUser(req, res, next) {
+    try {
+      const { id } = req.params;
+      const user = await this.userService.getUser(id);
+
+      res.status(HTTP_OK).json({ success: true, data: user })
+    } catch (error) {
+      // Handle other errors
+      const statusCode =
+        error.message === USER_ERRORS.NOT_FOUND
+          ? HTTP_NOT_FOUND
+          : HTTP_INTERNAL_SERVER_ERROR;
+
+      next({ message: error.message, statusCode })
+    }
+  }
+
   async createUser(req, res, next) {
     try {
       const user = await this.userService.createUser(req.body);

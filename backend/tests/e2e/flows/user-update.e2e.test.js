@@ -1,7 +1,7 @@
 import {
   teardownTestDatabase,
   setupTestDatabase,
-} from "../../setup/test.database";
+} from "../../setup/test.database.js";
 import db from "../../../config/database.js";
 import request from "supertest";
 import app from "../../../index.js";
