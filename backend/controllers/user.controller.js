@@ -23,11 +23,7 @@ class UserController {
         data: results,
       });
     } catch (error) {
-      res.status(HTTP_INTERNAL_SERVER_ERROR).json({
-        success: false,
-        message: error.message,
-      });
-      next(error);
+      next({ message: error.message, statusCode: HTTP_INTERNAL_SERVER_ERROR });
     }
   }
 
@@ -45,11 +41,7 @@ class UserController {
         error.message === USER_ERRORS.EMAIL_TAKEN ||
         error.message === USER_ERRORS.USERNAME_TAKEN
       ) {
-        res.status(HTTP_CONFLICT).json({
-          success: false,
-          message: error.message,
-        });
-        next(error);
+        next({ message: error.message, statusCode: HTTP_CONFLICT });
       }
 
       // Handle validation errors
@@ -59,11 +51,7 @@ class UserController {
         error.message === USER_ERRORS.INVALID_PASSWORD ||
         error.message === USER_ERRORS.INVALID_AGE
       ) {
-        res.status(HTTP_BAD_REQUEST).json({
-          success: false,
-          message: error.message,
-        });
-        next(error);
+        next({ message: error.message, statusCode: HTTP_BAD_REQUEST });
       }
 
       // Handle other errors
@@ -71,11 +59,8 @@ class UserController {
         error.message === USER_ERRORS.NOT_FOUND
           ? HTTP_NOT_FOUND
           : HTTP_INTERNAL_SERVER_ERROR;
-      res.status(statusCode).json({
-        success: false,
-        message: error.message,
-      });
-      next(error);
+
+      next({ message: error.message, statusCode });
     }
   }
 
@@ -92,11 +77,8 @@ class UserController {
     } catch (error) {
       // Handle conflict errors (duplicate username/email)
       if (error.message === USER_ERRORS.USERNAME_TAKEN) {
-        res.status(HTTP_CONFLICT).json({
-          success: false,
-          message: error.message,
-        });
-        next(error);
+
+        next({ message: error.message, statusCode: HTTP_CONFLICT });
       }
 
       // Handle validation errors
@@ -105,11 +87,8 @@ class UserController {
         error.message === USER_ERRORS.INVALID_EMAIL ||
         error.message === USER_ERRORS.INVALID_AGE
       ) {
-        res.status(HTTP_BAD_REQUEST).json({
-          success: false,
-          message: error.message,
-        });
-        next(error);
+
+        next({ message: error.message, statusCode: HTTP_BAD_REQUEST });
       }
 
       // Handle other errors
@@ -117,11 +96,8 @@ class UserController {
         error.message === USER_ERRORS.NOT_FOUND
           ? HTTP_NOT_FOUND
           : HTTP_INTERNAL_SERVER_ERROR;
-      res.status(statusCode).json({
-        success: false,
-        message: error.message,
-      });
-      next(error);
+
+      next({ message: error.message, statusCode });
     }
   }
 
@@ -143,11 +119,8 @@ class UserController {
         error.message === USER_ERRORS.OLD_PASSWORD_INVALID ||
         error.message === USER_ERRORS.NEW_PASSWORD_THE_SAME
       ) {
-        res.status(HTTP_BAD_REQUEST).json({
-          success: false,
-          message: error.message,
-        });
-        next(error);
+
+        next({ message: error.message, statusCode: HTTP_BAD_REQUEST });
       }
 
       // Handle other errors
@@ -155,11 +128,8 @@ class UserController {
         error.message === USER_ERRORS.NOT_FOUND
           ? HTTP_NOT_FOUND
           : HTTP_INTERNAL_SERVER_ERROR;
-      res.status(statusCode).json({
-        success: false,
-        message: error.message,
-      });
-      next(error);
+
+      next({ message: error.message, statusCode });
     }
   }
 
@@ -177,11 +147,8 @@ class UserController {
         error.message === USER_ERRORS.NOT_FOUND
           ? HTTP_NOT_FOUND
           : HTTP_INTERNAL_SERVER_ERROR;
-      res.status(statusCode).json({
-        success: false,
-        message: error.message,
-      });
-      next(error);
+
+      next({ message: error.message, statusCode });
     }
   }
 
@@ -197,11 +164,8 @@ class UserController {
     } catch (error) {
       // Handle conflict error (already activated)
       if (error.message === USER_ERRORS.ALREADY_ACTIVATED) {
-        res.status(HTTP_CONFLICT).json({
-          success: false,
-          message: error.message,
-        });
-        next(error);
+
+        next({ message: error.message, statusCode: HTTP_CONFLICT });
       }
 
       // Handle other errors
@@ -209,11 +173,8 @@ class UserController {
         error.message === USER_ERRORS.NOT_FOUND
           ? HTTP_NOT_FOUND
           : HTTP_INTERNAL_SERVER_ERROR;
-      res.status(statusCode).json({
-        success: false,
-        message: error.message,
-      });
-      next(error);
+
+      next({ message: error.message, statusCode });
     }
   }
 }
