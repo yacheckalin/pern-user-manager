@@ -143,7 +143,7 @@ class UserService {
     ) {
       throw new Error(USER_ERRORS.INVALID_USERNAME);
     }
-    if (!data.email || !data.email.includes("@")) {
+    if (!data.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
       throw new Error(USER_ERRORS.INVALID_EMAIL);
     }
     if (
@@ -171,7 +171,7 @@ class UserService {
     }
 
     if (data.email !== undefined) {
-      if (!data.email || !data.email.includes("@")) {
+      if (!data.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
         throw new Error(USER_ERRORS.INVALID_EMAIL);
       }
     }
