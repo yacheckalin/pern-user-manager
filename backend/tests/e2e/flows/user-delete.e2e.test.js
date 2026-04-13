@@ -9,7 +9,7 @@ import {
   HTTP_OK,
   USER_ERRORS,
   USER_MESSAGES,
-} from "../../../constants";
+} from "../../../constants/index.js";
 import bcrypt from "bcrypt";
 
 import app from "../../../index.js";
