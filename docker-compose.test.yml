@@ -2,10 +2,9 @@ services:
   app_test:
     image: my-app-test:latest
     build: ./backend
+    env_file:
+      - .env.test
     container_name: node_backend_test
-    volumes:
-      - ./backend:/app
-      - /app/node_modules
     environment:
       - NODE_ENV=test
       - DB_HOST=postgres_test
@@ -15,6 +14,7 @@ services:
       - DB_USER=${DB_USERNAME}
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
+      # - DB_URL=postgres://${DB_USERNAME}:${DB_PASSWORD}@postgres_test:5432/${DB_NAME}
       - DATABASE_URL=postgres://${DB_USERNAME}:${DB_PASSWORD}@postgres_test:5432/${DB_NAME}
       - LOG_LEVEL=error
     depends_on:
@@ -31,16 +31,18 @@ services:
       - test_network
   postgres_test:
     image: postgres:15-alpine
+    env_file:
+      - .env.test
     environment:
       - POSTGRES_USER=${DB_USERNAME}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
-      - DATABASE_URL=postgres://${DB_USERNAME}:${DB_PASSWORD}@postgres_test:5432/${DB_NAME}
     ports:
-      - "${DB_PORT}:5432" # External host port mapped to internal Postgres port
-    volumes:
-      - postgres_test_data:/var/lib/postgresql/data
-      # - ./scripts/init-test-db.sql:/docker-entrypoint-initdb.d/init.sql
+      - "5431:5432" # External host port mapped to internal Postgres port
+    tmpfs:
+      - /var/lib/postgresql/data
+    volumes: []
+    # - ./scripts/init-test-db.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME}"]
       interval: 5s

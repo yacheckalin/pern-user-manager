@@ -15,8 +15,10 @@ app.use("/users", userRoutes);
 
 app.use(errorHandler);
 
-app.listen(PORT, () =>
-  console.log(`Server is puring on http://localhost:${PORT}`),
-);
+if (process.env.NODE_ENV !== "test") {
+  app.listen(PORT, () =>
+    console.log(`Server is puring on http://localhost:${PORT}`),
+  );
+}
 
 export default app;

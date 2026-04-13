@@ -25,6 +25,8 @@ class Database {
       connectionTimeoutMillis: DB_CONNECTION_TIMEOUT,
       options: "-c search_path=app,public",
     });
+
+    this.ended = false;
   }
 
   async query(text, params) {
@@ -64,7 +66,12 @@ class Database {
   }
 
   async end() {
+    if (this.ended) {
+      return;
+    }
+
     await this.pool.end();
+    this.ended = true;
   }
 }
 

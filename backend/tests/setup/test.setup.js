@@ -5,6 +5,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
 import { Pool } from "pg";
+import database from "../../config/database.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -47,7 +48,6 @@ const requiredEnvVars = [
   "DB_NAME",
   "DB_PASSWORD",
   "DB_CONNECTION",
-  "DB_URL",
 ];
 
 const missingEnvVars = requiredEnvVars.filter(
@@ -57,7 +57,7 @@ const missingEnvVars = requiredEnvVars.filter(
 if (missingEnvVars.length > 0) {
   throw new Error(
     `Missing required environment variables: ${missingEnvVars.join(", ")}\n` +
-      "Make sure .env.test or .env.test.local exists with these values.",
+    "Make sure .env.test or .env.test.local exists with these values.",
   );
 }
 
@@ -286,6 +286,10 @@ beforeEach(async () => {
 // Cleanup after all tests
 afterAll(async () => {
   await closeTestDatabase();
+
+  if (database && typeof database.end === "function") {
+    await database.end();
+  }
 
   if (process.env.MOCK_DATE === "true") {
     jest.useRealTimers();

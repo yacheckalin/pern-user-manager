@@ -44,7 +44,7 @@ describe("User Joi Schemas", () => {
     };
 
     it("should validate when passwords match", () => {
-      const { error } = userSchemas.chagePassword.validate(validPassChange);
+      const { error } = userSchemas.changePassword.validate(validPassChange);
       expect(error).toBeUndefined();
     });
 
@@ -53,14 +53,14 @@ describe("User Joi Schemas", () => {
         ...validPassChange,
         confirm_password: "wrongMatch",
       };
-      const { error } = userSchemas.chagePassword.validate(invalidPassChange);
+      const { error } = userSchemas.changePassword.validate(invalidPassChange);
       expect(error).toBeDefined();
       expect(error.details[0].message).toBe("Password do not match");
     });
 
     it("should fail if new_password is provided without confirm_password", () => {
       const { id, old_password, new_password } = validPassChange;
-      const { error } = userSchemas.chagePassword.validate({
+      const { error } = userSchemas.changePassword.validate({
         id,
         old_password,
         new_password,
