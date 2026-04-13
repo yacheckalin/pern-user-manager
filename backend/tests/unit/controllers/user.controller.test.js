@@ -16,6 +16,7 @@ jest.unstable_mockModule("../../../services/user.service.js", () => ({
     getAllUsers: jest.fn(),
     updateUserPassword: jest.fn(),
     activateUser: jest.fn(),
+    getUser: jest.fn()
   })),
 }));
 const { default: UserService } =
@@ -35,6 +36,7 @@ describe("UserController - Unit Tests", () => {
       getAllUsers: jest.fn(),
       updateUserPassword: jest.fn(),
       activateUser: jest.fn(),
+      getUser: jest.fn()
     };
 
     UserService.mockImplementation(() => mockUserService);
@@ -278,6 +280,39 @@ describe("UserController - Unit Tests", () => {
       );
       req.params.id = 999;
       await userController.activateUser(req, res, next);
+      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.NOT_FOUND, statusCode: HTTP_NOT_FOUND });
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
+    });
+  });
+  describe("getUser", () => {
+    it("should get user by id", async () => {
+      const mockedUser = {
+        id: "1",
+        username: "test1",
+        email: "test1@tt.tt",
+        age: 18,
+        isActive: false,
+        createdAt: "2026-04-08T07:08:00.823Z",
+        updatedAt: "2026-04-08T07:08:00.823Z",
+        activatedAt: null,
+        lastLogin: null,
+      };
+      mockUserService.getUser.mockResolvedValue(mockedUser);
+
+      await userController.getUser(req, res, next);
+      expect(res.status).toHaveBeenCalledWith(HTTP_OK);
+      expect(res.json).toHaveBeenCalledWith({
+        success: true,
+        data: mockedUser,
+      });
+    });
+    it("should return 404", async () => {
+      mockUserService.getUser.mockRejectedValue(
+        new Error(USER_ERRORS.NOT_FOUND),
+      );
+      req.params.id = 999;
+      await userController.getUser(req, res, next);
       expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.NOT_FOUND, statusCode: HTTP_NOT_FOUND });
       expect(res.status).not.toHaveBeenCalled();
       expect(res.json).not.toHaveBeenCalled();
