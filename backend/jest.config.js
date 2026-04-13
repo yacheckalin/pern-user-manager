@@ -25,6 +25,7 @@ export default {
     "<rootDir>/services/**",
     "<rootDir>/routes/**",
     "<rootDir>/schemas/**",
+    "<rootDir>/utils/**",
   ],
   coverageDirectory: "coverage",
   coverageReporters: ["text", "lcov", "html"],

@@ -141,20 +141,18 @@ describe("UserController - Unit Tests", () => {
       });
     });
 
-    it("should return 500 when something went wrong", async () => {
-      mockUserService.createUser.mockRejectedValue(
-        new Error("Internal Server Error"),
-      );
+    it("should call next with error when service fails", async () => {
+      const error = new Error("Database connection failed");
+      mockUserService.createUser.mockRejectedValue(error);
 
       req.body = {
         username: "username",
       };
       await userController.createUser(req, res, next);
-      expect(res.status).toHaveBeenCalledWith(HTTP_INTERNAL_SERVER_ERROR);
-      expect(res.json).toHaveBeenCalledWith({
-        success: false,
-        message: "Internal Server Error",
-      });
+
+      expect(next).toHaveBeenCalledWith({ message: error.message, statusCode: HTTP_INTERNAL_SERVER_ERROR });
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
     });
   });
 
@@ -199,11 +197,9 @@ describe("UserController - Unit Tests", () => {
 
       req.params.id = 999;
       await userController.updateUser(req, res, next);
-      expect(res.status).toHaveBeenCalledWith(HTTP_NOT_FOUND);
-      expect(res.json).toHaveBeenCalledWith({
-        success: false,
-        message: USER_ERRORS.NOT_FOUND,
-      });
+      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.NOT_FOUND, statusCode: HTTP_NOT_FOUND });
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
     });
   });
 
@@ -214,11 +210,9 @@ describe("UserController - Unit Tests", () => {
       );
       req.params.id = 999;
       await userController.deleteUser(req, res, next);
-      expect(res.status).toHaveBeenCalledWith(HTTP_NOT_FOUND);
-      expect(res.json).toHaveBeenCalledWith({
-        success: false,
-        message: USER_ERRORS.NOT_FOUND,
-      });
+      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.NOT_FOUND, statusCode: HTTP_NOT_FOUND });
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
     });
     it("should delete user", async () => {
       const returnedUser = {
@@ -284,11 +278,9 @@ describe("UserController - Unit Tests", () => {
       );
       req.params.id = 999;
       await userController.activateUser(req, res, next);
-      expect(res.status).toHaveBeenCalledWith(HTTP_NOT_FOUND);
-      expect(res.json).toHaveBeenCalledWith({
-        success: false,
-        message: USER_ERRORS.NOT_FOUND,
-      });
+      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.NOT_FOUND, statusCode: HTTP_NOT_FOUND });
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
     });
   });
 });

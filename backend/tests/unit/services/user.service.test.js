@@ -17,6 +17,12 @@ jest.unstable_mockModule("../../../repositories/user.repo.js", () => ({
   })),
 }));
 
+// Mock the user helpers
+jest.unstable_mockModule("../../../utils/user.helpers.js", () => ({
+  sanitizeUserData: jest.fn((data) => data), // Return input unchanged
+  sanitizeUpdateUserPassword: jest.fn((data) => data), // Return input unchanged
+}));
+
 const { default: UserService } =
   await import("../../../services/user.service.js");
 const { default: UserRepository } =

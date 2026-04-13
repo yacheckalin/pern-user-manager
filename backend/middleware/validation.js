@@ -6,9 +6,10 @@ function validate(schema) {
     const { error, value } = schema.validate(data);
 
     if (error) {
-      return res.status(HTTP_BAD_REQUEST).json({
+      return res.status(error.statusCode || HTTP_BAD_REQUEST).json({
         success: false,
         error: error.details[0].message,
+        trace: process.env.NODE_ENV === "development" || process.env.LOG_LEVEL === "debug" ? error.stack : undefined,
       });
     }
 
