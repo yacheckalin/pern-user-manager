@@ -49,7 +49,7 @@ class UserController {
           success: false,
           message: error.message,
         });
-        return;
+        next(error);
       }
 
       // Handle validation errors
@@ -63,7 +63,7 @@ class UserController {
           success: false,
           message: error.message,
         });
-        return;
+        next(error);
       }
 
       // Handle other errors
@@ -96,7 +96,7 @@ class UserController {
           success: false,
           message: error.message,
         });
-        return;
+        next(error);
       }
 
       // Handle validation errors
@@ -109,7 +109,7 @@ class UserController {
           success: false,
           message: error.message,
         });
-        return;
+        next(error);
       }
 
       // Handle other errors
@@ -147,7 +147,7 @@ class UserController {
           success: false,
           message: error.message,
         });
-        return;
+        next(error);
       }
 
       // Handle other errors
@@ -201,7 +201,7 @@ class UserController {
           success: false,
           message: error.message,
         });
-        return;
+        next(error);
       }
 
       // Handle other errors
