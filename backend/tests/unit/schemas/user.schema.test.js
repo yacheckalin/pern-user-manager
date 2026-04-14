@@ -1,3 +1,4 @@
+import { USER_ERRORS, USER_VALIDATION } from "../../../constants";
 import { userSchemas } from "../../../schemas/user.schema";
 
 describe("User Joi Schemas", () => {
@@ -90,4 +91,53 @@ describe("User Joi Schemas", () => {
       expect(error).toBeUndefined();
     });
   });
+
+  describe("registerUser schema", () => {
+    let mockValidUser = {};
+    beforeEach(() => {
+      mockValidUser = {
+        username: "someUserName",
+        password: "some_user_password",
+        confirm_password: "some_user_password",
+        email: "some@email.com",
+        age: 30
+      }
+    })
+    it("should validate register new user", () => {
+
+      const { error } = userSchemas.registerUser.validate(mockValidUser);
+      expect(error).toBeUndefined();
+    });
+
+    it('should fail on not alphanumeric username', () => {
+      const { error } = userSchemas.registerUser.validate({ ...mockValidUser, username: "some_not_valid_username" });
+      expect(error).toBeDefined();
+    })
+    it('should fail on not long enough password ', () => {
+      const { error } = userSchemas.registerUser.validate({ ...mockValidUser, password: "2" });
+      expect(error).toBeDefined();
+      expect(error.details[0].message).toBe(`\"password\" length must be at least ${USER_VALIDATION.PASSWORD_MIN_LENGTH} characters long`)
+    })
+    it('should fail when email not valid', () => {
+      const { error } = userSchemas.registerUser.validate({ ...mockValidUser, email: "some@ss" });
+      expect(error).toBeDefined();
+      expect(error.details[0].message).toBe('\"email\" must be a valid email')
+    });
+    it('should fail when confirm password is not valid', () => {
+      const { error } = userSchemas.registerUser.validate({ ...mockValidUser, confirm_password: null });
+      expect(error).toBeDefined();
+      expect(error.details[0].message).toBe(USER_ERRORS.INVALID_CONFIRM_PASSWORD);
+    })
+    it('should fail when confirm password is not the same as password', () => {
+      const { error } = userSchemas.registerUser.validate({ ...mockValidUser, confirm_password: "some_other_password" });
+      expect(error).toBeDefined();
+      expect(error.details[0].message).toBe(USER_ERRORS.INVALID_CONFIRM_PASSWORD);
+    })
+    it('should fail when age is not integer', () => {
+      const { error } = userSchemas.registerUser.validate({ ...mockValidUser, age: 'xxx' });
+      expect(error).toBeDefined();
+
+      expect(error.details[0].message).toBe(`\"age\" must be a number`)
+    })
+  })
 });
