@@ -15,7 +15,7 @@ class AuthService {
 
   async login(data) {
     let sanitizedData = sanitizeUserData(data);
-    let user;
+    let user = null;
     this.validateLoginUserData(sanitizedData);
 
 

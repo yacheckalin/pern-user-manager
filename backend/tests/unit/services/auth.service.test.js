@@ -1,88 +1,216 @@
-import { AUTH_ERRORS, USER_ERRORS } from "../../../constants/index.js";
+import { AUTH_ERRORS } from "../../../constants/index.js";
+import { USER_VALIDATION } from "../../../constants/user.constants.js";
 import { jest } from "@jest/globals";
 
-// Mock the repository
+// Mock bcrypt module
+jest.unstable_mockModule("bcrypt", () => ({
+  default: {
+    compare: jest.fn(),
+  },
+}));
+
+// Mock database
+jest.unstable_mockModule("../../../config/database.js", () => ({
+  default: {},
+}));
+
+// Mock repositories
 jest.unstable_mockModule("../../../repositories/auth.repo.js", () => ({
-  default: jest.fn().mockImplementation(() => ({
-    login: jest.fn()
-  })),
+  default: jest.fn(),
 }));
 
-// Mock the user helpers
+jest.unstable_mockModule("../../../repositories/user.repo.js", () => ({
+  default: jest.fn(),
+}));
+
+// Mock user helpers
 jest.unstable_mockModule("../../../utils/user.helpers.js", () => ({
-  sanitizeUserData: jest.fn((data) => data), // Return input unchanged
+  sanitizeUserData: jest.fn((data) => data),
 }));
 
-const { default: AuthService } =
-  await import("../../../services/auth.service.js");
-const { default: AuthRepository } =
-  await import("../../../repositories/auth.repo.js");
+const bcryptModule = await import("bcrypt");
+const { default: AuthService } = await import("../../../services/auth.service.js");
+const { default: AuthRepository } = await import("../../../repositories/auth.repo.js");
+const { default: UserRepository } = await import("../../../repositories/user.repo.js");
+
+// Get the mocked bcrypt instance
+const mockBcrypt = bcryptModule.default;
 
 describe("AuthService - Unit Tests", () => {
   let authService;
-  let mockAuthRepository;
+  let mockUserRepository;
+
+  const mockUser = {
+    id: 1,
+    username: "janeDoe",
+    email: "jane@example.com",
+    passwordHash: "$2b$10$hashedPasswordExample",
+  };
 
   beforeEach(() => {
-    // 1. Clear the constructor mock
+    // Clear all mocks
+    jest.clearAllMocks();
     AuthRepository.mockClear();
+    UserRepository.mockClear();
 
-    // 2. Define what the constructor returns for this test
-    // This creates the "instance" that AuthService will use
-    mockAuthRepository = {
-      login: jest.fn()
+    // Setup mock repositories
+    mockUserRepository = {
+      findUserByName: jest.fn(),
+      findUserByEmail: jest.fn(),
     };
 
-    AuthRepository.mockImplementation(() => mockAuthRepository);
+    // Mock repository constructors to return mock instances
+    AuthRepository.mockImplementation(() => ({}));
+    UserRepository.mockImplementation(() => mockUserRepository);
 
-    // 3. When this runs 'new AuthRepository()', it gets mockAuthRepository
-    authService = new AuthService(AuthRepository);
+    // Create AuthService instance
+    authService = new AuthService();
   });
 
   describe("Login User", () => {
-    const validUserData = {
-      username: "janeDoe",
-      password: "SecurePass123"
-    };
+    describe("Successful login", () => {
+      it("should login user successfully with username", async () => {
+        const loginData = {
+          username: "janeDoe",
+          password: "SecurePass123",
+        };
 
-    it('should login user successfully', async () => {
-      mockAuthRepository.login.mockResolvedValue({ id: 1, ...validUserData });
-      const res = await authService.login(validUserData);
+        mockUserRepository.findUserByName.mockResolvedValue(mockUser);
+        mockBcrypt.compare.mockResolvedValue(true);
 
-      expect(res).toHaveProperty("id");
-      expect(mockAuthRepository.login).toHaveBeenCalled()
+        const result = await authService.login(loginData);
+
+        expect(result).toEqual(mockUser);
+        expect(mockUserRepository.findUserByName).toHaveBeenCalledWith("janeDoe");
+        expect(mockBcrypt.compare).toHaveBeenCalledWith("SecurePass123", mockUser.passwordHash);
+      });
+
+      it("should login user successfully with email", async () => {
+        const loginData = {
+          username: "jane@example.com",
+          password: "SecurePass123",
+        };
+
+        mockUserRepository.findUserByEmail.mockResolvedValue(mockUser);
+        mockBcrypt.compare.mockResolvedValue(true);
+
+        const result = await authService.login(loginData);
+
+        expect(result).toEqual(mockUser);
+        expect(mockUserRepository.findUserByEmail).toHaveBeenCalledWith("jane@example.com");
+        expect(mockBcrypt.compare).toHaveBeenCalledWith("SecurePass123", mockUser.passwordHash);
+      });
     });
 
-    it('should throw error if username or password are incorrect', async () => {
-      mockAuthRepository.login.mockResolvedValue(null);
+    describe("Validation errors", () => {
+      it("should throw INVALID_USERNAME_OR_EMAIL when username/email is empty", async () => {
+        const loginData = {
+          username: "",
+          password: "SecurePass123",
+        };
 
-      await expect(authService.login(validUserData)).rejects.toThrow(AUTH_ERRORS.INVALID_CRIDENTIALS);
+        await expect(authService.login(loginData)).rejects.toThrow(
+          AUTH_ERRORS.INVALID_USERNAME_OR_EMAIL
+        );
+      });
+
+      it("should throw INVALID_USERNAME when username is too short", async () => {
+        const loginData = {
+          username: "ab",
+          password: "SecurePass123",
+        };
+
+        await expect(authService.login(loginData)).rejects.toThrow(
+          AUTH_ERRORS.INVALID_USERNAME
+        );
+      });
+
+      it("should throw INVALID_USERNAME when username exceeds max length", async () => {
+        const loginData = {
+          username: "a".repeat(USER_VALIDATION.USERNAME_MAX_LENGTH + 1),
+          password: "SecurePass123",
+        };
+
+        await expect(authService.login(loginData)).rejects.toThrow(
+          AUTH_ERRORS.INVALID_USERNAME
+        );
+      });
+
+      it("should throw INVALID_EMAIL when email format is invalid", async () => {
+        const loginData = {
+          username: "invalidemail@",
+          password: "SecurePass123",
+        };
+
+        await expect(authService.login(loginData)).rejects.toThrow(
+          AUTH_ERRORS.INVALID_EMAIL
+        );
+      });
+
+      it("should throw INVALID_PASSWORD when password is empty", async () => {
+        const loginData = {
+          username: "janeDoe",
+          password: "",
+        };
+
+        await expect(authService.login(loginData)).rejects.toThrow(
+          AUTH_ERRORS.INVALID_PASSWORD
+        );
+      });
+
+      it("should throw INVALID_PASSWORD when password is too short", async () => {
+        const loginData = {
+          username: "janeDoe",
+          password: "123",
+        };
+
+        await expect(authService.login(loginData)).rejects.toThrow(
+          AUTH_ERRORS.INVALID_PASSWORD
+        );
+      });
     });
 
+    describe("Authentication errors", () => {
+      it("should throw INVALID_CRIDENTIALS when user not found by username", async () => {
+        const loginData = {
+          username: "nonexistent",
+          password: "SecurePass123",
+        };
 
-    it(`should return [${AUTH_ERRORS.INVALID_USERNAME}]`, async () => {
-      mockAuthRepository.login.mockResolvedValue({ id: 2 });
+        mockUserRepository.findUserByName.mockResolvedValue(null);
+        mockUserRepository.findUserByEmail.mockResolvedValue(null);
 
-      await expect(authService.login({ ...validUserData, username: 'ss' }))
-        .rejects.toThrow(AUTH_ERRORS.INVALID_USERNAME);
+        await expect(authService.login(loginData)).rejects.toThrow(
+          AUTH_ERRORS.INVALID_CRIDENTIALS
+        );
+      });
+
+      it("should throw INVALID_CRIDENTIALS when user not found by email", async () => {
+        const loginData = {
+          username: "nonexistent@example.com",
+          password: "SecurePass123",
+        };
+
+        mockUserRepository.findUserByEmail.mockResolvedValue(null);
+
+        await expect(authService.login(loginData)).rejects.toThrow(
+          AUTH_ERRORS.INVALID_CRIDENTIALS
+        );
+      });
+
+      it("should throw INVALID_CRIDENTIALS when password is incorrect", async () => {
+        const loginData = {
+          username: "janeDoe",
+          password: "WrongPassword123",
+        };
+
+        mockUserRepository.findUserByName.mockResolvedValue(mockUser);
+        mockBcrypt.compare.mockResolvedValue(false);
+
+        await expect(authService.login(loginData)).rejects.toThrow(
+          AUTH_ERRORS.INVALID_CRIDENTIALS
+        );
+      });
     });
-
-    it(`should return [${AUTH_ERRORS.INVALID_EMAIL}]`, async () => {
-
-      await expect(authService.login({ ...validUserData, username: 'invalidemail@' }))
-        .rejects.toThrow(AUTH_ERRORS.INVALID_EMAIL);
-    });
-
-    it(`should return [${AUTH_ERRORS.INVALID_PASSWORD}]`, async () => {
-      mockAuthRepository.login.mockResolvedValue({ id: 2 });
-
-      await expect(authService.login({ ...validUserData, username: 'ema@dd.tt', password: '' }))
-        .rejects.toThrow(AUTH_ERRORS.INVALID_PASSWORD);
-    })
-    it(`should return [${AUTH_ERRORS.INVALID_USERNAME_OR_EMAIL}]`, async () => {
-      mockAuthRepository.login.mockResolvedValue({ id: 2 });
-
-      await expect(authService.login({ ...validUserData, username: '' }))
-        .rejects.toThrow(AUTH_ERRORS.INVALID_USERNAME_OR_EMAIL);
-    })
-  })
-})
+  });
+});
