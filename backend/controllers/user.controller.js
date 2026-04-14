@@ -197,7 +197,7 @@ class UserController {
 
   async registerUser(req, res, next) {
     try {
-      // const user = await this.userService.registerUser(req.body);
+      const user = await this.userService.registerUser(req.body);
       res.status(HTTP_CREATED).json({
         success: true,
         message: USER_MESSAGES.REGISTERED,

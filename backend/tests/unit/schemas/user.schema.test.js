@@ -118,6 +118,16 @@ describe("User Joi Schemas", () => {
       expect(error).toBeDefined();
       expect(error.details[0].message).toBe(`\"password\" length must be at least ${USER_VALIDATION.PASSWORD_MIN_LENGTH} characters long`)
     })
+    it('should fail on empty password', () => {
+      const { error } = userSchemas.registerUser.validate({ ...mockValidUser, password: "" });
+      expect(error).toBeDefined();
+      expect(error.details[0].message).toBe(`\"password\" is not allowed to be empty`)
+    })
+    it('should fail on empty email', () => {
+      const { error } = userSchemas.registerUser.validate({ ...mockValidUser, email: "" });
+      expect(error).toBeDefined();
+      expect(error.details[0].message).toBe(`\"email\" is not allowed to be empty`)
+    })
     it('should fail when email not valid', () => {
       const { error } = userSchemas.registerUser.validate({ ...mockValidUser, email: "some@ss" });
       expect(error).toBeDefined();

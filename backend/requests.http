@@ -40,3 +40,15 @@ DELETE http://localhost:5000/users/1
 
 ### Activate user by id
 PATCH http://localhost:5000/users/2/activate
+
+
+### Register new user
+POST http://localhost:5000/users/register
+Content-Type: application/json
+
+{
+  "username":"sos",
+  "email": "sos@sos.com",
+  "password": "password",
+  "confirm_password": "password"
+}
