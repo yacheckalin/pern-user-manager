@@ -64,13 +64,14 @@ describe("AuthService - Unit Tests", () => {
 
       await expect(authService.login({ ...validUserData, username: 'ss' }))
         .rejects.toThrow(AUTH_ERRORS.INVALID_USERNAME);
-    })
-    it(`should return [${AUTH_ERRORS.INVALID_EMAIL}]`, async () => {
-      mockAuthRepository.login.mockResolvedValue({ id: 2 });
+    });
 
-      await expect(authService.login({ ...validUserData, email: 'invalidemail' }))
+    it(`should return [${AUTH_ERRORS.INVALID_EMAIL}]`, async () => {
+
+      await expect(authService.login({ ...validUserData, username: 'invalidemail@' }))
         .rejects.toThrow(AUTH_ERRORS.INVALID_EMAIL);
-    })
+    });
+
     it(`should return [${AUTH_ERRORS.INVALID_PASSWORD}]`, async () => {
       mockAuthRepository.login.mockResolvedValue({ id: 2 });
 

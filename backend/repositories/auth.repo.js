@@ -1,4 +1,4 @@
-import User from "../models/user.model";
+import User from "../models/user.model.js";
 
 class AuthRepository {
   constructor(pool) {
@@ -14,10 +14,27 @@ class AuthRepository {
    */
   async login(data, returning = "*") {
     const { username, email, password } = data;
-    const { rows } = await this.pool.query(`SELECt * FROM ${this.table}
-       WHERE (username = $1 OR email = $2) AND password_hash = $3 RETURNING ${returning}`,
-      [username, email, password]);
-    return User.fromDatabase(rows[0])
+    const filter = [];
+    const params = [];
+    if (username) {
+      filter.push(' username = $1');
+      params.push(username)
+    }
+    if (email) {
+      filter.push(' email = $1')
+      params.push(email)
+    }
+
+    filter.push(' password_hash = $2 ');
+    params.push(password);
+
+    const { rows } = await this.pool.query(
+      `SELECT ${returning} FROM ${this.table} WHERE ${filter.join(' AND ')}`,
+      params,
+    );
+
+    return User.fromDatabase(rows[0]);
+
   }
 }
 
