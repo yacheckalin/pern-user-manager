@@ -437,4 +437,75 @@ describe("UserService - Unit Tests", () => {
       ).toThrow(USER_ERRORS.INVALID_CONFIRM_PASSWORD);
     });
   });
+
+
+  describe("Register User", () => {
+    const validUserData = {
+      username: "janeDoe",
+      email: "jane@example.com",
+      password: "SecurePass123",
+      confirm_password: "SecurePass123",
+      age: 25,
+    };
+
+    it("should register new user successfully", async () => {
+      // Arrange
+      mockUserRepository.findUserById.mockResolvedValue(null);
+      mockUserRepository.findUserByEmail.mockResolvedValue(null);
+      mockUserRepository.findUserByName.mockResolvedValue(null);
+      mockUserRepository.createUser.mockResolvedValue({
+        id: 1,
+        ...validUserData,
+      });
+
+      // Act
+      const result = await userService.registerUser(validUserData);
+
+      // Assert
+      expect(result).toHaveProperty("id");
+      expect(mockUserRepository.createUser).toHaveBeenCalled();
+    });
+
+    it("should throw error if email already exists", async () => {
+      // Arrange
+      mockUserRepository.findUserByEmail.mockResolvedValue({
+        id: 2,
+        email: validUserData.email,
+      });
+
+      // Act & Assert
+      await expect(userService.registerUser(validUserData)).rejects.toThrow(
+        USER_ERRORS.EMAIL_TAKEN,
+      );
+    });
+
+    it("should validate password length", async () => {
+      // Arrange
+      const invalidData = { ...validUserData, password: "short" };
+
+      // Act & Assert
+      await expect(userService.registerUser(invalidData)).rejects.toThrow(
+        USER_ERRORS.INVALID_PASSWORD,
+      );
+    });
+
+    it('should validate confirm_passwrod', async () => {
+      const invalidData = { ...validUserData, confirm_password: "" };
+      await expect(userService.registerUser(invalidData)).rejects.toThrow(USER_ERRORS.INVALID_CONFIRM_PASSWORD)
+    });
+    it("should validate confirm_password equality with password", async () => {
+      const invalidData = { ...validUserData, confirm_password: "some_other_password" };
+      await expect(userService.registerUser(invalidData)).rejects.toThrow(USER_ERRORS.INVALID_CONFIRM_PASSWORD)
+    })
+
+    it("should throw error if username already exists", async () => {
+      mockUserRepository.findUserByName.mockResolvedValue(
+        validUserData.username,
+      );
+
+      await expect(userService.registerUser(validUserData)).rejects.toThrow(
+        USER_ERRORS.USERNAME_TAKEN,
+      );
+    });
+  });
 });
