@@ -297,6 +297,7 @@ Base URL: `http://localhost:5000/users`
 - `PATCH /users/:id/password` - Change user password by ID
 - `DELETE /users/:id` - Delete user by ID
 - `PATCH /users/:id/activate` - Activate user by ID
+- `POST /users/register` - Register a new user
 
 ## ✅ Testing
 
