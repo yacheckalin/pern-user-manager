@@ -1,5 +1,6 @@
 import Joi from "joi";
 import { USER_VALIDATION } from "../constants/user.constants.js";
+import { USER_ERRORS } from "../constants/error.constants.js";
 
 const userSchemas = {
   createUser: Joi.object({
@@ -50,6 +51,16 @@ const userSchemas = {
   activateUser: Joi.object({
     id: Joi.number().integer().required(),
   }),
+  registerUser: Joi.object({
+    username: Joi.string().alphanum().min(USER_VALIDATION.USERNAME_MIN_LENGTH).max(USER_VALIDATION.USERNAME_MAX_LENGTH).required(),
+    email: Joi.string().email().required(),
+    password: Joi.string().min(USER_VALIDATION.PASSWORD_MIN_LENGTH).max(USER_VALIDATION.PASSWORD_MAX_LENGTH).required(),
+    confirm_password: Joi.string().
+      min(USER_VALIDATION.PASSWORD_MIN_LENGTH).
+      max(USER_VALIDATION.PASSWORD_MAX_LENGTH).
+      required().equal(Joi.ref("password")).messages({ "any.only": USER_ERRORS.INVALID_CONFIRM_PASSWORD }),
+    age: Joi.number().integer(),
+  }).with("password", "confirm_password")
 };
 
 export { userSchemas };
