@@ -356,6 +356,27 @@ describe("UserService - Unit Tests", () => {
     });
   });
 
+  describe("Get User By ID", () => {
+    it(`should return user`, async () => {
+      mockUserRepository.findUserById.mockResolvedValue({ id: 1 });
+
+      const result = await userService.getUser(1);
+
+      expect(result).toHaveProperty("id");
+      expect(mockUserRepository.findUserById).toHaveBeenCalled();
+    });
+
+    it(`should return [${USER_ERRORS.NOT_FOUND}]`, async () => {
+      mockUserRepository.findUserById.mockResolvedValue(null);
+
+      await expect(userService.getUser(100)).rejects.toThrow(
+        USER_ERRORS.NOT_FOUND,
+      );
+    });
+
+
+  });
+
   describe("validateUpdateUserData", () => {
     const validData = {
       username: "valid_username",

@@ -1,11 +1,14 @@
 import { jest } from "@jest/globals";
 import {
+  HTTP_BAD_REQUEST,
+  HTTP_CONFLICT,
   HTTP_CREATED,
   HTTP_INTERNAL_SERVER_ERROR,
   HTTP_NOT_FOUND,
   HTTP_OK,
   USER_ERRORS,
   USER_MESSAGES,
+  USER_VALIDATION,
 } from "../../../constants";
 
 jest.unstable_mockModule("../../../services/user.service.js", () => ({
@@ -104,6 +107,15 @@ describe("UserController - Unit Tests", () => {
         data: mockUsers,
       });
     });
+
+    it(`should return ${HTTP_INTERNAL_SERVER_ERROR}`, async () => {
+      mockUserService.getAllUsers.mockRejectedValue(HTTP_INTERNAL_SERVER_ERROR)
+      await userController.getAllUsers(req, res, next);
+
+      expect(next).toHaveBeenCalledWith({ message: USER_VALIDATION.HTTP_INTERNAL_SERVER_ERROR, statusCode: HTTP_INTERNAL_SERVER_ERROR });
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
+    })
   });
 
   describe("createUser", () => {
@@ -158,6 +170,56 @@ describe("UserController - Unit Tests", () => {
       expect(res.status).not.toHaveBeenCalled();
       expect(res.json).not.toHaveBeenCalled();
     });
+
+    it(`should return ${HTTP_CONFLICT} ; ${USER_ERRORS.EMAIL_TAKEN}`, async () => {
+      mockUserService.createUser.mockRejectedValue(new Error(USER_ERRORS.EMAIL_TAKEN));
+      await userController.createUser(req, res, next);
+
+      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.EMAIL_TAKEN, statusCode: HTTP_CONFLICT });
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
+    })
+
+    it(`should return ${HTTP_CONFLICT} : ${USER_ERRORS.USERNAME_TAKEN}`, async () => {
+      mockUserService.createUser.mockRejectedValue(new Error(USER_ERRORS.USERNAME_TAKEN));
+      await userController.createUser(req, res, next);
+
+      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.USERNAME_TAKEN, statusCode: HTTP_CONFLICT });
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
+    });
+    it(`should return ${HTTP_BAD_REQUEST} : ${USER_ERRORS.INVALID_USERNAME}`, async () => {
+      mockUserService.createUser.mockRejectedValue(new Error(USER_ERRORS.INVALID_USERNAME));
+      await userController.createUser(req, res, next);
+
+      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.INVALID_USERNAME, statusCode: HTTP_BAD_REQUEST });
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
+    });
+    it(`should return ${HTTP_BAD_REQUEST} : ${USER_ERRORS.INVALID_AGE}`, async () => {
+      mockUserService.createUser.mockRejectedValue(new Error(USER_ERRORS.INVALID_AGE));
+      await userController.createUser(req, res, next);
+
+      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.INVALID_AGE, statusCode: HTTP_BAD_REQUEST });
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
+    });
+    it(`should return ${HTTP_BAD_REQUEST} : ${USER_ERRORS.INVALID_EMAIL}`, async () => {
+      mockUserService.createUser.mockRejectedValue(new Error(USER_ERRORS.INVALID_EMAIL));
+      await userController.createUser(req, res, next);
+
+      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.INVALID_EMAIL, statusCode: HTTP_BAD_REQUEST });
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
+    });
+    it(`should return ${HTTP_BAD_REQUEST} : ${USER_ERRORS.INVALID_PASSWORD}`, async () => {
+      mockUserService.createUser.mockRejectedValue(new Error(USER_ERRORS.INVALID_PASSWORD));
+      await userController.createUser(req, res, next);
+
+      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.INVALID_PASSWORD, statusCode: HTTP_BAD_REQUEST });
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
+    })
   });
 
   describe("updateUser", () => {
@@ -205,6 +267,126 @@ describe("UserController - Unit Tests", () => {
       expect(res.status).not.toHaveBeenCalled();
       expect(res.json).not.toHaveBeenCalled();
     });
+
+    it(`should return ${HTTP_CONFLICT} : ${USER_ERRORS.USERNAME_TAKEN}`, async () => {
+      mockUserService.updateUser.mockRejectedValue(new Error(USER_ERRORS.USERNAME_TAKEN));
+      await userController.updateUser(req, res, next);
+
+      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.USERNAME_TAKEN, statusCode: HTTP_CONFLICT });
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
+    });
+    it(`should return ${HTTP_BAD_REQUEST} : ${USER_ERRORS.INVALID_USERNAME}`, async () => {
+      mockUserService.updateUser.mockRejectedValue(new Error(USER_ERRORS.INVALID_USERNAME));
+      await userController.updateUser(req, res, next);
+
+      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.INVALID_USERNAME, statusCode: HTTP_BAD_REQUEST });
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
+    })
+    it(`should return ${HTTP_BAD_REQUEST} : ${USER_ERRORS.INVALID_EMAIL}`, async () => {
+      mockUserService.updateUser.mockRejectedValue(new Error(USER_ERRORS.INVALID_EMAIL));
+      await userController.updateUser(req, res, next);
+
+      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.INVALID_EMAIL, statusCode: HTTP_BAD_REQUEST });
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
+    })
+    it(`should return ${HTTP_BAD_REQUEST} : ${USER_ERRORS.INVALID_AGE}`, async () => {
+      mockUserService.updateUser.mockRejectedValue(new Error(USER_ERRORS.INVALID_AGE));
+      await userController.updateUser(req, res, next);
+
+      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.INVALID_AGE, statusCode: HTTP_BAD_REQUEST });
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
+    })
+  });
+  describe("updateUserPassword", () => {
+    it("should return updated user", async () => {
+      const mockUser = {
+        id: "1",
+        username: "test1",
+        email: "test1@tt.tt",
+        age: 18,
+        isActive: false,
+        createdAt: "2026-04-08T07:08:00.823Z",
+        updatedAt: "2026-04-08T07:08:00.823Z",
+        activatedAt: null,
+        lastLogin: null,
+      };
+      mockUserService.updateUserPassword.mockResolvedValue({
+        id: "1",
+        username: "test1",
+        email: "test1@tt.tt",
+        age: 18,
+        isActive: false,
+        createdAt: "2026-04-08T07:08:00.823Z",
+        updatedAt: "2026-04-08T07:08:00.823Z",
+        activatedAt: null,
+        lastLogin: null,
+      });
+
+      await userController.updateUserPassword(req, res, next);
+      expect(res.status).toHaveBeenCalledWith(HTTP_OK);
+      expect(res.json).toHaveBeenCalledWith({
+        success: true,
+        message: USER_MESSAGES.PASSWORD_CHANGED,
+        data: mockUser,
+      });
+    });
+
+    it("should return not found", async () => {
+      mockUserService.updateUserPassword.mockRejectedValue(
+        new Error(USER_ERRORS.NOT_FOUND),
+      );
+
+      req.params.id = 999;
+      await userController.updateUserPassword(req, res, next);
+      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.NOT_FOUND, statusCode: HTTP_NOT_FOUND });
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
+    });
+
+    it(`should return ${HTTP_CONFLICT} : ${USER_ERRORS.INVALID_NEW_PASSWORD}`, async () => {
+      mockUserService.updateUserPassword.mockRejectedValue(new Error(USER_ERRORS.INVALID_NEW_PASSWORD));
+      await userController.updateUserPassword(req, res, next);
+
+      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.INVALID_NEW_PASSWORD, statusCode: HTTP_BAD_REQUEST });
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
+    });
+    it(`should return ${HTTP_BAD_REQUEST} : ${USER_ERRORS.INVALID_OLD_PASSWORD}`, async () => {
+      mockUserService.updateUserPassword.mockRejectedValue(new Error(USER_ERRORS.INVALID_OLD_PASSWORD));
+      await userController.updateUserPassword(req, res, next);
+
+      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.INVALID_OLD_PASSWORD, statusCode: HTTP_BAD_REQUEST });
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
+    })
+    it(`should return ${HTTP_BAD_REQUEST} : ${USER_ERRORS.INVALID_CONFIRM_PASSWORD}`, async () => {
+      mockUserService.updateUserPassword.mockRejectedValue(new Error(USER_ERRORS.INVALID_CONFIRM_PASSWORD));
+      await userController.updateUserPassword(req, res, next);
+
+      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.INVALID_CONFIRM_PASSWORD, statusCode: HTTP_BAD_REQUEST });
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
+    })
+    it(`should return ${HTTP_BAD_REQUEST} : ${USER_ERRORS.OLD_PASSWORD_INVALID}`, async () => {
+      mockUserService.updateUserPassword.mockRejectedValue(new Error(USER_ERRORS.OLD_PASSWORD_INVALID));
+      await userController.updateUserPassword(req, res, next);
+
+      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.OLD_PASSWORD_INVALID, statusCode: HTTP_BAD_REQUEST });
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
+    })
+    it(`should return ${HTTP_BAD_REQUEST} : ${USER_ERRORS.NEW_PASSWORD_THE_SAME}`, async () => {
+      mockUserService.updateUserPassword.mockRejectedValue(new Error(USER_ERRORS.NEW_PASSWORD_THE_SAME));
+      await userController.updateUserPassword(req, res, next);
+
+      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.NEW_PASSWORD_THE_SAME, statusCode: HTTP_BAD_REQUEST });
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
+    })
   });
 
   describe("deleteUser", () => {
@@ -283,6 +465,16 @@ describe("UserController - Unit Tests", () => {
       req.params.id = 999;
       await userController.activateUser(req, res, next);
       expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.NOT_FOUND, statusCode: HTTP_NOT_FOUND });
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
+    });
+    it("should return 409", async () => {
+      mockUserService.activateUser.mockRejectedValue(
+        new Error(USER_ERRORS.ALREADY_ACTIVATED),
+      );
+      req.params.id = 999;
+      await userController.activateUser(req, res, next);
+      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.ALREADY_ACTIVATED, statusCode: HTTP_CONFLICT });
       expect(res.status).not.toHaveBeenCalled();
       expect(res.json).not.toHaveBeenCalled();
     });
@@ -373,6 +565,77 @@ describe("UserController - Unit Tests", () => {
       expect(res.status).not.toHaveBeenCalled();
       expect(res.json).not.toHaveBeenCalled();
     });
+    it(`should return ${HTTP_CONFLICT} : ${USER_ERRORS.EMAIL_TAKEN}`, async () => {
+      mockUserService.registerUser.mockRejectedValue(
+        new Error(USER_ERRORS.EMAIL_TAKEN),
+      );
+      req.params.id = 999;
+      await userController.registerUser(req, res, next);
+      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.EMAIL_TAKEN, statusCode: HTTP_CONFLICT });
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
+    });
+    it(`should return ${HTTP_CONFLICT} : ${USER_ERRORS.USERNAME_TAKEN}`, async () => {
+      mockUserService.registerUser.mockRejectedValue(
+        new Error(USER_ERRORS.USERNAME_TAKEN),
+      );
+      req.params.id = 999;
+      await userController.registerUser(req, res, next);
+      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.USERNAME_TAKEN, statusCode: HTTP_CONFLICT });
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
+    });
+    it(`should return ${HTTP_BAD_REQUEST} : ${USER_ERRORS.INVALID_USERNAME}`, async () => {
+      mockUserService.registerUser.mockRejectedValue(
+        new Error(USER_ERRORS.INVALID_USERNAME),
+      );
+      req.params.id = 999;
+      await userController.registerUser(req, res, next);
+      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.INVALID_USERNAME, statusCode: HTTP_BAD_REQUEST });
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
+    });
+    it(`should return ${HTTP_BAD_REQUEST} : ${USER_ERRORS.INVALID_EMAIL}`, async () => {
+      mockUserService.registerUser.mockRejectedValue(
+        new Error(USER_ERRORS.INVALID_EMAIL),
+      );
+      req.params.id = 999;
+      await userController.registerUser(req, res, next);
+      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.INVALID_EMAIL, statusCode: HTTP_BAD_REQUEST });
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
+    });
+    it(`should return ${HTTP_BAD_REQUEST} : ${USER_ERRORS.INVALID_PASSWORD}`, async () => {
+      mockUserService.registerUser.mockRejectedValue(
+        new Error(USER_ERRORS.INVALID_PASSWORD),
+      );
+      req.params.id = 999;
+      await userController.registerUser(req, res, next);
+      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.INVALID_PASSWORD, statusCode: HTTP_BAD_REQUEST });
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
+    });
+    it(`should return ${HTTP_BAD_REQUEST} : ${USER_ERRORS.INVALID_AGE}`, async () => {
+      mockUserService.registerUser.mockRejectedValue(
+        new Error(USER_ERRORS.INVALID_AGE),
+      );
+      req.params.id = 999;
+      await userController.registerUser(req, res, next);
+      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.INVALID_AGE, statusCode: HTTP_BAD_REQUEST });
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
+    });
+    it(`should return ${HTTP_BAD_REQUEST} : ${USER_ERRORS.INVALID_CONFIRM_PASSWORD}`, async () => {
+      mockUserService.registerUser.mockRejectedValue(
+        new Error(USER_ERRORS.INVALID_CONFIRM_PASSWORD),
+      );
+      req.params.id = 999;
+      await userController.registerUser(req, res, next);
+      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.INVALID_CONFIRM_PASSWORD, statusCode: HTTP_BAD_REQUEST });
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
+    });
+
   });
 
 });
