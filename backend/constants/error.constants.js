@@ -21,3 +21,11 @@ export const DB_ERRORS = {
   CONNECTION_FAILED: "Database connection failed",
   QUERY_FAILED: "Database query failed",
 };
+
+export const AUTH_ERRORS = {
+  INVALID_CRIDENTIALS: "Invalid cridentials",
+  INVALID_USERNAME_OR_EMAIL: "Invalid username or email",
+  INVALID_EMAIL: "Invalid email",
+  INVALID_USERNAME: "Invalid username",
+  INVALID_PASSWORD: "Invalid password"
+}
