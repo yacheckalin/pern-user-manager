@@ -38,6 +38,31 @@ describe("UserRepository", () => {
     mockUserRepository = new UserRepository(mockDb.pool);
   });
 
+  describe('findAll', () => {
+    it('should return all users', async () => {
+      const mockRecord = {
+        id: 1,
+        username: 'john_doe',
+        email: "john@example.com"
+      };
+      mockDb.pool.query.mockResolvedValue({ rows: [mockRecord] });
+      const result = await mockUserRepository.findAll();
+      expect(result).toBeInstanceOf(Array);
+      expect(result.length).toBe(1);
+      expect(result[0].id).toBe(1);
+      expect(result[0].username).toBe('john_doe');
+      expect(result[0].email).toBe('john@example.com')
+    })
+
+    it("should return empty array when no users", async () => {
+      mockDb.pool.query.mockResolvedValue({ rows: [] });
+      const result = await mockUserRepository.findAll();
+      expect(result).toBeDefined
+      expect(result).toBeInstanceOf(Array);
+      expect(result.length).toBe(0)
+    });
+  })
+
   describe("findUserById", () => {
     it("should return user when found", async () => {
       const mockRecord = {

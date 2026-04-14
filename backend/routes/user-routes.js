@@ -16,6 +16,8 @@ router.post(
   userController.createUser.bind(userController),
 );
 
+router.post("/register", validate(userSchemas.registerUser), userController.registerUser.bind(userController))
+
 router.put(
   "/:id",
   validate(userSchemas.updateUser),

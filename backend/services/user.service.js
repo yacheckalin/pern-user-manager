@@ -3,6 +3,7 @@ import db from "../config/database.js";
 import bcrypt from "bcrypt";
 import {
   BCRYPT_ROUNDS,
+  USER_DEFAULTS,
   USER_ERRORS,
   USER_VALIDATION,
 } from "../constants/index.js";
@@ -51,6 +52,40 @@ class UserService {
       password_hash: passwordHash,
       age: data.age,
       is_active: data.is_active === 1 || data.is_active === "true",
+    });
+
+    return result;
+  }
+
+  async registerUser(data) {
+    this.validateCreateUserData(sanitizeUserData(data));
+
+    const existingUsername = await this.userRepository.findUserByName(
+      data.username,
+    );
+    if (existingUsername) {
+      throw new Error(USER_ERRORS.USERNAME_TAKEN);
+    }
+
+    const existingEmail = await this.userRepository.findUserByEmail(data.email);
+    if (existingEmail) {
+      throw new Error(USER_ERRORS.EMAIL_TAKEN);
+    }
+
+    // check if password and confirm_password the same
+    if (String(data.password).toUpperCase() !== String(data.confirm_password).toUpperCase()) {
+      throw new Error(USER_ERRORS.INVALID_CONFIRM_PASSWORD)
+    }
+
+    // Hash password
+    const passwordHash = await bcrypt.hash(data.password, BCRYPT_ROUNDS);
+
+    const result = await this.userRepository.createUser({
+      username: data.username,
+      email: data.email,
+      password_hash: passwordHash,
+      age: data.age,
+      is_active: USER_DEFAULTS.IS_ACTIVE,
     });
 
     return result;
