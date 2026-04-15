@@ -5,6 +5,7 @@ import userRoutes from "./routes/user-routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import errorHandler from "./middleware/error-handler.js";
 import db from './config/database.js';
+import cookieParser from "cookie-parser";
 
 const { PORT } = process.env;
 
@@ -12,6 +13,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser())
 
 app.use("/users", userRoutes);
 app.use("/auth", authRoutes);
