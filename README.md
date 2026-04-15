@@ -300,6 +300,7 @@ Base URL: `http://localhost:5000/users`
 - `POST /users/register` - Register a new user
 
 - `POST /auth/login` - Authenticate user username(username |email, password)
+- `POST /auth/logout` - Logout user
 
 ## ✅ Testing
 

@@ -61,3 +61,6 @@ Content-Type: application/json
   "username": "sos2@sos.com",
   "password": "password"
 }
+
+### Logout user
+POST http://localhost:5000/auth/logout

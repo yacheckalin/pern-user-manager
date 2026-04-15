@@ -77,7 +77,8 @@ describe("User Constants", () => {
           "PASSWORD_CHANGED",
           "ACTIVATED",
           "REGISTERED",
-          "AUTHORIZED"
+          "AUTHORIZED",
+
         ];
 
         requiredEvents.forEach((event) => {
@@ -124,7 +125,8 @@ describe("User Constants", () => {
           ACTIVATED: "User was activated successfully",
           PASSWORD_CHANGED: "User password was changed successfully",
           REGISTERED: "User was registered successfully",
-          AUTHORIZED: "User authorized successfully"
+          AUTHORIZED: "User authorized successfully",
+          LOGOUT: "User logout successfully"
         };
 
         expect(USER_MESSAGES).toEqual(expected);

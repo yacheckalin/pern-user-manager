@@ -45,6 +45,20 @@ class AuthController {
       next({ message: error.message, statusCode: HTTP_INTERNAL_SERVER_ERROR })
     }
   }
+
+  logout(req, res, next) {
+    const refreshToken = req.cookie?.refreshToken;
+
+    if (refreshToken) {
+      //TODO: add to blacklist or remove from DB
+    }
+    res.clearCookie('refreshToken');
+    res.status(HTTP_OK).json({
+      success: true,
+      message: USER_MESSAGES.LOGOUT
+    })
+
+  }
 }
 
 export default AuthController;
