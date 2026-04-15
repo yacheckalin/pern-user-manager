@@ -19,7 +19,7 @@ Content-Type: application/json
 
 {
   "username": "test2",
-  "email":"test2@test.tt"
+  "email":"invalidemail"
 }
 
 ### Get user by id

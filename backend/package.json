@@ -17,7 +17,7 @@
     "test:docker:down": "cd .. && docker compose -f docker-compose.test.yml down -v",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest --coverage --testPathIgnorePatterns=tests/integration",
     "test:unit": "NODE_OPTIONS=--experimental-vm-modules jest --testPathPatterns=tests/unit",
-    "test:integration": "NODE_OPTIONS=--experimental-vm-modules jest --testPathPatterns=tests/integration",
+    "test:integration": "NODE_OPTIONS=--experimental-vm-modules jest --runInBand --testPathPatterns=tests/integration",
     "test:e2e": "NODE_OPTIONS=--experimental-vm-modules jest --config=jest.e2e.config.js --runInBand",
     "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --watch",
     "test:ci": "NODE_OPTIONS=--experimental-vm-modules jest --coverage --runInBand --testPathIgnorePatterns=tests/integration",

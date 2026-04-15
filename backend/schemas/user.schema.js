@@ -24,7 +24,7 @@ const userSchemas = {
   updateUser: Joi.object({
     id: Joi.number().integer().required(),
     username: Joi.string().alphanum().max(USER_VALIDATION.USERNAME_MAX_LENGTH),
-    email: Joi.string().email(),
+    email: Joi.string(),
     age: Joi.number().integer(),
   }),
 
