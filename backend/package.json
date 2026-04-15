@@ -37,6 +37,7 @@
     "cors": "^2.8.6",
     "express": "^5.2.1",
     "joi": "^18.1.2",
+    "jsonwebtoken": "^9.0.3",
     "node-pg-migrate": "^8.0.4",
     "pg": "^8.20.0",
     "validator": "^13.15.35"
