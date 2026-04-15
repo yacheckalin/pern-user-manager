@@ -16,3 +16,9 @@ export const ONE_WEEK = 7 * 24 * 60 * 60 * 100;
 
 // Bcrypt
 export const BCRYPT_ROUNDS = 10;
+
+// JWT
+export const JWT_DEFAULTS = {
+  EXPIRES_IN: '1d',
+  SECRET: 'default_jwt_secret'
+}

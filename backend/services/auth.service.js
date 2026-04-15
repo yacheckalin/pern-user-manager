@@ -1,5 +1,5 @@
 import db from '../config/database.js';
-import { AUTH_ERRORS } from '../constants/index.js';
+import { AUTH_ERRORS, JWT_DEFAULTS } from '../constants/index.js';
 import { USER_VALIDATION } from '../constants/user.constants.js';
 import { sanitizeUserData } from '../utils/user.helpers.js';
 import bcrypt from 'bcrypt';
@@ -56,8 +56,8 @@ class AuthService {
           lastLogin: result.lastLogin,
         },
       },
-      process.env.JWT_SECRET || 'change_me',
-      { expiresIn: '1d' },
+      process.env.JWT_SECRET || JWT_DEFAULTS.SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN || JWT_DEFAULTS.EXPIRES_IN },
     );
 
     return token;
