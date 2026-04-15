@@ -1,12 +1,12 @@
 import db from '../config/database.js';
-import { BCRYPT_ROUNDS } from '../constants/app.constants.js';
-import { AUTH_ERRORS } from '../constants/error.constants.js';
+import { AUTH_ERRORS } from '../constants/index.js';
 import { USER_VALIDATION } from '../constants/user.constants.js';
 import { sanitizeUserData } from '../utils/user.helpers.js';
 import bcrypt from 'bcrypt';
 import AuthRepository from '../repositories/auth.repo.js';
 import UserRepository from '../repositories/user.repo.js';
-
+import jwt from 'jsonwebtoken';
+import dotenv from "dotenv";
 class AuthService {
   constructor() {
     this.authRepository = new AuthRepository(db);
@@ -41,9 +41,26 @@ class AuthService {
     // add info about last_login
     const result = await this.authRepository.updateLastLogin(user.id);
 
-    //TODO: JWT sign here
+    // TODO: JWT sign here
+    const token = jwt.sign(
+      {
+        auth: {
+          id: result.id,
+          username: result.username,
+          email: result.email,
+          age: result.age,
+          isActive: result.isActive,
+          createdAt: result.createdAt,
+          updatedAt: result.updatedAt,
+          activatedAt: result.activatedAt,
+          lastLogin: result.lastLogin,
+        },
+      },
+      process.env.JWT_SECRET || 'change_me',
+      { expiresIn: '1d' },
+    );
 
-    return result;
+    return token;
   }
 
   hasEmail(data) {

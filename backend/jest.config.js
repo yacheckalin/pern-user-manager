@@ -2,6 +2,10 @@ export default {
   // Test environment
   testEnvironment: "node",
 
+  // ESM support
+  transform: {},
+  transformIgnorePatterns: ["node_modules/(?!(bcrypt|jsonwebtoken)/)"],
+
   // Test file patterns
   testMatch: [
     "**/tests/unit/**/*.test.js",

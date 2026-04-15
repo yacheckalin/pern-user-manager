@@ -8,6 +8,9 @@ import app from "../../../index.js";
 import bcrypt from "bcrypt";
 import { AUTH_ERRORS, BCRYPT_ROUNDS, HTTP_BAD_REQUEST, HTTP_UNAUTHORIZED, USER_MESSAGES } from "../../../constants/index.js";
 
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv'
+
 describe("User Login E2E Flow", () => {
   const mockUserData = {
     username: 'username',
@@ -42,22 +45,44 @@ describe("User Login E2E Flow", () => {
     expect(response.status).toBe(200);
     expect(response.body.success).toBe(true);
     expect(response.body.data).toBeDefined();
-    expect(response.body.data.id).toBeDefined();
-    expect(response.body.data.username).toBe(mockUserData.username);
-    expect(response.body.data.email).toBe(mockUserData.email);
-    expect(response.body.data.age).toBe(mockUserData.age);
-    expect(response.body.data.isActive).toBe(false);
-    expect(response.body.data.lastLogin).toBeDefined();
+    expect(response.body.message).toBe(USER_MESSAGES.AUTHORIZED)
+
+    jwt.verify(response.body.data, process.env.JWT_SECRET, (err, item) => {
+      if (err) {
+        console.error(err)
+      }
+      expect(item.auth.id).toBeDefined();
+      expect(item.auth.username).toBe(mockUserData.username);
+      expect(item.auth.email).toBe(mockUserData.email);
+      expect(item.auth.age).toBe(mockUserData.age);
+      expect(item.auth.isActive).toBe(false)
+      expect(item.auth.lastLogin).toBeDefined();
+
+    });
+
   });
 
   it('should login an existing user via [email] successfully', async () => {
     const response = await request(app).post("/auth/login").send({ username: "valid@email.com", password: 'password_hash' })
     expect(response.status).toBe(200);
     expect(response.body.success).toBe(true);
+
     expect(response.body.message).toBe(USER_MESSAGES.AUTHORIZED);
-    expect(response.body.data.id).toBeDefined();
-    expect(response.body.data.lastLogin).toBeDefined();
-    expect(response.body.data.email).toBe(mockUserData.email)
+    expect(response.body.data).toBeDefined();
+    expect(response.body.data).not.toBe(null)
+
+    jwt.verify(response.body.data, process.env.JWT_SECRET, (err, item) => {
+      if (err) {
+        console.error(err)
+      }
+      expect(item.auth.id).toBeDefined();
+      expect(item.auth.username).toBe(mockUserData.username);
+      expect(item.auth.email).toBe(mockUserData.email);
+      expect(item.auth.age).toBe(mockUserData.age);
+      expect(item.auth.isActive).toBe(false)
+      expect(item.auth.lastLogin).toBeDefined();
+
+    });
   })
 
   it(`should throw ${AUTH_ERRORS.INVALID_CRIDENTIALS} `, async () => {

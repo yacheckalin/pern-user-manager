@@ -1,6 +1,8 @@
 import { AUTH_ERRORS } from "../../../constants/index.js";
 import { USER_VALIDATION } from "../../../constants/user.constants.js";
 import { jest } from "@jest/globals";
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
 
 // Mock bcrypt module
 jest.unstable_mockModule("bcrypt", () => ({
@@ -86,8 +88,12 @@ describe("AuthService - Unit Tests", () => {
 
         const result = await authService.login(loginData);
 
-        expect(result.id).toBeDefined();
-        expect(result.username).toBe(mockUser.username)
+        expect(result).toBeDefined();
+
+        jwt.verify(result, process.env.JWT_SECRET || 'change_me', (err, item) => {
+          expect(item.auth.id).toBeDefined();
+          expect(item.auth.username).toBe(mockUser.username)
+        })
         expect(mockUserRepository.findUserByName).toHaveBeenCalledWith("janeDoe");
         expect(mockAuthRepository.updateLastLogin).toHaveBeenCalled();
         expect(mockBcrypt.compare).toHaveBeenCalledWith("SecurePass123", mockUser.passwordHash);
@@ -105,7 +111,13 @@ describe("AuthService - Unit Tests", () => {
 
         const result = await authService.login(loginData);
 
-        expect(result).toEqual(mockUser);
+        expect(result).toBeDefined();
+
+        jwt.verify(result, process.env.JWT_SECRET || 'change_me', (err, item) => {
+          expect(item.auth.id).toBeDefined();
+          expect(item.auth.username).toBe(mockUser.username);
+          expect(item.auth.email).toBe(mockUser.email)
+        })
         expect(mockUserRepository.findUserByEmail).toHaveBeenCalledWith("jane@example.com");
         expect(mockBcrypt.compare).toHaveBeenCalledWith("SecurePass123", mockUser.passwordHash);
       });
