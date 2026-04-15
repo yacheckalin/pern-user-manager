@@ -20,5 +20,9 @@ export const BCRYPT_ROUNDS = 10;
 // JWT
 export const JWT_DEFAULTS = {
   EXPIRES_IN: '1d',
-  SECRET: 'default_jwt_secret'
+  SECRET: 'default_jwt_secret',
+  ACCESS_TOKEN_SECRET: 'super-secret-access-key-minimum-32-character',
+  REFRESH_TOKEN_SECRET: 'super-secret-refresh-key-minimum-32-character',
+  ACCESS_TOKEN_EXPIRES_IN: '30m',
+  REFRESH_TOKEN_EXPIRES_IN: '7d'
 }

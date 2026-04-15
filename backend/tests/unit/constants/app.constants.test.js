@@ -83,13 +83,22 @@ describe("App Constants", () => {
   describe("JWT Constants", () => {
     const checkJwtDefaults = [
       'EXPIRES_IN',
-      'SECRET'
+      'SECRET',
+      'ACCESS_TOKEN_SECRET',
+      'REFRESH_TOKEN_SECRET',
+      'ACCESS_TOKEN_EXPIRES_IN',
+      'REFRESH_TOKEN_EXPIRES_IN'
     ];
 
     const mockJwtDefault = {
       EXPIRES_IN: '1d',
-      SECRET: 'default_jwt_secret'
+      SECRET: 'default_jwt_secret',
+      ACCESS_TOKEN_SECRET: 'super-secret-access-key-minimum-32-character',
+      REFRESH_TOKEN_SECRET: 'super-secret-refresh-key-minimum-32-character',
+      ACCESS_TOKEN_EXPIRES_IN: '30m',
+      REFRESH_TOKEN_EXPIRES_IN: '7d'
     }
+
 
     it('should have all JWT_DEFAULTS constants', () => {
       checkJwtDefaults.forEach((item) => {

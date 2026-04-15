@@ -60,6 +60,8 @@ class AuthService {
       { expiresIn: process.env.JWT_EXPIRES_IN || JWT_DEFAULTS.EXPIRES_IN },
     );
 
+
+
     return token;
   }
 
