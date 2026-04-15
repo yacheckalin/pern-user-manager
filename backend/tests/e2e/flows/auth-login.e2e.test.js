@@ -6,7 +6,7 @@ import db from "../../../config/database.js";
 import request from "supertest";
 import app from "../../../index.js";
 import bcrypt from "bcrypt";
-import { AUTH_ERRORS, BCRYPT_ROUNDS, HTTP_BAD_REQUEST, HTTP_UNAUTHORIZED, USER_MESSAGES } from "../../../constants/index.js";
+import { AUTH_ERRORS, BCRYPT_ROUNDS, HTTP_BAD_REQUEST, HTTP_OK, HTTP_UNAUTHORIZED, USER_MESSAGES } from "../../../constants/index.js";
 
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv'
@@ -46,8 +46,10 @@ describe("User Login E2E Flow", () => {
     expect(response.body.success).toBe(true);
     expect(response.body.data).toBeDefined();
     expect(response.body.message).toBe(USER_MESSAGES.AUTHORIZED)
+    expect(response.body.data.user.username).toBe(mockUserData.username);
+    expect(response.body.data.user.email).toBe(mockUserData.email);
 
-    jwt.verify(response.body.data, process.env.JWT_SECRET, (err, item) => {
+    jwt.verify(response.body.data.accessToken, process.env.JWT_ACCESS_TOKEN_SECRET, (err, item) => {
       if (err) {
         console.error(err)
       }
@@ -64,14 +66,16 @@ describe("User Login E2E Flow", () => {
 
   it('should login an existing user via [email] successfully', async () => {
     const response = await request(app).post("/auth/login").send({ username: "valid@email.com", password: 'password_hash' })
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(HTTP_OK);
     expect(response.body.success).toBe(true);
 
     expect(response.body.message).toBe(USER_MESSAGES.AUTHORIZED);
     expect(response.body.data).toBeDefined();
-    expect(response.body.data).not.toBe(null)
+    expect(response.body.data).not.toBe(null);
+    expect(response.body.data.user.username).toBe(mockUserData.username);
+    expect(response.body.data.user.email).toBe(mockUserData.email);
 
-    jwt.verify(response.body.data, process.env.JWT_SECRET, (err, item) => {
+    jwt.verify(response.body.data.accessToken, process.env.JWT_ACCESS_TOKEN_SECRET, (err, item) => {
       if (err) {
         console.error(err)
       }
