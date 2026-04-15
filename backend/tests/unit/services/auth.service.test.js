@@ -1,5 +1,5 @@
-import { AUTH_ERRORS } from "../../../constants/index.js";
-import { USER_VALIDATION } from "../../../constants/user.constants.js";
+import { AUTH_ERRORS, JWT_DEFAULTS } from "../../../constants/index.js";
+import { USER_MESSAGES, USER_VALIDATION } from "../../../constants/user.constants.js";
 import { jest } from "@jest/globals";
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
@@ -90,9 +90,10 @@ describe("AuthService - Unit Tests", () => {
 
         expect(result).toBeDefined();
 
-        jwt.verify(result, process.env.JWT_SECRET || 'change_me', (err, item) => {
+        jwt.verify(result.accessToken, process.env.JWT_ACCESS_TOKEN_SECRET || JWT_DEFAULTS.ACCESS_TOKEN_SECRET, (err, item) => {
           expect(item.auth.id).toBeDefined();
           expect(item.auth.username).toBe(mockUser.username)
+          expect(item.auth.email).toBe(mockUser.email)
         })
         expect(mockUserRepository.findUserByName).toHaveBeenCalledWith("janeDoe");
         expect(mockAuthRepository.updateLastLogin).toHaveBeenCalled();
@@ -113,7 +114,7 @@ describe("AuthService - Unit Tests", () => {
 
         expect(result).toBeDefined();
 
-        jwt.verify(result, process.env.JWT_SECRET || 'change_me', (err, item) => {
+        jwt.verify(result.accessToken, process.env.JWT_ACCESS_TOKEN_SECRET || JWT_DEFAULTS.ACCESS_TOKEN_SECRET, (err, item) => {
           expect(item.auth.id).toBeDefined();
           expect(item.auth.username).toBe(mockUser.username);
           expect(item.auth.email).toBe(mockUser.email)

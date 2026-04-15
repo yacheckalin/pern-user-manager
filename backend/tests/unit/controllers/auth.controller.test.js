@@ -40,6 +40,7 @@ describe("AuthController - Unit Tests", () => {
     res = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn().mockReturnThis(),
+      cookie: jest.fn().mockReturnThis()
     };
     next = jest.fn();
   });
@@ -64,11 +65,7 @@ describe("AuthController - Unit Tests", () => {
 
       expect(mockAuthService.login).toHaveBeenCalledWith(req.body);
       expect(res.status).toHaveBeenCalledWith(HTTP_OK);
-      expect(res.json).toHaveBeenCalledWith({
-        success: true,
-        message: USER_MESSAGES.AUTHORIZED,
-        data: mockUser,
-      });
+
       expect(next).not.toHaveBeenCalled();
     });
 

@@ -1,3 +1,4 @@
+import { ONE_WEEK } from "../constants/app.constants.js";
 import { AUTH_ERRORS } from "../constants/error.constants.js";
 import { HTTP_BAD_REQUEST, HTTP_INTERNAL_SERVER_ERROR, HTTP_OK, HTTP_UNAUTHORIZED } from "../constants/http.constants.js";
 import { USER_MESSAGES } from "../constants/user.constants.js";
@@ -10,11 +11,21 @@ class AuthController {
 
   async login(req, res, next) {
     try {
-      const user = await this.authService.login(req.body);
+      const { accessToken, refreshToken, user } = await this.authService.login(req.body);
+
+      // Set refresh token as HTTP-only cookie
+      res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: ONE_WEEK
+      });
+
+
       res.status(HTTP_OK).json({
         success: true,
         message: USER_MESSAGES.AUTHORIZED,
-        data: user
+        data: { accessToken, user }
       })
     } catch (error) {
       // Handle validation errors

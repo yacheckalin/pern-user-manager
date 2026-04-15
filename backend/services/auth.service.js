@@ -41,28 +41,49 @@ class AuthService {
     // add info about last_login
     const result = await this.authRepository.updateLastLogin(user.id);
 
-    // TODO: JWT sign here
-    const token = jwt.sign(
+    const accessToken = this.generateAccessToken(result);
+    const refreshToken = this.generateRefreshToken(result);
+
+    return { accessToken, refreshToken, user };
+  }
+
+  generateRefreshToken(user) {
+    return jwt.sign({
+      auth: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        age: user.age,
+        isActive: user.isActive,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+        activatedAt: user.activatedAt,
+        lastLogin: user.lastLogin,
+      },
+    },
+      process.env.JWT_REFRESH_TOKEN_SECRET || JWT_DEFAULTS.REFRESH_TOKEN_SECRET,
+      { expiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRES_IN || JWT_DEFAULTS.REFRESH_TOKEN_EXPIRES_IN },
+    )
+  }
+
+  generateAccessToken(user) {
+    return jwt.sign(
       {
         auth: {
-          id: result.id,
-          username: result.username,
-          email: result.email,
-          age: result.age,
-          isActive: result.isActive,
-          createdAt: result.createdAt,
-          updatedAt: result.updatedAt,
-          activatedAt: result.activatedAt,
-          lastLogin: result.lastLogin,
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          age: user.age,
+          isActive: user.isActive,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
+          activatedAt: user.activatedAt,
+          lastLogin: user.lastLogin,
         },
       },
-      process.env.JWT_SECRET || JWT_DEFAULTS.SECRET,
-      { expiresIn: process.env.JWT_EXPIRES_IN || JWT_DEFAULTS.EXPIRES_IN },
-    );
-
-
-
-    return token;
+      process.env.JWT_ACCESS_TOKEN_SECRET || JWT_DEFAULTS.ACCESS_TOKEN_SECRET,
+      { expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRES_IN || JWT_DEFAULTS.ACCESS_TOKEN_EXPIRES_IN },
+    )
   }
 
   hasEmail(data) {
