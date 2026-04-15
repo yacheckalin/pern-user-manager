@@ -299,6 +299,8 @@ Base URL: `http://localhost:5000/users`
 - `PATCH /users/:id/activate` - Activate user by ID
 - `POST /users/register` - Register a new user
 
+- `POST /auth/login` - Authenticate user username(username |email, password)
+
 ## ✅ Testing
 
 ### Backend Tests

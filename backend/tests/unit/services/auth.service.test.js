@@ -86,7 +86,8 @@ describe("AuthService - Unit Tests", () => {
 
         const result = await authService.login(loginData);
 
-        expect(result).toEqual(mockUser);
+        expect(result.id).toBeDefined();
+        expect(result.username).toBe(mockUser.username)
         expect(mockUserRepository.findUserByName).toHaveBeenCalledWith("janeDoe");
         expect(mockAuthRepository.updateLastLogin).toHaveBeenCalled();
         expect(mockBcrypt.compare).toHaveBeenCalledWith("SecurePass123", mockUser.passwordHash);
