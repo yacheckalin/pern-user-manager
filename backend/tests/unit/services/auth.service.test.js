@@ -39,12 +39,14 @@ const mockBcrypt = bcryptModule.default;
 describe("AuthService - Unit Tests", () => {
   let authService;
   let mockUserRepository;
+  let mockAuthRepository;
 
   const mockUser = {
     id: 1,
     username: "janeDoe",
     email: "jane@example.com",
     passwordHash: "$2b$10$hashedPasswordExample",
+    lastLogin: new Date("2024-01-01T00:00:00.000Z")
   };
 
   beforeEach(() => {
@@ -58,9 +60,12 @@ describe("AuthService - Unit Tests", () => {
       findUserByName: jest.fn(),
       findUserByEmail: jest.fn(),
     };
+    mockAuthRepository = {
+      updateLastLogin: jest.fn()
+    }
 
     // Mock repository constructors to return mock instances
-    AuthRepository.mockImplementation(() => ({}));
+    AuthRepository.mockImplementation(() => mockAuthRepository);
     UserRepository.mockImplementation(() => mockUserRepository);
 
     // Create AuthService instance
@@ -76,12 +81,14 @@ describe("AuthService - Unit Tests", () => {
         };
 
         mockUserRepository.findUserByName.mockResolvedValue(mockUser);
+        mockAuthRepository.updateLastLogin.mockResolvedValue({ ...mockUser, lastLogin: new Date() })
         mockBcrypt.compare.mockResolvedValue(true);
 
         const result = await authService.login(loginData);
 
         expect(result).toEqual(mockUser);
         expect(mockUserRepository.findUserByName).toHaveBeenCalledWith("janeDoe");
+        expect(mockAuthRepository.updateLastLogin).toHaveBeenCalled();
         expect(mockBcrypt.compare).toHaveBeenCalledWith("SecurePass123", mockUser.passwordHash);
       });
 
@@ -92,6 +99,7 @@ describe("AuthService - Unit Tests", () => {
         };
 
         mockUserRepository.findUserByEmail.mockResolvedValue(mockUser);
+        mockAuthRepository.updateLastLogin.mockResolvedValue(mockUser);
         mockBcrypt.compare.mockResolvedValue(true);
 
         const result = await authService.login(loginData);

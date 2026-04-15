@@ -6,35 +6,25 @@ class AuthRepository {
     this.table = 'users';
   }
 
+
   /**
-   * Get user info by (username || email) AND password
+   * Update last_login information
    * 
-   * @param {*} data {username, email, password}
-   * @returns User
+   * 
+   * @param {*} id 
+   * @param {*} returning 
+   * @returns 
    */
-  async login(data, returning = "*") {
-    const { username, email, password } = data;
-    const filter = [];
-    const params = [];
-    if (username) {
-      filter.push(' username = $1');
-      params.push(username)
-    }
-    if (email) {
-      filter.push(' email = $1')
-      params.push(email)
-    }
+  async updateLastLogin(id, returning = "*") {
+    const query = `
+      UPDATE ${this.table} 
+      SET last_login = CURRENT_TIMESTAMP
+      WHERE id = $1
+      RETURNING ${returning}
+      `;
+    const result = await this.pool.query(query, [id]);
 
-    filter.push(' password_hash = $2 ');
-    params.push(password);
-
-    const { rows } = await this.pool.query(
-      `SELECT ${returning} FROM ${this.table} WHERE ${filter.join(' AND ')}`,
-      params,
-    );
-
-    return User.fromDatabase(rows[0]);
-
+    return User.fromDatabase(result.rows[0])
   }
 }
 

@@ -16,11 +16,7 @@ let mockDb = {
 
 describe("AuthRepository", () => {
   let mockAuthRepository;
-  let tableName = "users";
-  let mockLoginData = {
-    username: "testUsername",
-    password: "test_password"
-  }
+
 
   // Mock user data
   const mockUserData = {
@@ -43,28 +39,31 @@ describe("AuthRepository", () => {
     mockAuthRepository = new AuthRepository(mockDb.pool);
   });
 
-  describe('login', () => {
+  describe('updateLastLogin', () => {
     it('should return user', async () => {
       const mockRecord = {
         id: 1,
         username: 'testUsername',
-        email: 'test@test.tt'
+        email: 'test@test.tt',
+        lastLogin: new Date("2024-01-01T00:00:00.000Z")
       }
       mockDb.pool.query.mockResolvedValue({ rows: [mockRecord] });
-      const res = await mockAuthRepository.login(mockLoginData);
+      const res = await mockAuthRepository.updateLastLogin(1);
 
       expect(res).toBeInstanceOf(User);
       expect(res.id).toBe(1);
-      expect(res.username).toBe(mockLoginData.username)
+      expect(res.username).toBe(mockRecord.username)
       expect(res.email).toBe(mockRecord.email)
     })
     it('should return null', async () => {
 
       mockDb.pool.query.mockResolvedValue({ rows: [] });
-      const res = await mockAuthRepository.login(mockLoginData);
+      const res = await mockAuthRepository.updateLastLogin(1);
 
       expect(res).toBe(null);
 
     })
   })
+
+
 })

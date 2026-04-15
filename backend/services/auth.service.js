@@ -18,7 +18,6 @@ class AuthService {
     let user = null;
     this.validateLoginUserData(sanitizedData);
 
-
     // if email provided
     if (this.hasEmail(sanitizedData.username)) {
       user = await this.userRepository.findUserByEmail(sanitizedData.username)
@@ -39,7 +38,12 @@ class AuthService {
       throw new Error(AUTH_ERRORS.INVALID_CRIDENTIALS)
     }
 
-    return user;
+    // add info about last_login
+    const result = await this.authRepository.updateLastLogin(user.id);
+
+    //TODO: JWT sign here
+
+    return result;
   }
 
   hasEmail(data) {
