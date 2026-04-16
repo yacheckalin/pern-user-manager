@@ -64,3 +64,6 @@ Content-Type: application/json
 
 ### Logout user
 POST http://localhost:5000/auth/logout
+
+### Refresh token
+POST http://localhost:5000/auth/refresh

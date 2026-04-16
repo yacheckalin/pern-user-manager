@@ -33,7 +33,6 @@ class RefreshTokenService {
         Date.now() + ms(process.env.JWT_REFRESH_TOKEN_EXPIRES_IN || ONE_WEEK),
       ),
     });
-
     return { accessToken, refreshToken, storedToken };
   }
 

@@ -301,6 +301,7 @@ Base URL: `http://localhost:5000/users`
 
 - `POST /auth/login` - Authenticate user username(username |email, password)
 - `POST /auth/logout` - Logout user
+- `POST /auth/refresh` - Rotate Access/Refresh Tokens
 
 ## ✅ Testing
 
