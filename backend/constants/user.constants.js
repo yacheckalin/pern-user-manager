@@ -29,7 +29,8 @@ export const USER_EVENTS = {
   LOGOUT: "user.logout",
   PASSWORD_CHANGED: "user.password.changed",
   ACTIVATED: "user.activated",
-  REGISTERED: "user.registered"
+  REGISTERED: "user.registered",
+  AUTHORIZED: "user.authorized",
 };
 
 // User success messages
@@ -39,5 +40,7 @@ export const USER_MESSAGES = {
   DELETED: "User was deleted successfully",
   ACTIVATED: "User was activated successfully",
   PASSWORD_CHANGED: "User password was changed successfully",
-  REGISTERED: "User was registered successfully"
+  REGISTERED: "User was registered successfully",
+  AUTHORIZED: "User authorized successfully",
+  LOGOUT: "User logout successfully"
 };

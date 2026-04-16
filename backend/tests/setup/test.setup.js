@@ -22,9 +22,9 @@ const projectRoot = path.resolve(__dirname, "../..");
 
 const loadEnvFiles = () => {
   const envFiles = [
+    { path: path.join(projectRoot, ".env"), required: false },
     { path: path.join(projectRoot, ".env.test"), required: false },
     { path: path.join(projectRoot, ".env.test.local"), required: false },
-    { path: path.join(projectRoot, ".env"), required: false },
   ];
 
   for (const envFile of envFiles) {

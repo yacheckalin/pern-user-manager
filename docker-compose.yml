@@ -5,15 +5,20 @@ services:
     container_name: postgres_db
     restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: secret_password
-      POSTGRES_DB: my_database
-      DATABASE_URL: postgres://postgres:secret_password@db:5432/my_database
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      DATABASE_URL: ${DATABASE_URL}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d my_database"]
       interval: 5s
       timeout: 5s
       retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     ports:
       - "5432:5432"
     volumes:
@@ -26,6 +31,11 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: admin
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     ports:
       - "5050:80"
     depends_on:
@@ -39,23 +49,37 @@ services:
       - /app/node_modules # this will keep modules inside the container
     restart: always
     ports:
-      - "5000:5000"
+      - "${NODE_PORT}:5000"
+    env_file:
+      - .env
     environment:
       - NODE_ENV=development
-      - DATABASE_URL=postgres://postgres:secret_password@db:5432/my_database
-
+      - DATABASE_URL=${DATABASE_URL}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     depends_on:
       - db
-    command: sh -c "npm run migrate && npm run dev"
+    command: sh -c "npm run migrate:docker && npm run dev"
   frontend:
     build: ./frontend
     container_name: react_frontend
     restart: always
     ports:
-      - "3000:3000"
+      - "${REACT_PORT}:3000"
     stdin_open: true
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     depends_on:
       - backend
+    # volumes:
+    #   - ./frontend:/app
+    #   - /app/node_modules
 
 volumes:
   pgdata:

@@ -1,4 +1,4 @@
-export { HTTP_INTERNAL_SERVER_ERROR } from "../constants/http.constants.js";
+import { HTTP_INTERNAL_SERVER_ERROR } from "../constants/index.js";
 
 const errorHandler = (err, req, res, next) => {
   if (process.env.LOG_LEVEL === "error" || process.env.NODE_ENV === "development") {

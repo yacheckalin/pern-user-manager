@@ -19,7 +19,7 @@ Content-Type: application/json
 
 {
   "username": "test2",
-  "email":"test2@test.tt"
+  "email":"invalidemail"
 }
 
 ### Get user by id
@@ -47,8 +47,20 @@ POST http://localhost:5000/users/register
 Content-Type: application/json
 
 {
-  "username":"sos",
-  "email": "sos@sos.com",
+  "username":"sos2",
+  "email": "sos2@sos.com",
   "password": "password",
   "confirm_password": "password"
 }
+
+### Login user
+POST http://localhost:5000/auth/login
+Content-Type: application/json
+
+{
+  "username": "sos2@sos.com",
+  "password": "password"
+}
+
+### Logout user
+POST http://localhost:5000/auth/logout

@@ -21,3 +21,20 @@ export const DB_ERRORS = {
   CONNECTION_FAILED: "Database connection failed",
   QUERY_FAILED: "Database query failed",
 };
+
+// Authentication errors
+export const AUTH_ERRORS = {
+  INVALID_CRIDENTIALS: "Invalid cridentials",
+  INVALID_USERNAME_OR_EMAIL: "Invalid username or email",
+  INVALID_EMAIL: "Invalid email",
+  INVALID_USERNAME: "Invalid username",
+  INVALID_PASSWORD: "Invalid password",
+  UNAUTHORIZED_ACCESS: "Unauthorized access detected",
+};
+
+// Tokens Errors
+export const TOKEN_ERRORS = {
+  TOKEN_EXPIRED: "Token has expired",
+  TOKEN_NOT_FOUND: "Token not found",
+  TOKEN_REVOKED: "Token revoked - possible token theft detected",
+};
