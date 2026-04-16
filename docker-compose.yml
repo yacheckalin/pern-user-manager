@@ -62,7 +62,7 @@ services:
         max-file: "3"
     depends_on:
       - db
-    command: sh -c "npm run migrate && npm run dev"
+    command: sh -c "npm run migrate:docker && npm run dev"
   frontend:
     build: ./frontend
     container_name: react_frontend
