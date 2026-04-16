@@ -26,3 +26,5 @@ export const JWT_DEFAULTS = {
   ACCESS_TOKEN_EXPIRES_IN: '30m',
   REFRESH_TOKEN_EXPIRES_IN: '7d'
 }
+
+export const REFRESH_TOKEN_COOKIE_NAME = 'refreshToken'

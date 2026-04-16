@@ -1,5 +1,5 @@
 import db from '../config/database.js';
-import { AUTH_ERRORS, JWT_DEFAULTS } from '../constants/index.js';
+import { AUTH_ERRORS, JWT_DEFAULTS, TOKEN_ERRORS } from '../constants/index.js';
 import { USER_VALIDATION } from '../constants/user.constants.js';
 import { sanitizeUserData } from '../utils/user.helpers.js';
 import bcrypt from 'bcrypt';
@@ -52,6 +52,14 @@ class AuthService {
     const result = await this.authRepository.updateLastLogin(user.id);
 
     return { accessToken, refreshToken, result, storedToken };
+  }
+
+  async logout(data) {
+    const result = await this.refreshTokenService.revokeToken(data);
+    if (!result) {
+      throw new Error(TOKEN_ERRORS.TOKEN_NOT_FOUND);
+    }
+    return result;
   }
 
   hasEmail(data) {

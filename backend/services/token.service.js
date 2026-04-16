@@ -1,14 +1,17 @@
 import db from '../config/database.js';
 import RefreshTokenRepository from '../repositories/token.repo.js';
-import { JWT_DEFAULTS, ONE_WEEK } from '../constants/index.js';
+import { JWT_DEFAULTS, ONE_WEEK, TOKEN_ERRORS, USER_ERRORS } from '../constants/index.js';
 import dotenv from 'dotenv';
 import crypto from 'crypto';
 import ms from 'ms';
 import jwt from 'jsonwebtoken'
+import { sanitizeUserData } from '../utils/user.helpers.js';
+import UserRepository from '../repositories/user.repo.js';
 
 class RefreshTokenService {
   constructor() {
     this.refreshTokenRepository = new RefreshTokenRepository(db);
+    this.userRepository = new UserRepository(db);
   }
 
   async createToken(data) {
@@ -25,6 +28,53 @@ class RefreshTokenService {
     })
 
     return { accessToken, refreshToken, storedToken }
+
+  }
+
+  async revokeToken(data) {
+    const result = await this.refreshTokenRepository.revokeToken(data);
+    return result;
+  }
+
+  async validateWithRotate(data) {
+
+    // we should validate data here
+    const sanitizedData = sanitizeUserData(data);
+    const refreshToken = await this.refreshTokenRepository.findTokenByHash(sanitizedData.refreshToken);
+
+
+    if (!refreshToken) {
+      throw new Error(TOKEN_ERRORS.TOKEN_NOT_FOUND);
+    }
+
+    if (refreshToken.revokedAt) {
+      throw new Error(TOKEN_ERRORS.TOKEN_REVOKED)
+    }
+
+    if (new Date() > refreshToken.expiresAt) {
+      throw new Error(TOKEN_ERRORS.TOKEN_EXPIRED)
+    }
+
+    // get user info
+    const user = await this.userRepository.findUserById(refreshToken.userId);
+    if (!user) {
+      throw new Error(USER_ERRORS.NOT_FOUND)
+    }
+    // create new token and revoke old one
+    const newToken = await this.createToken({ ...data, ...user });
+
+    const rotatedToken = await this.refreshTokenRepository.revokeAndReplaceToken({
+      newTokenId: newToken.storedToken.id,
+      tokenId: refreshToken.id
+    });
+
+    return {
+      success: true,
+      data: {
+        newToken: { ...newToken },
+        user: { ...user }
+      }
+    }
 
   }
 

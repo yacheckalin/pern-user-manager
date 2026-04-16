@@ -1,9 +1,9 @@
-import { ONE_WEEK } from "../constants/app.constants.js";
-import { AUTH_ERRORS } from "../constants/error.constants.js";
-import { HTTP_BAD_REQUEST, HTTP_INTERNAL_SERVER_ERROR, HTTP_OK, HTTP_UNAUTHORIZED } from "../constants/http.constants.js";
+import { JWT_DEFAULTS, ONE_WEEK, REFRESH_TOKEN_COOKIE_NAME } from "../constants/app.constants.js";
+import { AUTH_ERRORS, TOKEN_ERRORS } from "../constants/error.constants.js";
+import { HTTP_BAD_REQUEST, HTTP_FORBIDDEN, HTTP_INTERNAL_SERVER_ERROR, HTTP_OK, HTTP_UNAUTHORIZED } from "../constants/http.constants.js";
 import { USER_MESSAGES } from "../constants/user.constants.js";
 import AuthService from "../services/auth.service.js";
-
+import ms from 'ms';
 class AuthController {
   constructor() {
     this.authService = new AuthService();
@@ -18,13 +18,12 @@ class AuthController {
       });
 
       // Set refresh token as HTTP-only cookie
-      res.cookie('refreshToken', storedToken.tokenHash, {
+      res.cookie(REFRESH_TOKEN_COOKIE_NAME, storedToken.tokenHash, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
-        maxAge: process.env.JWT_REFRESH_TOKEN_EXPIRES_IN || ONE_WEEK
+        maxAge: ms(process.env.JWT_REFRESH_TOKEN_EXPIRES_IN || JWT_DEFAULTS.REFRESH_TOKEN_EXPIRES_IN)
       });
-
 
       res.status(HTTP_OK).json({
         success: true,
@@ -50,17 +49,31 @@ class AuthController {
     }
   }
 
-  logout(req, res, next) {
-    const refreshToken = req.cookie?.refreshToken;
+  async logout(req, res, next) {
+    const refreshToken = req.cookies?.refreshToken;
 
     if (refreshToken) {
-      //TODO: add to blacklist or remove from DB
+      //TODO: add to blacklist and rotate refresh token in DB
+      try {
+        await this.authService.logout({ userId: req.user.id, tokenHash: refreshToken });
+
+        res.clearCookie(REFRESH_TOKEN_COOKIE_NAME);
+
+        res.status(HTTP_OK).json({
+          success: true,
+          message: USER_MESSAGES.LOGOUT
+        })
+
+      } catch (error) {
+        if (error.message === TOKEN_ERRORS.TOKEN_NOT_FOUND ||
+          error.message === TOKEN_ERRORS.TOKEN_EXPIRED ||
+          error.message === TOKEN_ERRORS.TOKEN_REVOKED
+        ) {
+          next({ message: error.message, statusCode: HTTP_UNAUTHORIZED })
+        }
+        next({ message: error.message, statusCode: HTTP_INTERNAL_SERVER_ERROR })
+      }
     }
-    res.clearCookie('refreshToken');
-    res.status(HTTP_OK).json({
-      success: true,
-      message: USER_MESSAGES.LOGOUT
-    })
 
   }
 }

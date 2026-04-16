@@ -9,7 +9,8 @@ export const sanitizeUserData = (data) => ({
   confirm_password: typeof data.confirm_password == 'string' ? validator.trim(data.confirm_password) : data.confirm_password,
   age: typeof data.age == 'number' ? data.age : validator.toInt(String(data.age) || '0'),
   ip: data.ip ? validator.trim(String(data.ip)) : data.ip,
-  userAgent: data.userAgent ? validator.trim(String(data.userAgent)) : data.userAgent
+  userAgent: data.userAgent ? validator.trim(String(data.userAgent)) : data.userAgent,
+  refreshToken: data.refreshToken ? validator.trim(String(data.refreshToken)) : data.refreshToken
 });
 
 
