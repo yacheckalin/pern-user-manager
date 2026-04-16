@@ -1,6 +1,9 @@
 import express from "express";
 import AuthController from "../controllers/auth.controller.js";
-import verifyRefreshToken from "../middleware/auth-handler.js";
+import {
+  verifyRefreshToken,
+  verifyAccess,
+} from "../middleware/auth-handler.js";
 
 const router = express.Router();
 const authController = new AuthController();

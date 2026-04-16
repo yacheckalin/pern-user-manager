@@ -37,4 +37,6 @@ export const TOKEN_ERRORS = {
   TOKEN_EXPIRED: "Token has expired",
   TOKEN_NOT_FOUND: "Token not found",
   TOKEN_REVOKED: "Token revoked - possible token theft detected",
+  NO_ACCESS_TOKEN: "No access token",
+  INVALID_ACCESS_TOKEN: "Invalid access token",
 };

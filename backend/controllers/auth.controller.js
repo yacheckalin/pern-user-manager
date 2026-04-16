@@ -1,19 +1,16 @@
 import {
-  ACCESS_TOKEN_COOKIE_NAME,
-  JWT_DEFAULTS,
-  ONE_WEEK,
-  REFRESH_TOKEN_COOKIE_NAME,
-  TOKEN_MESSAGES,
-} from "../constants/app.constants.js";
-import { AUTH_ERRORS, TOKEN_ERRORS } from "../constants/error.constants.js";
-import {
   HTTP_BAD_REQUEST,
-  HTTP_FORBIDDEN,
   HTTP_INTERNAL_SERVER_ERROR,
   HTTP_OK,
   HTTP_UNAUTHORIZED,
-} from "../constants/http.constants.js";
-import { USER_MESSAGES } from "../constants/user.constants.js";
+  USER_MESSAGES,
+  AUTH_ERRORS,
+  TOKEN_ERRORS,
+  ACCESS_TOKEN_COOKIE_NAME,
+  JWT_DEFAULTS,
+  REFRESH_TOKEN_COOKIE_NAME,
+  TOKEN_MESSAGES,
+} from "../constants/index.js";
 import AuthService from "../services/auth.service.js";
 import ms from "ms";
 class AuthController {

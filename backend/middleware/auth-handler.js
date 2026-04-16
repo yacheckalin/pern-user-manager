@@ -7,10 +7,12 @@ import {
   AUTH_ERRORS,
   HTTP_INTERNAL_SERVER_ERROR,
   ACCESS_TOKEN_COOKIE_NAME,
+  TOKEN_ERRORS,
 } from "../constants/index.js";
 import RefreshTokenService from "../services/token.service.js";
 import dotenv from "dotenv";
 import ms from "ms";
+import jwt from "jsonwebtoken";
 
 const verifyRefreshToken = async (req, res, next) => {
   const refreshToken =
@@ -84,4 +86,31 @@ const verifyRefreshToken = async (req, res, next) => {
   }
 };
 
-export default verifyRefreshToken;
+const verifyAccess = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(" ")[1]; // Bearer <token>
+
+  if (!token)
+    res.status(HTTP_UNAUTHORIZED).json({
+      success: false,
+      message: TOKEN_ERRORS.NO_ACCESS_TOKEN,
+    });
+
+  try {
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_ACCESS_TOKEN_SECRET || JWT_DEFAULTS.ACCESS_TOKEN_SECRET,
+    );
+
+    // Set current user info to req.user
+    req.user = decoded;
+
+    next();
+  } catch (err) {
+    next({
+      message: TOKEN_ERRORS.INVALID_ACCESS_TOKEN,
+      statusCode: HTTP_FORBIDDEN,
+    });
+  }
+};
+export { verifyRefreshToken, verifyAccess };
