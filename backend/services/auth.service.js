@@ -5,12 +5,15 @@ import { sanitizeUserData } from '../utils/user.helpers.js';
 import bcrypt from 'bcrypt';
 import AuthRepository from '../repositories/auth.repo.js';
 import UserRepository from '../repositories/user.repo.js';
+import RefershTokensService from './token.service.js';
 import jwt from 'jsonwebtoken';
 import dotenv from "dotenv";
+import RefreshTokenService from './token.service.js';
 class AuthService {
   constructor() {
     this.authRepository = new AuthRepository(db);
     this.userRepository = new UserRepository(db);
+    this.refreshTokenService = new RefreshTokenService();
   }
 
   async login(data) {
@@ -38,52 +41,17 @@ class AuthService {
       throw new Error(AUTH_ERRORS.INVALID_CRIDENTIALS)
     }
 
+    // add refresh_token to DB
+    const { accessToken, refreshToken, storedToken } = await this.refreshTokenService.createToken({
+      ...user,
+      ipAddress: data.ip,
+      userAgent: data.userAgent
+    })
+
     // add info about last_login
     const result = await this.authRepository.updateLastLogin(user.id);
 
-    const accessToken = this.generateAccessToken(result);
-    const refreshToken = this.generateRefreshToken(result);
-
-    return { accessToken, refreshToken, user };
-  }
-
-  generateRefreshToken(user) {
-    return jwt.sign({
-      auth: {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        age: user.age,
-        isActive: user.isActive,
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt,
-        activatedAt: user.activatedAt,
-        lastLogin: user.lastLogin,
-      },
-    },
-      process.env.JWT_REFRESH_TOKEN_SECRET || JWT_DEFAULTS.REFRESH_TOKEN_SECRET,
-      { expiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRES_IN || JWT_DEFAULTS.REFRESH_TOKEN_EXPIRES_IN },
-    )
-  }
-
-  generateAccessToken(user) {
-    return jwt.sign(
-      {
-        auth: {
-          id: user.id,
-          username: user.username,
-          email: user.email,
-          age: user.age,
-          isActive: user.isActive,
-          createdAt: user.createdAt,
-          updatedAt: user.updatedAt,
-          activatedAt: user.activatedAt,
-          lastLogin: user.lastLogin,
-        },
-      },
-      process.env.JWT_ACCESS_TOKEN_SECRET || JWT_DEFAULTS.ACCESS_TOKEN_SECRET,
-      { expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRES_IN || JWT_DEFAULTS.ACCESS_TOKEN_EXPIRES_IN },
-    )
+    return { accessToken, refreshToken, result, storedToken };
   }
 
   hasEmail(data) {
@@ -123,6 +91,11 @@ class AuthService {
     // Password is always required
     if (!this.hasValidPassword(password)) {
       throw new Error(AUTH_ERRORS.INVALID_PASSWORD)
+    }
+
+    // If IP provided
+    if (this.ip !== undefined && !validator.isIP(this.ip)) {
+      throw new Error("Wrong IP syntax")
     }
   }
 }

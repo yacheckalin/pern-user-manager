@@ -30,6 +30,7 @@
   "license": "MIT",
   "devDependencies": {
     "@types/cookie-parser": "^1.4.10",
+    "@types/jsonwebtoken": "^9.0.10",
     "cross-env": "^10.1.0",
     "dotenv": "^17.4.1",
     "dotenv-cli": "^11.0.0",

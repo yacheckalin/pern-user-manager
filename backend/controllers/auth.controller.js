@@ -11,14 +11,18 @@ class AuthController {
 
   async login(req, res, next) {
     try {
-      const { accessToken, refreshToken, user } = await this.authService.login(req.body);
+      const { accessToken, user, storedToken } = await this.authService.login({
+        ...req.body,
+        ip: req.ip,
+        userAgent: req.headers['user-agent']
+      });
 
       // Set refresh token as HTTP-only cookie
-      res.cookie('refreshToken', refreshToken, {
+      res.cookie('refreshToken', storedToken.tokenHash, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
-        maxAge: ONE_WEEK
+        maxAge: process.env.JWT_REFRESH_TOKEN_EXPIRES_IN || ONE_WEEK
       });
 
 
