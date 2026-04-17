@@ -25,7 +25,6 @@ class RefreshTokenService {
     const refreshToken = this.generateRefreshToken(data);
 
     // add to DB new data for existing user
-
     const storedToken = await this.refreshTokenRepository.createToken({
       ...data,
       tokenHash: this.generateTokenHash(refreshToken),
