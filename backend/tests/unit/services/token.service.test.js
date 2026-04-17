@@ -2,6 +2,11 @@ import { jest, describe, beforeEach } from "@jest/globals";
 import "dotenv/config";
 import jwt from "jsonwebtoken";
 import { sanitizeUserData } from "../../../utils/user.helpers";
+import {
+  WRONG_IP,
+  TOKEN_ERRORS,
+  USER_ERRORS,
+} from "../../../constants/index.js";
 
 jest.unstable_mockModule("bcrypt", () => ({
   default: {
@@ -147,6 +152,83 @@ describe("TokenService --> UNIT TESTS", () => {
       expect(result.data.user).toBeDefined();
       expect(result.data.user.id).toBe(1);
       expect(result.data.user.username).toBe("username");
+    });
+    it(`throw new ${TOKEN_ERRORS.TOKEN_NOT_FOUND}`, async () => {
+      const data = { newTokenId: "new-token-id", tokenId: "token-id" };
+      mockUserRepository.findUserById.mockResolvedValue({
+        id: 1,
+        username: "username",
+      });
+      mockTokenRepository.findTokenByHash.mockResolvedValue(false);
+      mockTokenRepository.revokeAndReplaceToken.mockResolvedValue(data);
+      mockTokenRepository.createToken.mockResolvedValue({
+        accessToken: "access-token",
+        refreshToken: "refresh-token",
+        storedToken: { id: 100 },
+      });
+
+      await expect(tokenService.validateWithRotate(data)).rejects.toThrow(
+        TOKEN_ERRORS.TOKEN_NOT_FOUND,
+      );
+    });
+    it(`throw new ${TOKEN_ERRORS.TOKEN_REVOKED}`, async () => {
+      const data = { newTokenId: "new-token-id", tokenId: "token-id" };
+      mockUserRepository.findUserById.mockResolvedValue({
+        id: 1,
+        username: "username",
+      });
+      mockTokenRepository.findTokenByHash.mockResolvedValue({
+        revokedAt: true,
+      });
+      mockTokenRepository.revokeAndReplaceToken.mockResolvedValue(data);
+      mockTokenRepository.createToken.mockResolvedValue({
+        accessToken: "access-token",
+        refreshToken: "refresh-token",
+        storedToken: { id: 100 },
+      });
+
+      await expect(tokenService.validateWithRotate(data)).rejects.toThrow(
+        TOKEN_ERRORS.TOKEN_REVOKED,
+      );
+    });
+    it(`throw new ${TOKEN_ERRORS.TOKEN_EXPIRED}`, async () => {
+      const data = { newTokenId: "new-token-id", tokenId: "token-id" };
+      mockUserRepository.findUserById.mockResolvedValue({
+        id: 1,
+        username: "username",
+      });
+      mockTokenRepository.findTokenByHash.mockResolvedValue({
+        expiresAt: Date.now() - 7 * 24 * 60 * 1000,
+      });
+      mockTokenRepository.revokeAndReplaceToken.mockResolvedValue(data);
+      mockTokenRepository.createToken.mockResolvedValue({
+        accessToken: "access-token",
+        refreshToken: "refresh-token",
+        storedToken: { id: 100 },
+      });
+
+      await expect(tokenService.validateWithRotate(data)).rejects.toThrow(
+        TOKEN_ERRORS.TOKEN_EXPIRED,
+      );
+    });
+    it(`throw new ${USER_ERRORS.NOT_FOUND}`, async () => {
+      const data = { newTokenId: "new-token-id", tokenId: "token-id" };
+      mockUserRepository.findUserById.mockResolvedValue({
+        id: 1,
+        username: "username",
+      });
+      mockTokenRepository.findTokenByHash.mockResolvedValue(true);
+      mockTokenRepository.revokeAndReplaceToken.mockResolvedValue(data);
+      mockTokenRepository.createToken.mockResolvedValue({
+        accessToken: "access-token",
+        refreshToken: "refresh-token",
+        storedToken: { id: 100 },
+      });
+      mockUserRepository.findUserById.mockResolvedValue(false);
+
+      await expect(tokenService.validateWithRotate(data)).rejects.toThrow(
+        USER_ERRORS.NOT_FOUND,
+      );
     });
   });
 

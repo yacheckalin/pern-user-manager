@@ -40,3 +40,5 @@ export const TOKEN_ERRORS = {
   NO_ACCESS_TOKEN: "No access token",
   INVALID_ACCESS_TOKEN: "Invalid access token",
 };
+
+export const WRONG_IP = "Wrong IP Address";

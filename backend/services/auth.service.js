@@ -1,5 +1,10 @@
 import db from "../config/database.js";
-import { AUTH_ERRORS, JWT_DEFAULTS, TOKEN_ERRORS } from "../constants/index.js";
+import {
+  AUTH_ERRORS,
+  JWT_DEFAULTS,
+  TOKEN_ERRORS,
+  WRONG_IP,
+} from "../constants/index.js";
 import { USER_VALIDATION } from "../constants/user.constants.js";
 import { sanitizeUserData } from "../utils/user.helpers.js";
 import bcrypt from "bcrypt";
@@ -7,7 +12,7 @@ import AuthRepository from "../repositories/auth.repo.js";
 import UserRepository from "../repositories/user.repo.js";
 import RefershTokensService from "./token.service.js";
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
+import "dotenv/config";
 import RefreshTokenService from "./token.service.js";
 class AuthService {
   constructor() {
@@ -113,7 +118,7 @@ class AuthService {
 
     // If IP provided
     if (this.ip !== undefined && !validator.isIP(this.ip)) {
-      throw new Error("Wrong IP syntax");
+      throw new Error(WRONG_IP);
     }
   }
 }
