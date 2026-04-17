@@ -1,4 +1,4 @@
-import dotenv from "dotenv";
+import "dotenv/config";
 import { jest } from "@jest/globals";
 import crypto from "crypto";
 import path from "path";

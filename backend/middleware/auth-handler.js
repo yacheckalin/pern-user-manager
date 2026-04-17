@@ -10,7 +10,7 @@ import {
   TOKEN_ERRORS,
 } from "../constants/index.js";
 import RefreshTokenService from "../services/token.service.js";
-import dotenv from "dotenv";
+import "dotenv/config";
 import ms from "ms";
 import jwt from "jsonwebtoken";
 
@@ -40,12 +40,12 @@ const verifyRefreshToken = async (req, res, next) => {
       if (result.data.newToken) {
         const maxAgeRefreshTimestamp = ms(
           process.env.JWT_REFRESH_TOKEN_EXPIRES_IN ||
-            JWT_DEFAULTS.REFRESH_TOKEN_EXPIRES_IN,
+          JWT_DEFAULTS.REFRESH_TOKEN_EXPIRES_IN,
         );
 
         const maxAgeAccessTimestamp = ms(
           process.env.JWT_ACCESS_TOKEN_EXPIRES_IN ||
-            JWT_DEFAULTS.ACCESS_TOKEN_EXPIRES_IN,
+          JWT_DEFAULTS.ACCESS_TOKEN_EXPIRES_IN,
         );
 
         // Set refresh token as HTTP-only cookie

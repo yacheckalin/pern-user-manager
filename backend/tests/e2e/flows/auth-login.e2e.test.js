@@ -9,7 +9,7 @@ import bcrypt from "bcrypt";
 import { AUTH_ERRORS, BCRYPT_ROUNDS, HTTP_BAD_REQUEST, HTTP_OK, HTTP_UNAUTHORIZED, USER_MESSAGES } from "../../../constants/index.js";
 
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv'
+import 'dotenv/config'
 
 describe("User Login E2E Flow", () => {
   const mockUserData = {
