@@ -2,6 +2,7 @@ import { jest, describe, beforeEach } from "@jest/globals";
 import "dotenv/config";
 import jwt from "jsonwebtoken";
 import { sanitizeUserData } from "../../../utils/user.helpers";
+import { WRONG_IP } from "../../../constants/index.js";
 
 jest.unstable_mockModule("bcrypt", () => ({
   default: {

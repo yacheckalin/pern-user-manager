@@ -2,6 +2,7 @@ import {
   USER_ERRORS,
   DB_ERRORS,
   AUTH_ERRORS,
+  WRONG_IP,
 } from "../../../constants/index.js";
 
 describe("Errors Constants", () => {
@@ -102,6 +103,11 @@ describe("Errors Constants", () => {
 
     it("should contain all user errors with correct values", () => {
       expect(AUTH_ERRORS).toEqual(expectedErrors);
+    });
+  });
+  describe("Other Errors", () => {
+    it("should have WRONG_IP", () => {
+      expect(WRONG_IP).toEqual("Wrong IP Address");
     });
   });
 });

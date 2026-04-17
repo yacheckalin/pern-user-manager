@@ -12,6 +12,7 @@ import "dotenv/config";
 jest.unstable_mockModule("../../../services/auth.service.js", () => ({
   default: jest.fn().mockImplementation(() => ({
     login: jest.fn(),
+    logout: jest.fn(),
   })),
 }));
 
@@ -65,6 +66,7 @@ describe("AuthController - Unit Tests", () => {
         storedToken: { id: 1, tokenHash: "some-mock-hash" },
         user: mockUser,
       }),
+      logout: jest.fn(),
     };
 
     AuthService.mockImplementation(() => mockAuthService);
@@ -84,6 +86,7 @@ describe("AuthController - Unit Tests", () => {
       status: jest.fn().mockReturnThis(),
       json: jest.fn().mockReturnThis(),
       cookie: jest.fn().mockReturnThis(),
+      clearCookie: jest.fn().mockReturnThis(),
     };
     next = jest.fn();
   });
@@ -276,6 +279,45 @@ describe("AuthController - Unit Tests", () => {
       });
       expect(res.status).not.toHaveBeenCalled();
       expect(res.json).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("logout", () => {
+    it("should logout properly", async () => {
+      req.user = { id: 3 };
+      req.ip = "127.0.0.1";
+      req.headers["user-agent"] = "jest-test";
+      req.cookies = { refreshToken: "mock-refresh-token" };
+      req.refreshToken = "mock-refresh-token";
+
+      mockAuthService.logout.mockResolvedValue({
+        userId: 1,
+        tokenHash: "mock-refresh-token",
+      });
+
+      await authController.logout(req, res, next);
+
+      expect(mockAuthService.logout).toHaveBeenCalledWith({
+        tokenHash: "mock-refresh-token",
+        userId: 3,
+      });
+      expect(next).not.toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(HTTP_OK);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          success: true,
+        }),
+      );
+    });
+
+    it("should not logout when user.id is not provided", async () => {
+      req.cookies = { refreshToken: "mock-refresh-token" };
+      req.refreshToken = "mock-refresh-token";
+
+      mockAuthService.logout.mockResolvedValue(true);
+
+      await authController.logout(req, res, next);
+      expect(next).toHaveBeenCalled();
     });
   });
 });

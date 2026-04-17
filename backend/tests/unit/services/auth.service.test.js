@@ -1,8 +1,13 @@
-import { AUTH_ERRORS, JWT_DEFAULTS } from "../../../constants/index.js";
+import {
+  AUTH_ERRORS,
+  JWT_DEFAULTS,
+  WRONG_IP,
+} from "../../../constants/index.js";
 import {
   USER_MESSAGES,
   USER_VALIDATION,
-} from "../../../constants/user.constants.js";
+  TOKEN_ERRORS,
+} from "../../../constants/index.js";
 import { jest } from "@jest/globals";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
@@ -102,6 +107,7 @@ describe("AuthService - Unit Tests", () => {
         refreshToken: "mock-refresh-token",
         storedToken: { id: 1 },
       }),
+      revokeToken: jest.fn(),
     };
 
     // Mock repository constructors to return mock instances
@@ -113,7 +119,28 @@ describe("AuthService - Unit Tests", () => {
     authService = new AuthService();
     tokenService = new TokenService();
   });
+  describe("Logout User", () => {
+    it("should logout user successfully", async () => {
+      tokenService.revokeToken.mockResolvedValue(true);
+      const result = await authService.logout({
+        userId: 1,
+        tokenHash: "token-hash",
+      });
 
+      expect(result).toBeDefined();
+    });
+    it(`should throw ${TOKEN_ERRORS.TOKEN_NOT_FOUND}`, async () => {
+      tokenService.revokeToken.mockRejectedValue(
+        new Error(TOKEN_ERRORS.TOKEN_NOT_FOUND),
+      );
+      await expect(
+        authService.logout({
+          userId: 1,
+          tokenHash: "token-hash",
+        }),
+      ).rejects.toThrow(TOKEN_ERRORS.TOKEN_NOT_FOUND);
+    });
+  });
   describe("Login User", () => {
     describe("Successful login", () => {
       it("should login user successfully with username", async () => {
