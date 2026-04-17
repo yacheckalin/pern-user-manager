@@ -1,17 +1,16 @@
 import {
-  JWT_DEFAULTS,
-  ONE_WEEK,
-  REFRESH_TOKEN_COOKIE_NAME,
-} from "../constants/app.constants.js";
-import { AUTH_ERRORS, TOKEN_ERRORS } from "../constants/error.constants.js";
-import {
   HTTP_BAD_REQUEST,
-  HTTP_FORBIDDEN,
   HTTP_INTERNAL_SERVER_ERROR,
   HTTP_OK,
   HTTP_UNAUTHORIZED,
-} from "../constants/http.constants.js";
-import { USER_MESSAGES } from "../constants/user.constants.js";
+  USER_MESSAGES,
+  AUTH_ERRORS,
+  TOKEN_ERRORS,
+  ACCESS_TOKEN_COOKIE_NAME,
+  JWT_DEFAULTS,
+  REFRESH_TOKEN_COOKIE_NAME,
+  TOKEN_MESSAGES,
+} from "../constants/index.js";
 import AuthService from "../services/auth.service.js";
 import ms from "ms";
 class AuthController {
@@ -36,6 +35,18 @@ class AuthController {
           process.env.JWT_REFRESH_TOKEN_EXPIRES_IN ||
             JWT_DEFAULTS.REFRESH_TOKEN_EXPIRES_IN,
         ),
+      });
+
+      // Set access token as HTTP-only cookie
+      res.cookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: ms(
+          process.env.JWT_ACCESS_TOKEN_EXPIRES_IN ||
+            JWT_DEFAULTS.ACCESS_TOKEN_EXPIRES_IN,
+        ),
+        path: "/",
       });
 
       res.status(HTTP_OK).json({
@@ -65,7 +76,6 @@ class AuthController {
   async logout(req, res, next) {
     const refreshToken = req.newRefreshToken || req.cookies?.refreshToken;
 
-    //TODO: add to blacklist and rotate refresh token in DB
     try {
       if (refreshToken) {
         await this.authService.logout({
@@ -74,7 +84,25 @@ class AuthController {
         });
       }
 
-      res.clearCookie(REFRESH_TOKEN_COOKIE_NAME);
+      res.clearCookie(REFRESH_TOKEN_COOKIE_NAME, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: ms(
+          process.env.JWT_REFRESH_TOKEN_EXPIRES_IN ||
+            JWT_DEFAULTS.REFRESH_TOKEN_EXPIRES_IN,
+        ),
+      });
+      res.clearCookie(ACCESS_TOKEN_COOKIE_NAME, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: ms(
+          process.env.JWT_ACCESS_TOKEN_EXPIRES_IN ||
+            JWT_DEFAULTS.ACCESS_TOKEN_EXPIRES_IN,
+        ),
+        path: "/",
+      });
 
       res.status(HTTP_OK).json({
         success: true,
@@ -92,6 +120,16 @@ class AuthController {
       }
       next(error);
     }
+  }
+
+  async refresh(req, res, next) {
+    const accessToken = req.accessToken;
+
+    res.status(HTTP_OK).json({
+      success: true,
+      message: TOKEN_MESSAGES.ROTATED,
+      data: { accessToken },
+    });
   }
 }
 

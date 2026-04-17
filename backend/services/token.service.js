@@ -6,7 +6,7 @@ import {
   TOKEN_ERRORS,
   USER_ERRORS,
 } from "../constants/index.js";
-import dotenv from "dotenv";
+import "dotenv/config";
 import crypto from "crypto";
 import ms from "ms";
 import jwt from "jsonwebtoken";
@@ -25,7 +25,6 @@ class RefreshTokenService {
     const refreshToken = this.generateRefreshToken(data);
 
     // add to DB new data for existing user
-
     const storedToken = await this.refreshTokenRepository.createToken({
       ...data,
       tokenHash: this.generateTokenHash(refreshToken),
@@ -33,7 +32,6 @@ class RefreshTokenService {
         Date.now() + ms(process.env.JWT_REFRESH_TOKEN_EXPIRES_IN || ONE_WEEK),
       ),
     });
-
     return { accessToken, refreshToken, storedToken };
   }
 

@@ -6,7 +6,7 @@ class RefreshToken {
     this.expiresAt = data.expires_at;
     this.createdAt = data.created_at;
     this.revokedAt = data.revoked_at;
-    this.userAgent = data.user_agen;
+    this.userAgent = data.user_agent;
     this.ipAddress = data.ip_address;
     this.replacedByTokenId = data.replaced_by_token_id;
   }
@@ -21,17 +21,17 @@ class RefreshToken {
       revokedAt: this.revokedAt,
       userAgent: this.userAgent,
       ipAddress: this.ipAddress,
-      replacedByTokenId: this.replacedByTokenId
-    }
+      replacedByTokenId: this.replacedByTokenId,
+    };
   }
 
   static fromDatabase(row) {
     if (!row) return null;
-    return new RefreshToken(row)
+    return new RefreshToken(row);
   }
 
   static fromDatabaseArray(rows) {
-    return rows.length === 0 ? [] : rows.map((row) => new RefreshToken(row))
+    return rows.length === 0 ? [] : rows.map((row) => new RefreshToken(row));
   }
 }
 

@@ -1,4 +1,8 @@
-import { USER_ERRORS, DB_ERRORS, AUTH_ERRORS } from "../../../constants/index.js";
+import {
+  USER_ERRORS,
+  DB_ERRORS,
+  AUTH_ERRORS,
+} from "../../../constants/index.js";
 
 describe("Errors Constants", () => {
   describe("User Errors", () => {
@@ -72,23 +76,23 @@ describe("Errors Constants", () => {
       INVALID_USERNAME_OR_EMAIL: "Invalid username or email",
       INVALID_EMAIL: "Invalid email",
       INVALID_USERNAME: "Invalid username",
-      INVALID_PASSWORD: "Invalid password"
-    }
-    it('should have all expected types', () => {
-
+      INVALID_PASSWORD: "Invalid password",
+      UNAUTHORIZED_ACCESS: "Unauthorized access detected",
+    };
+    it("should have all expected types", () => {
       const expectedTypes = [
-        'INVALID_CRIDENTIALS',
-        'INVALID_USERNAME_OR_EMAIL',
-        'INVALID_EMAIL',
-        'INVALID_USERNAME',
-        'INVALID_PASSWORD'
+        "INVALID_CRIDENTIALS",
+        "INVALID_USERNAME_OR_EMAIL",
+        "INVALID_EMAIL",
+        "INVALID_USERNAME",
+        "INVALID_PASSWORD",
       ];
 
-      expectedTypes.forEach(type => {
+      expectedTypes.forEach((type) => {
         expect(AUTH_ERRORS[type]).toBeDefined();
-        expect(typeof AUTH_ERRORS[type]).toBe('string')
-      })
-    })
+        expect(typeof AUTH_ERRORS[type]).toBe("string");
+      });
+    });
 
     it("should have unique errors name", () => {
       const errorTypes = Object.keys(AUTH_ERRORS);
@@ -99,5 +103,5 @@ describe("Errors Constants", () => {
     it("should contain all user errors with correct values", () => {
       expect(AUTH_ERRORS).toEqual(expectedErrors);
     });
-  })
+  });
 });

@@ -1,8 +1,11 @@
 import { AUTH_ERRORS, JWT_DEFAULTS } from "../../../constants/index.js";
-import { USER_MESSAGES, USER_VALIDATION } from "../../../constants/user.constants.js";
+import {
+  USER_MESSAGES,
+  USER_VALIDATION,
+} from "../../../constants/user.constants.js";
 import { jest } from "@jest/globals";
-import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
+import jwt from "jsonwebtoken";
+import "dotenv/config";
 
 // Mock bcrypt module
 jest.unstable_mockModule("bcrypt", () => ({
@@ -14,6 +17,8 @@ jest.unstable_mockModule("bcrypt", () => ({
 // Mock database
 jest.unstable_mockModule("../../../config/database.js", () => ({
   default: {},
+  query: jest.fn(),
+  pool: jest.fn(),
 }));
 
 // Mock repositories
@@ -25,15 +30,24 @@ jest.unstable_mockModule("../../../repositories/user.repo.js", () => ({
   default: jest.fn(),
 }));
 
+jest.unstable_mockModule("../../../services/token.service.js", () => ({
+  default: jest.fn(),
+}));
+
 // Mock user helpers
 jest.unstable_mockModule("../../../utils/user.helpers.js", () => ({
   sanitizeUserData: jest.fn((data) => data),
 }));
 
 const bcryptModule = await import("bcrypt");
-const { default: AuthService } = await import("../../../services/auth.service.js");
-const { default: AuthRepository } = await import("../../../repositories/auth.repo.js");
-const { default: UserRepository } = await import("../../../repositories/user.repo.js");
+const { default: AuthService } =
+  await import("../../../services/auth.service.js");
+const { default: AuthRepository } =
+  await import("../../../repositories/auth.repo.js");
+const { default: UserRepository } =
+  await import("../../../repositories/user.repo.js");
+const { default: TokenService } =
+  await import("../../../services/token.service.js");
 
 // Get the mocked bcrypt instance
 const mockBcrypt = bcryptModule.default;
@@ -42,13 +56,15 @@ describe("AuthService - Unit Tests", () => {
   let authService;
   let mockUserRepository;
   let mockAuthRepository;
+  let tokenService;
+  let mockRefreshTokenService;
 
   const mockUser = {
     id: 1,
     username: "janeDoe",
     email: "jane@example.com",
     passwordHash: "$2b$10$hashedPasswordExample",
-    lastLogin: new Date("2024-01-01T00:00:00.000Z")
+    lastLogin: new Date("2024-01-01T00:00:00.000Z"),
   };
 
   beforeEach(() => {
@@ -63,15 +79,39 @@ describe("AuthService - Unit Tests", () => {
       findUserByEmail: jest.fn(),
     };
     mockAuthRepository = {
-      updateLastLogin: jest.fn()
-    }
+      updateLastLogin: jest.fn(),
+    };
+
+    const secret =
+      process.env.JWT_ACCESS_TOKEN_SECRET || JWT_DEFAULTS.ACCESS_TOKEN_SECRET;
+
+    const realToken = jwt.sign(
+      {
+        auth: {
+          id: mockUser.id,
+          username: mockUser.username,
+          email: mockUser.email,
+        },
+      },
+      secret,
+    );
+
+    mockRefreshTokenService = {
+      createToken: jest.fn().mockResolvedValue({
+        accessToken: realToken,
+        refreshToken: "mock-refresh-token",
+        storedToken: { id: 1 },
+      }),
+    };
 
     // Mock repository constructors to return mock instances
     AuthRepository.mockImplementation(() => mockAuthRepository);
     UserRepository.mockImplementation(() => mockUserRepository);
+    TokenService.mockImplementation(() => mockRefreshTokenService);
 
     // Create AuthService instance
     authService = new AuthService();
+    tokenService = new TokenService();
   });
 
   describe("Login User", () => {
@@ -83,21 +123,33 @@ describe("AuthService - Unit Tests", () => {
         };
 
         mockUserRepository.findUserByName.mockResolvedValue(mockUser);
-        mockAuthRepository.updateLastLogin.mockResolvedValue({ ...mockUser, lastLogin: new Date() })
+        mockAuthRepository.updateLastLogin.mockResolvedValue({
+          ...mockUser,
+          lastLogin: new Date(),
+        });
         mockBcrypt.compare.mockResolvedValue(true);
 
         const result = await authService.login(loginData);
 
         expect(result).toBeDefined();
 
-        jwt.verify(result.accessToken, process.env.JWT_ACCESS_TOKEN_SECRET || JWT_DEFAULTS.ACCESS_TOKEN_SECRET, (err, item) => {
-          expect(item.auth.id).toBeDefined();
-          expect(item.auth.username).toBe(mockUser.username)
-          expect(item.auth.email).toBe(mockUser.email)
-        })
-        expect(mockUserRepository.findUserByName).toHaveBeenCalledWith("janeDoe");
+        const decoded = jwt.verify(
+          result.accessToken,
+          process.env.JWT_ACCESS_TOKEN_SECRET ||
+            JWT_DEFAULTS.ACCESS_TOKEN_SECRET,
+        );
+
+        expect(decoded.auth.id).toBeDefined();
+        expect(decoded.auth.username).toBe(mockUser.username);
+        expect(decoded.auth.email).toBe(mockUser.email);
+        expect(mockUserRepository.findUserByName).toHaveBeenCalledWith(
+          "janeDoe",
+        );
         expect(mockAuthRepository.updateLastLogin).toHaveBeenCalled();
-        expect(mockBcrypt.compare).toHaveBeenCalledWith("SecurePass123", mockUser.passwordHash);
+        expect(mockBcrypt.compare).toHaveBeenCalledWith(
+          "SecurePass123",
+          mockUser.passwordHash,
+        );
       });
 
       it("should login user successfully with email", async () => {
@@ -105,22 +157,33 @@ describe("AuthService - Unit Tests", () => {
           username: "jane@example.com",
           password: "SecurePass123",
         };
+        const expectedTokens = {
+          accessToken: "valid-looking-fake-access-token",
+          refreshToken: "valid-looking-fake-refresh-token",
+          storedToken: { id: 1 },
+        };
 
         mockUserRepository.findUserByEmail.mockResolvedValue(mockUser);
         mockAuthRepository.updateLastLogin.mockResolvedValue(mockUser);
+        mockRefreshTokenService.createToken.mockResolvedValue(expectedTokens);
         mockBcrypt.compare.mockResolvedValue(true);
 
         const result = await authService.login(loginData);
 
         expect(result).toBeDefined();
+        expect(result.accessToken).toBe(expectedTokens.accessToken);
+        expect(result.refreshToken).toBe(expectedTokens.refreshToken);
 
-        jwt.verify(result.accessToken, process.env.JWT_ACCESS_TOKEN_SECRET || JWT_DEFAULTS.ACCESS_TOKEN_SECRET, (err, item) => {
-          expect(item.auth.id).toBeDefined();
-          expect(item.auth.username).toBe(mockUser.username);
-          expect(item.auth.email).toBe(mockUser.email)
-        })
-        expect(mockUserRepository.findUserByEmail).toHaveBeenCalledWith("jane@example.com");
-        expect(mockBcrypt.compare).toHaveBeenCalledWith("SecurePass123", mockUser.passwordHash);
+        expect(mockUserRepository.findUserByEmail).toHaveBeenCalledWith(
+          "jane@example.com",
+        );
+        expect(mockUserRepository.findUserByEmail).toHaveBeenCalledWith(
+          "jane@example.com",
+        );
+        expect(mockBcrypt.compare).toHaveBeenCalledWith(
+          "SecurePass123",
+          mockUser.passwordHash,
+        );
       });
     });
 
@@ -132,7 +195,7 @@ describe("AuthService - Unit Tests", () => {
         };
 
         await expect(authService.login(loginData)).rejects.toThrow(
-          AUTH_ERRORS.INVALID_USERNAME_OR_EMAIL
+          AUTH_ERRORS.INVALID_USERNAME_OR_EMAIL,
         );
       });
 
@@ -143,7 +206,7 @@ describe("AuthService - Unit Tests", () => {
         };
 
         await expect(authService.login(loginData)).rejects.toThrow(
-          AUTH_ERRORS.INVALID_USERNAME
+          AUTH_ERRORS.INVALID_USERNAME,
         );
       });
 
@@ -154,7 +217,7 @@ describe("AuthService - Unit Tests", () => {
         };
 
         await expect(authService.login(loginData)).rejects.toThrow(
-          AUTH_ERRORS.INVALID_USERNAME
+          AUTH_ERRORS.INVALID_USERNAME,
         );
       });
 
@@ -165,7 +228,7 @@ describe("AuthService - Unit Tests", () => {
         };
 
         await expect(authService.login(loginData)).rejects.toThrow(
-          AUTH_ERRORS.INVALID_EMAIL
+          AUTH_ERRORS.INVALID_EMAIL,
         );
       });
 
@@ -176,7 +239,7 @@ describe("AuthService - Unit Tests", () => {
         };
 
         await expect(authService.login(loginData)).rejects.toThrow(
-          AUTH_ERRORS.INVALID_PASSWORD
+          AUTH_ERRORS.INVALID_PASSWORD,
         );
       });
 
@@ -187,7 +250,7 @@ describe("AuthService - Unit Tests", () => {
         };
 
         await expect(authService.login(loginData)).rejects.toThrow(
-          AUTH_ERRORS.INVALID_PASSWORD
+          AUTH_ERRORS.INVALID_PASSWORD,
         );
       });
     });
@@ -203,7 +266,7 @@ describe("AuthService - Unit Tests", () => {
         mockUserRepository.findUserByEmail.mockResolvedValue(null);
 
         await expect(authService.login(loginData)).rejects.toThrow(
-          AUTH_ERRORS.INVALID_CRIDENTIALS
+          AUTH_ERRORS.INVALID_CRIDENTIALS,
         );
       });
 
@@ -216,7 +279,7 @@ describe("AuthService - Unit Tests", () => {
         mockUserRepository.findUserByEmail.mockResolvedValue(null);
 
         await expect(authService.login(loginData)).rejects.toThrow(
-          AUTH_ERRORS.INVALID_CRIDENTIALS
+          AUTH_ERRORS.INVALID_CRIDENTIALS,
         );
       });
 
@@ -230,7 +293,7 @@ describe("AuthService - Unit Tests", () => {
         mockBcrypt.compare.mockResolvedValue(false);
 
         await expect(authService.login(loginData)).rejects.toThrow(
-          AUTH_ERRORS.INVALID_CRIDENTIALS
+          AUTH_ERRORS.INVALID_CRIDENTIALS,
         );
       });
     });
