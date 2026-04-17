@@ -6,7 +6,7 @@ import {
   TOKEN_ERRORS,
   USER_ERRORS,
 } from "../constants/index.js";
-import dotenv from "dotenv";
+import "dotenv/config";
 import crypto from "crypto";
 import ms from "ms";
 import jwt from "jsonwebtoken";

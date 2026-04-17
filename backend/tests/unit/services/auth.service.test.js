@@ -5,7 +5,7 @@ import {
 } from "../../../constants/user.constants.js";
 import { jest } from "@jest/globals";
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
+import "dotenv/config";
 
 // Mock bcrypt module
 jest.unstable_mockModule("bcrypt", () => ({
