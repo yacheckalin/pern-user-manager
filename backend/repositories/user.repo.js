@@ -3,7 +3,7 @@ import User from "../models/user.model.js";
 class UserRepository {
   constructor(pool) {
     this.pool = pool;
-    this.table = "users";
+    this.table = "app.users";
   }
 
   /**

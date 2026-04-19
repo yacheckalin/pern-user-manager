@@ -15,7 +15,7 @@ let mockDb = {
 
 describe("UserRepository", () => {
   let mockUserRepository;
-  let tableName = "users";
+  let tableName = "app.users";
 
   // Mock user data
   const mockUserData = {

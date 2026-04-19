@@ -5,8 +5,16 @@ import {
 import db from "../../../config/database.js";
 import request from "supertest";
 import app from "../../../index.js";
+import { BCRYPT_ROUNDS } from "../../../constants/index.js";
+import bcrypt from 'bcrypt'
 
 describe("User Get All E2E Flow", () => {
+  const mockUserData = {
+    username: "username",
+    password: "password",
+    email: 'test@test.test',
+    age: 22
+  }
   beforeAll(async () => {
     await setupTestDatabase();
   });
@@ -19,10 +27,22 @@ describe("User Get All E2E Flow", () => {
   beforeEach(async () => {
     // Clean up before each test
     await db.query("TRUNCATE TABLE app.users CASCADE");
+    await db.query("TRUNCATE TABLE app.refresh_tokens CASCADE");
+
   });
 
   it("should complete get all users e2e flow", async () => {
-    const allUsers = await request(app).get("/users");
+    const query = "INSERT INTO app.users(username, email, password_hash, age) VALUES ($1, $2, $3, $4)";
+    const hashedPassword = await bcrypt.hash(mockUserData.password, BCRYPT_ROUNDS);
+    await db.query(query, [mockUserData.username, mockUserData.email, hashedPassword, mockUserData.age]);
+
+    const result = await request(app).post('/auth/login')
+      .send({ username: mockUserData.username, password: mockUserData.password });
+
+    const allUsers = await request(app)
+      .get("/users")
+      .set('Authorization', `Bearer ${result.body.data.accessToken}`)
+      .set('Accept', 'application/json');;
 
     expect(allUsers.status).toBe(200);
     expect(allUsers.body.success).toBe(true);

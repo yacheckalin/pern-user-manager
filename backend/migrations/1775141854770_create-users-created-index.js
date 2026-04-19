@@ -10,7 +10,7 @@ export const shorthands = undefined;
  */
 export const up = (pgm) => {
   pgm.sql(
-    `CREATE INDEX IF NOT EXISTS idx_users_created_at ON users(created_at)`,
+    `CREATE INDEX IF NOT EXISTS idx_users_created_at ON app.users(created_at)`,
   );
 };
 

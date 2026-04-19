@@ -3,20 +3,22 @@ services:
     image: my-app-test:latest
     build: ./backend
     env_file:
-      - .env.test
+      - ./backend/.env.test
     container_name: node_backend_test
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    dns_search: .
     environment:
       - NODE_ENV=test
-      - DB_HOST=postgres_test
-      - DB_CONNECTION=postgres_test
-      - DB_PORT=5432
-      - DB_NAME=${DB_NAME}
-      - DB_USER=${DB_USERNAME}
-      - DB_USERNAME=${DB_USERNAME}
-      - DB_PASSWORD=${DB_PASSWORD}
-      # - DB_URL=postgres://${DB_USERNAME}:${DB_PASSWORD}@postgres_test:5432/${DB_NAME}
-      - DATABASE_URL=postgres://${DB_USERNAME}:${DB_PASSWORD}@postgres_test:5432/${DB_NAME}
-      - LOG_LEVEL=error
+      - SCHEMA=app
+      - TEST_COMMAND=${TEST_COMMAND:-test:ci}
+      - DATABASE_URL=${DATABASE_URL:-postgres://postgres:test_secret_password@postgres_test:5432/test_my_database}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     depends_on:
       postgres_test:
         condition: service_healthy
@@ -31,22 +33,30 @@ services:
   postgres_test:
     image: postgres:15-alpine
     env_file:
-      - .env.test
+      - ./backend/.env.test
     environment:
       - POSTGRES_USER=${DB_USERNAME}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
+      - DATABASE_URL=${DATABASE_URL:-postgres://${DB_USERNAME}:${DB_PASSWORD}@${DB_CONNECTION}:5432/${DB_NAME}}
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     ports:
-      - "5431:5432" # External host port mapped to internal Postgres port
+      - "5433:5432" # External host port mapped to internal Postgres port
     tmpfs:
       - /var/lib/postgresql/data
     volumes: []
     # - ./scripts/init-test-db.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME}"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d test_my_database"]
       interval: 5s
-      timeout: 5s
+      timeout: 10s
       retries: 5
+      start_period: 10s
     networks:
       - test_network
 

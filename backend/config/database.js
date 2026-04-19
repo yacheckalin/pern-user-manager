@@ -27,6 +27,17 @@ class Database {
     });
 
     this.ended = false;
+
+    this.pool.on('connect', async (client) => {
+      try {
+        // Create schema if it doesn't exist
+        await client.query('CREATE SCHEMA IF NOT EXISTS app');
+        // Set search path for better organization
+        await client.query('SET search_path TO app, public');
+      } catch (error) {
+        console.error('Error setting up database connection:', error);
+      }
+    });
   }
 
   async query(text, params) {

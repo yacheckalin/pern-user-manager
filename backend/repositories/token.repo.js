@@ -3,7 +3,7 @@ import RefreshToken from '../models/token.model.js';
 class RefreshTokenRepository {
   constructor(pool) {
     this.pool = pool;
-    this.table = 'refresh_tokens'
+    this.table = 'app.refresh_tokens'
   }
 
   async findTokensByUserId(id) {

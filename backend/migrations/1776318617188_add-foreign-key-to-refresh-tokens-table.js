@@ -9,13 +9,11 @@ export const shorthands = undefined;
  * @returns {Promise<void> | void}
  */
 export const up = (pgm) => {
-  pgm.addConstraint('refresh_tokens', 'fk_replaced_by_token_id', {
-    foreignKeys: {
-      columns: 'replaced_by_token_id',
-      references: 'refresh_tokens(id)',
-      onDelete: 'SET NULL',
-    },
-  });
+  pgm.sql(`
+    ALTER TABLE app.refresh_tokens
+      ADD CONSTRAINT fk_replaced_by_token_id FOREIGN KEY (replaced_by_token_id) 
+      REFERENCES app.refresh_tokens(id) ON DELETE SET NULL
+  `);
 };
 
 /**
@@ -24,5 +22,7 @@ export const up = (pgm) => {
  * @returns {Promise<void> | void}
  */
 export const down = (pgm) => {
-  pgm.dropConstraint('refresh_tokens', 'fk_replaced_by_token_id')
+  pgm.sql(`
+    ALTER TABLE app.refresh_tokens DROP CONSTRAINT IF EXISTS fk_replaced_by_token_id
+  `);
 };

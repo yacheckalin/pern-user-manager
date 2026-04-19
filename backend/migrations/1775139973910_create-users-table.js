@@ -10,7 +10,9 @@ export const shorthands = undefined;
  */
 export const up = (pgm) => {
   pgm.sql(`
-    CREATE TABLE IF NOT EXISTS users(
+    CREATE SCHEMA IF NOT EXISTS app;
+
+    CREATE TABLE IF NOT EXISTS app.users(
       id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
       email VARCHAR(255) NOT NULL UNIQUE,
       username VARCHAR(255) NOT NULL UNIQUE,
@@ -31,5 +33,6 @@ export const up = (pgm) => {
  * @returns {Promise<void> | void}
  */
 export const down = (pgm) => {
-  pgm.sql(`DROP TABLE users;`);
+  pgm.sql(`DROP TABLE app.users;`);
+  pgm.sql(`DROP SCHEMA app`)
 };
