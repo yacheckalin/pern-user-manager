@@ -42,26 +42,6 @@ const loadEnvFiles = () => {
 
 loadEnvFiles();
 
-// Validate required environment variables for tests
-const requiredEnvVars = [
-  "DB_PORT",
-  "DB_USERNAME",
-  "DB_NAME",
-  "DB_PASSWORD",
-  "DB_CONNECTION",
-];
-
-const missingEnvVars = requiredEnvVars.filter(
-  (varName) => !process.env[varName],
-);
-
-if (missingEnvVars.length > 0) {
-  throw new Error(
-    `Missing required environment variables: ${missingEnvVars.join(", ")}\n` +
-    "Make sure .env.test or .env.test.local exists with these values.",
-  );
-}
-
 // ============================================
 // 2. OVERRIDE ENVIRONMENT
 // ============================================
