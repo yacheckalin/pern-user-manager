@@ -2,6 +2,7 @@ import { Pool } from "pg";
 import dotenv from 'dotenv';
 dotenv.config();
 
+
 const testPool = new Pool({
   host: process.env.DB_CONNECTION || process.env.DB_HOST || "localhost",
   port: process.env.DB_PORT || 5433,
@@ -11,10 +12,10 @@ const testPool = new Pool({
 });
 
 async function setupTestDatabase() {
-  // Global setup (globalSetup in jest config) already creates all tables via migrations
-  // This function just ensures a clean state by truncating data
-  // Tables are created by global setup, so we don't recreate them here
-  await testPool.query(`CREATE SCHEMA IF NOT EXISTS ${process.env.SCHEMA || 'app'}`);
+  const schema = process.env.SCHEMA || 'app';
+
+  await testPool.query('SELECT 1');
+  await testPool.query(`SET search_path TO ${schema}, public`);
 
   return testPool;
 }
@@ -27,8 +28,15 @@ async function teardownTestDatabase() {
 }
 
 async function clearTestDatabase() {
-  // Clear data between tests
-  await testPool.query("TRUNCATE TABLE  IF EXISTS app.users CASCADE");
+  try {
+    const schema = process.env.SCHEMA || 'app';
+    // Clear data between tests
+    await testPool.query(`TRUNCATE TABLE ${schema}.users, ${schema}.refresh_tokens RESTART IDENTITY CASCADE`);
+
+  } catch (error) {
+    console.error(`Fail to clear test database [${error.message}]`)
+    throw new Error(error);
+  }
 }
 
 export { setupTestDatabase, teardownTestDatabase, clearTestDatabase, testPool };

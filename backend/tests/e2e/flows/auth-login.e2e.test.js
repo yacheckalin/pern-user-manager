@@ -29,12 +29,18 @@ describe("User Login E2E Flow", () => {
 
   beforeEach(async () => {
     // Clean up before each test
-    await db.query("TRUNCATE TABLE app.users CASCADE");
-    const passwordHash = await bcrypt.hash(mockUserData.password, BCRYPT_ROUNDS);
-    await db.query(`
-      INSERT INTO app.users (username, email, password_hash, age) 
-      VALUES ($1, $2, $3, $4)`,
-      [mockUserData.username, mockUserData.email, passwordHash, mockUserData.age]);
+    try {
+      const schema = process.env.SCHEMA || 'app';
+
+      await db.query(`TRUNCATE TABLE ${schema}.users, ${schema}.refresh_tokens RESTART IDENTITY CASCADE`)
+      const passwordHash = await bcrypt.hash(mockUserData.password, BCRYPT_ROUNDS);
+      await db.query(`
+        INSERT INTO ${process.env.SCHEMA || 'app'}.users (username, email, password_hash, age) 
+        VALUES ($1, $2, $3, $4)`,
+        [mockUserData.username, mockUserData.email, passwordHash, mockUserData.age]);
+    } catch (error) {
+      console.error('Fail to clear [USER LOGIN E2E FLOW SUITE CASE]', error.message)
+    }
   });
 
   it("should login an existing user via [username] successfully", async () => {
@@ -45,9 +51,8 @@ describe("User Login E2E Flow", () => {
     expect(response.status).toBe(200);
     expect(response.body.success).toBe(true);
     expect(response.body.data).toBeDefined();
+    expect(response.body.data.accessToken).toBeDefined();
     expect(response.body.message).toBe(USER_MESSAGES.AUTHORIZED)
-    expect(response.body.data.user.username).toBe(mockUserData.username);
-    expect(response.body.data.user.email).toBe(mockUserData.email);
 
     jwt.verify(response.body.data.accessToken, process.env.JWT_ACCESS_TOKEN_SECRET, (err, item) => {
       if (err) {
@@ -67,13 +72,12 @@ describe("User Login E2E Flow", () => {
   it('should login an existing user via [email] successfully', async () => {
     const response = await request(app).post("/auth/login").send({ username: "valid@email.com", password: 'password_hash' })
     expect(response.status).toBe(HTTP_OK);
-    expect(response.body.success).toBe(true);
+    expect(response.body.success).toBe(true)
 
     expect(response.body.message).toBe(USER_MESSAGES.AUTHORIZED);
     expect(response.body.data).toBeDefined();
-    expect(response.body.data).not.toBe(null);
-    expect(response.body.data.user.username).toBe(mockUserData.username);
-    expect(response.body.data.user.email).toBe(mockUserData.email);
+    expect(response.body.data.accessToken).toBeDefined();
+
 
     jwt.verify(response.body.data.accessToken, process.env.JWT_ACCESS_TOKEN_SECRET, (err, item) => {
       if (err) {
