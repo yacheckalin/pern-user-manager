@@ -14,13 +14,14 @@ import {
   HTTP_FORBIDDEN,
   HTTP_OK,
   HTTP_UNAUTHORIZED,
+  TOKEN_MESSAGES,
   USER_MESSAGES,
 } from "../../../constants/index.js";
 
 import jwt from 'jsonwebtoken';
 import 'dotenv/config'
 
-describe("User Login E2E Flow", () => {
+describe("Auth Refresh E2E Flow", () => {
   const mockUserData = {
     username: 'username',
     email: "valid@email.com",
@@ -28,8 +29,8 @@ describe("User Login E2E Flow", () => {
     age: 39
   }
   const API_URL = API_PREFIX + '/' + API_VERSION;
-  const accessToken = null;
-  const refreshToken = null;
+  let accessToken = null;
+  let refreshToken = null;
 
   const agent = request.agent(app);
 
@@ -80,17 +81,31 @@ describe("User Login E2E Flow", () => {
 
     expect(response.status).toBe(HTTP_OK);
     expect(response.body.message).toBe(USER_MESSAGES.LOGOUT);
-    expect(response.body.success).toBe(true)
-      ;
+    expect(response.body.success).toBe(true);
   });
 
-  it(`should return ${AUTH_ERRORS.UNAUTHORIZED_ACCESS}`, async () => {
-    agent.jar.setCookie('');
-    const response = await request(app).post(`${API_URL}/auth/logout`)
+  it('should refresh token successfully [with valid refresh token]', async () => {
+    const response = await agent.post(`${API_URL}/auth/refresh`);
+
+    expect(response.status).toBe(HTTP_OK);
+    expect(response.body.success).toBe(true);
+    expect(response.body.message).toBe(TOKEN_MESSAGES.ROTATED);
+    expect(response.body.data).toBeDefined();
+    expect(response.body.data.accessToken).toBeDefined();
+
+    const responseCookies = response.header['set-cookie'];
+    expect(Array.isArray(responseCookies)).toBe(true);
+    expect(responseCookies.some((cookie) => cookie.startsWith('refreshToken='))).toBe(true);
+    expect(responseCookies.some((cookie) => cookie.startsWith('accessToken='))).toBe(true);
+  });
+
+  it(`should return ${AUTH_ERRORS.UNAUTHORIZED_ACCESS} when refresh token is missing`, async () => {
+    const anonymousAgent = request.agent(app);
+    const response = await anonymousAgent.post(`${API_URL}/auth/refresh`);
 
     expect(response.status).toBe(HTTP_FORBIDDEN);
     expect(response.body.success).toBe(false);
-    expect(response.body.message).toBe(AUTH_ERRORS.UNAUTHORIZED_ACCESS)
-  })
+    expect(response.body.message).toBe(AUTH_ERRORS.UNAUTHORIZED_ACCESS);
+  });
 
-})
+});
