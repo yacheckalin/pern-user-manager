@@ -10,7 +10,8 @@ import {
   ONE_SECOND,
   ONE_WEEK,
   BCRYPT_ROUNDS,
-  JWT_DEFAULTS
+  JWT_DEFAULTS,
+  API_PREFIX
 } from "../../../constants/index.js";
 
 describe("App Constants", () => {
@@ -32,6 +33,11 @@ describe("App Constants", () => {
       expect(API_VERSION).toBeDefined();
       expect(typeof API_VERSION).toBe("string");
       expect(API_VERSION).toMatch(/^v\d+$/);
+    });
+    it("should have valid API prefix", () => {
+      expect(API_PREFIX).toBeDefined();
+      expect(typeof API_PREFIX).toBe("string");
+      expect(API_PREFIX).toMatch(/^\/api/);
     });
   });
 

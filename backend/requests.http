@@ -1,10 +1,10 @@
 ### Get all users
-GET http://localhost:5000/users
+GET http://localhost:5000/api/v1/users
 Authorization: Bearer {{accessToken}}
 
 
 ### Create new user
-POST http://localhost:5000/users
+POST http://localhost:5000/api/v1/users
 Content-Type: application/json
 
 {
@@ -16,7 +16,7 @@ Content-Type: application/json
 }
 
 ### Update user by id
-PUT http://localhost:5000/users/1
+PUT http://localhost:5000/api/v1/users/1
 Content-Type: application/json
 
 {
@@ -25,10 +25,10 @@ Content-Type: application/json
 }
 
 ### Get user by id
-GET http://localhost:5000/users/1
+GET http://localhost:5000/api/v1/users/1
 
 ### Update user password by id
-PATCH http://localhost:5000/users/4/password
+PATCH http://localhost:5000/api/v1/users/4/password
 Content-Type: application/json
 
 {
@@ -38,14 +38,14 @@ Content-Type: application/json
 }
 
 ### Delete user by id
-DELETE http://localhost:5000/users/1
+DELETE http://localhost:5000/api/v1/users/1
 
 ### Activate user by id
-PATCH http://localhost:5000/users/2/activate
+PATCH http://localhost:5000/api/v1/users/2/activate
 
 
 ### Register new user
-POST http://localhost:5000/users/register
+POST http://localhost:5000/api/v1/users/register
 Content-Type: application/json
 
 {
@@ -57,7 +57,7 @@ Content-Type: application/json
 
 ### Login user
 # @name login
-POST http://localhost:5000/auth/login
+POST http://localhost:5000/api/v1/auth/login
 Content-Type: application/json
 
 {
@@ -70,8 +70,8 @@ Content-Type: application/json
 @accessToken = {{login.response.body.data.accessToken}}
 
 ### Logout user
-POST http://localhost:5000/auth/logout
+POST http://localhost:5000/api/v1/auth/logout
 
 
 ### Refresh token
-POST http://localhost:5000/auth/refresh
+POST http://localhost:5000/api/v1/auth/refresh

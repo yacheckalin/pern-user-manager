@@ -6,8 +6,10 @@ import authRoutes from "./routes/auth.routes.js";
 import errorHandler from "./middleware/error-handler.js";
 import db from './config/database.js';
 import cookieParser from "cookie-parser";
-
+import { API_PREFIX, API_VERSION } from './constants/index.js'
 const { PORT } = process.env;
+
+const apiPrefix = API_PREFIX + '/' + API_VERSION
 
 const app = express();
 
@@ -15,8 +17,8 @@ app.use(cors());
 app.use(express.json());
 app.use(cookieParser())
 
-app.use("/users", userRoutes);
-app.use("/auth", authRoutes);
+app.use(`${apiPrefix}/users`, userRoutes);
+app.use(`${apiPrefix}/auth`, authRoutes);
 
 app.use(errorHandler);
 

@@ -290,18 +290,18 @@ Base URL: `http://localhost:5000/users`
 
 **Available endpoints:**
 
-- `GET /users` - Get all users
-- `GET /users/:id` - Get user by ID
-- `POST /users` - Create new user
-- `PUT /users/:id` - Update user by ID
-- `PATCH /users/:id/password` - Change user password by ID
-- `DELETE /users/:id` - Delete user by ID
-- `PATCH /users/:id/activate` - Activate user by ID
-- `POST /users/register` - Register a new user
+- `GET /api/v1/users` - Get all users
+- `GET /api/v1/users/:id` - Get user by ID
+- `POST /api/v1/users` - Create new user
+- `PUT /api/v1/users/:id` - Update user by ID
+- `PATCH /api/v1/users/:id/password` - Change user password by ID
+- `DELETE /api/v1/users/:id` - Delete user by ID
+- `PATCH /api/v1/users/:id/activate` - Activate user by ID
+- `POST /api/v1/users/register` - Register a new user
 
-- `POST /auth/login` - Authenticate user username(username |email, password)
-- `POST /auth/logout` - Logout user
-- `POST /auth/refresh` - Rotate Access/Refresh Tokens
+- `POST /api/v1/auth/login` - Authenticate user username(username |email, password)
+- `POST /api/v1/auth/logout` - Logout user
+- `POST /api/v1/auth/refresh` - Rotate Access/Refresh Tokens
 
 ## ✅ Testing
 
