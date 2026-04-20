@@ -1,5 +1,6 @@
 import db from "../../../config/database.js";
 import AuthRepository from "../../../repositories/auth.repo.js";
+import logger from '../../../logger.js';
 
 import {
   setupTestDatabase,

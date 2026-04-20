@@ -6,6 +6,7 @@ import { fileURLToPath } from "url";
 import fs from "fs";
 import { Pool } from "pg";
 import database from "../../config/database.js";
+import logger from '../../logger.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -31,9 +32,9 @@ const loadEnvFiles = () => {
     if (fs.existsSync(envFile.path)) {
       const result = dotenv.config({ path: envFile.path });
       if (result.error) {
-        console.warn(`Warning: Error loading ${envFile.path}`, result.error);
+        logger.warn(`Warning: Error loading ${envFile.path}`, result.error);
       } else {
-        console.log(`✅ Loaded: ${path.basename(envFile.path)}`);
+        logger.info(`✅ Loaded: ${path.basename(envFile.path)}`);
       }
     }
   }
@@ -84,7 +85,7 @@ if (
 ) {
   const uniqueDbName = `test_${crypto.randomBytes(8).toString("hex")}`;
   process.env.DB_NAME = uniqueDbName;
-  console.log(`🔨 Using unique test database: ${uniqueDbName}`);
+  logger.info(`🔨 Using unique test database: ${uniqueDbName}`);
 }
 
 // ============================================
@@ -98,8 +99,8 @@ if (process.env.LOG_LEVEL === "error" && !process.env.DEBUG_TESTS) {
     log: jest.fn(),
     info: jest.fn(),
     debug: jest.fn(),
-    warn: console.warn,
-    error: console.error,
+    warn: logger.warn,
+    error: logger.error,
   };
 }
 
@@ -172,7 +173,7 @@ export const getTestPool = () => {
 export const clearTestDatabase = async () => {
   try {
     const pool = getTestPool();
-    console.log("🔄 Clearing test database...");
+    logger.info("🔄 Clearing test database...");
 
     // Get all tables in app schema
     const { rows } = await pool.query({
@@ -209,11 +210,11 @@ export const clearTestDatabase = async () => {
       });
     }
 
-    console.log("✅ Test database cleared");
+    logger.info("✅ Test database cleared");
   } catch (error) {
     // Silently skip DB clearing for unit tests that don't have a database
     if (!error.message.includes("ENOTFOUND")) {
-      console.error("Error clearing test database:", error);
+      logger.error("Error clearing test database:", error);
       throw error;
     }
   }
@@ -230,7 +231,7 @@ export const closeTestDatabase = async () => {
       return;
     }
 
-    console.log(`💾 Keeping test database: ${process.env.DB_NAME}`);
+    logger.info(`💾 Keeping test database: ${process.env.DB_NAME}`);
     await testPool.end();
     testPool = null;
   }
@@ -251,9 +252,9 @@ beforeAll(async () => {
     const pool = getTestPool();
     try {
       await pool.query("SELECT 1");
-      console.log(`✅ Test database connected: ${process.env.DB_NAME}`);
+      logger.info(`✅ Test database connected: ${process.env.DB_NAME}`);
     } catch (error) {
-      console.warn(`⚠️  Could not connect to test database: ${error.message}`);
+      logger.warn(`⚠️  Could not connect to test database: ${error.message}`);
     }
 
     // Run migrations if needed
@@ -261,9 +262,9 @@ beforeAll(async () => {
       const { execSync } = await import("child_process");
       try {
         execSync("npm run migrate:up", { stdio: "inherit" });
-        console.log("✅ Migrations completed");
+        logger.info("✅ Migrations completed");
       } catch (error) {
-        console.error("Migration failed:", error.message);
+        logger.error("Migration failed:", error.message);
       }
     }
   }
@@ -295,7 +296,7 @@ afterAll(async () => {
     jest.useRealTimers();
   }
 
-  console.log("✅ Test setup cleanup complete");
+  logger.info("✅ Test setup cleanup complete");
 });
 
 // ============================================

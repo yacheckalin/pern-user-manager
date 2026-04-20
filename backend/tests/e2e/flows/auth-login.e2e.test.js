@@ -16,6 +16,7 @@ import {
   HTTP_UNAUTHORIZED,
   USER_MESSAGES
 } from "../../../constants/index.js";
+import logger from '../../../logger.js';
 
 import jwt from 'jsonwebtoken';
 import 'dotenv/config'
@@ -50,7 +51,7 @@ describe("User Login E2E Flow", () => {
         VALUES ($1, $2, $3, $4)`,
         [mockUserData.username, mockUserData.email, passwordHash, mockUserData.age]);
     } catch (error) {
-      console.error('Fail to clear [USER LOGIN E2E FLOW SUITE CASE]', error.message)
+      logger.error('Fail to clear [USER LOGIN E2E FLOW SUITE CASE]', error.message)
     }
   });
 
@@ -67,7 +68,7 @@ describe("User Login E2E Flow", () => {
 
     jwt.verify(response.body.data.accessToken, process.env.JWT_ACCESS_TOKEN_SECRET, (err, item) => {
       if (err) {
-        console.error(err)
+        logger.error(err)
       }
       expect(item.auth.id).toBeDefined();
       expect(item.auth.username).toBe(mockUserData.username);
@@ -92,7 +93,7 @@ describe("User Login E2E Flow", () => {
 
     jwt.verify(response.body.data.accessToken, process.env.JWT_ACCESS_TOKEN_SECRET, (err, item) => {
       if (err) {
-        console.error(err)
+        logger.error(err)
       }
       expect(item.auth.id).toBeDefined();
       expect(item.auth.username).toBe(mockUserData.username);

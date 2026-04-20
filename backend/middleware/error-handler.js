@@ -1,8 +1,9 @@
 import { HTTP_INTERNAL_SERVER_ERROR } from "../constants/index.js";
+import logger from '../logger.js';
 
 const errorHandler = (err, req, res, next) => {
   if (process.env.LOG_LEVEL === "error" || process.env.NODE_ENV === "development") {
-    console.error(`[Error] ${err.message}`);
+    logger.error(`[Error] ${err.message}`);
   }
   const statusCode = err.statusCode || HTTP_INTERNAL_SERVER_ERROR;
 

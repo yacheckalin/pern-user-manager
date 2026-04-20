@@ -1,6 +1,7 @@
 import { Pool } from "pg";
 import { DB_ERRORS } from "../constants/index.js";
 import 'dotenv/config';
+import logger from '../logger.js';
 class Database {
   constructor() {
     const {
@@ -41,7 +42,7 @@ class Database {
         await client.query(`CREATE SCHEMA IF NOT EXISTS ${process.env.SCHEMA}`)
 
       } catch (error) {
-        console.error('Error setting up database connection: ', error)
+        logger.error('Error setting up database connection: ', error)
       }
     })
   }
@@ -54,11 +55,11 @@ class Database {
 
       // log slow queries
       if (duration > 100) {
-        console.log(`Slow query (${duration}ms):`, text);
+        logger.info(`Slow query (${duration}ms):`, text);
       }
       return result;
     } catch (error) {
-      console.error(DB_ERRORS.DB_QUERY_FAILED, error);
+      logger.error(DB_ERRORS.DB_QUERY_FAILED, error);
       throw error;
     }
   }

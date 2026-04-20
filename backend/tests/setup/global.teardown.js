@@ -1,15 +1,16 @@
 import { Pool } from "pg";
 import dotenv from 'dotenv';
+import logger from '../../logger.js;'
 
 dotenv.config({ path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env' });
 
 const globalTeardown = async () => {
-  console.log("🧹 Global test teardown...");
+  logger.info("🧹 Global test teardown...");
 
   const dbName = global.__TEST_DB_NAME__ || process.env.DB_NAME;
 
   if (!dbName) {
-    console.warn("No test database name found");
+    logger.warn("No test database name found");
     return;
   }
 
@@ -35,17 +36,17 @@ const globalTeardown = async () => {
 
     // Drop the test database (will be dropped when container remove)
     // await adminPool.query(`DROP DATABASE IF EXISTS ${dbName}`);
-    // console.log(`✅ Test database dropped: ${dbName}`);
+    // logger.info(`✅ Test database dropped: ${dbName}`);
 
-    console.log(`✅ Test database SKIPPED: ${dbName}`);
+    logger.info(`✅ Test database SKIPPED: ${dbName}`);
   } catch (error) {
-    console.error("Failed to drop test database:", error);
+    logger.error("Failed to drop test database:", error);
   } finally {
     await adminPool.end();
   }
 
   const duration = Date.now() - global.__TEST_START_TIME__;
-  console.log(`✅ Global test teardown complete (${duration}ms)`);
+  logger.info(`✅ Global test teardown complete (${duration}ms)`);
 };
 
 export default globalTeardown;

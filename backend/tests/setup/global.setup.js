@@ -2,19 +2,20 @@ import { Pool } from "pg";
 import { exec } from "child_process";
 import { promisify } from "util";
 import crypto from "crypto";
+import logger from '../../logger.js';
 
 const execAsync = promisify(exec);
 
 const globalSetup = async () => {
-  console.log("🌍 Global test setup starting...");
+  logger.info("🌍 Global test setup starting...");
 
   // In Docker environment, database setup is handled by wait-for-test-db.sh
   if (process.env.DB_CONNECTION === 'postgres_test') {
-    console.log("✅ Running in Docker test environment - skipping database setup");
-    console.log("DB_NAME:", process.env.DB_NAME);
+    logger.info("✅ Running in Docker test environment - skipping database setup");
+    logger.info("DB_NAME:", process.env.DB_NAME);
     global.__TEST_DB_NAME__ = process.env.DB_NAME;
     global.__TEST_START_TIME__ = Date.now();
-    console.log("✅ Global test setup complete (Docker mode)");
+    logger.info("✅ Global test setup complete (Docker mode)");
     return;
   }
 
@@ -37,9 +38,9 @@ const globalSetup = async () => {
 
   try {
     await adminPool.query(`CREATE DATABASE ${process.env.DB_NAME}`);
-    console.log(`✅ Test database created: ${process.env.DB_NAME}`);
+    logger.info(`✅ Test database created: ${process.env.DB_NAME}`);
   } catch (error) {
-    console.error("Failed to create test database:", error);
+    logger.error("Failed to create test database:", error);
     throw error;
   } finally {
     await adminPool.end();
@@ -56,9 +57,9 @@ const globalSetup = async () => {
 
   try {
     await testPool.query('CREATE SCHEMA IF NOT EXISTS app');
-    console.log("✅ App schema created");
+    logger.info("✅ App schema created");
   } catch (error) {
-    console.error("Failed to create app schema:", error);
+    logger.error("Failed to create app schema:", error);
     throw error;
   } finally {
     await testPool.end();
@@ -67,18 +68,18 @@ const globalSetup = async () => {
   // Run migrations
   try {
     const dbUrl = `postgres://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`;
-    console.log("🚀 Running migrations with DATABASE_URL:", dbUrl);
+    logger.info("🚀 Running migrations with DATABASE_URL:", dbUrl);
     const { stdout, stderr } = await execAsync(`DATABASE_URL="${dbUrl}" npx node-pg-migrate up`, {
       cwd: process.cwd(),
     });
-    console.log("✅ Migrations completed");
-    console.log("Migration stdout:", stdout);
-    if (stderr) console.log("Migration stderr:", stderr);
+    logger.info("✅ Migrations completed");
+    logger.info("Migration stdout:", stdout);
+    if (stderr) logger.info("Migration stderr:", stderr);
   } catch (error) {
-    console.error("❌ Failed to run migrations:", error.message);
-    console.error("Error code:", error.code);
-    console.error("Error stdout:", error.stdout);
-    console.error("Error stderr:", error.stderr);
+    logger.error("❌ Failed to run migrations:", error.message);
+    logger.error("Error code:", error.code);
+    logger.error("Error stdout:", error.stdout);
+    logger.error("Error stderr:", error.stderr);
     throw error;
   }
 
@@ -86,7 +87,7 @@ const globalSetup = async () => {
   global.__TEST_DB_NAME__ = process.env.DB_NAME;
   global.__TEST_START_TIME__ = Date.now();
 
-  console.log("✅ Global test setup complete");
+  logger.info("✅ Global test setup complete");
 };
 
 export default globalSetup;

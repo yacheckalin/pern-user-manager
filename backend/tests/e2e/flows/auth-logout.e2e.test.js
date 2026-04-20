@@ -17,6 +17,7 @@ import {
   TOKEN_MESSAGES,
   USER_MESSAGES,
 } from "../../../constants/index.js";
+import logger from '../../../logger.js';
 
 import jwt from 'jsonwebtoken';
 import 'dotenv/config'
@@ -70,7 +71,7 @@ describe("Auth Refresh E2E Flow", () => {
       refreshToken = refreshTokenCookie.split(';')[0].split('=')[1];
 
     } catch (error) {
-      console.error('Fail to clear [USER LOGIN E2E FLOW SUITE CASE]', error.message)
+      logger.error('Fail to clear [USER LOGIN E2E FLOW SUITE CASE]', error.message)
     }
   });
 
