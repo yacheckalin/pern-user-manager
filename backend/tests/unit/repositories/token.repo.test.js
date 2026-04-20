@@ -1,6 +1,7 @@
 import RefreshToken from "../../../models/token.model.js";
 import RefreshTokenRepository from "../../../repositories/token.repo.js";
 import { jest, describe } from "@jest/globals";
+import logger from '../../../logger.js';
 
 const queryMock = jest.fn();
 let mockDb = {
@@ -41,7 +42,7 @@ describe("TokenServiceRepository", () => {
       mockDb.pool.query.mockResolvedValue({ rows: [mockTokenData] });
       const res = await mockRepository.findTokensByUserId(1);
 
-      // console.error(res);
+      // logger.error(res);
       expect(res).toBeInstanceOf(Array);
       expect(res.length).toBe(1);
       expect(res[0].id).toBe("3a615243-b3d2-49e1-a3cd-91571d02b256");

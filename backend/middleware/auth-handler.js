@@ -13,6 +13,7 @@ import RefreshTokenService from "../services/token.service.js";
 import "dotenv/config";
 import ms from "ms";
 import jwt from "jsonwebtoken";
+import logger from '../logger.js';
 
 const verifyRefreshToken = async (req, res, next) => {
   const refreshToken =
@@ -36,7 +37,7 @@ const verifyRefreshToken = async (req, res, next) => {
     });
 
     if (result.success) {
-      // console.log(result.data.newToken.storedToken.toJSON())
+      // logger.info(result.data.newToken.storedToken.toJSON())
       if (result.data.newToken) {
         const maxAgeRefreshTimestamp = ms(
           process.env.JWT_REFRESH_TOKEN_EXPIRES_IN ||

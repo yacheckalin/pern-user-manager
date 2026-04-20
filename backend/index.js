@@ -6,7 +6,8 @@ import authRoutes from "./routes/auth.routes.js";
 import errorHandler from "./middleware/error-handler.js";
 import db from './config/database.js';
 import cookieParser from "cookie-parser";
-import { API_PREFIX, API_VERSION } from './constants/index.js'
+import { API_PREFIX, API_VERSION } from './constants/index.js';
+import logger from './logger.js';
 const { PORT } = process.env;
 
 const API_URL = API_PREFIX + '/' + API_VERSION
@@ -24,14 +25,14 @@ app.use(errorHandler);
 
 // Graceful shutdown
 process.on('SIGTERM', async () => {
-  console.log('SIGTERM received, closing HTTP server...');
+  logger.info('SIGTERM received, closing HTTP server...');
   await db.end();
   process.exit(0);
 });
 
 if (process.env.NODE_ENV !== "test") {
   app.listen(PORT, () =>
-    console.log(`Server is puring on http://localhost:${PORT}`),
+    logger.info(`Server is puring on http://localhost:${PORT}`),
   );
 }
 

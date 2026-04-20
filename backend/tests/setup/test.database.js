@@ -1,7 +1,8 @@
 import { Pool } from "pg";
 import dotenv from 'dotenv';
-dotenv.config();
+import logger from '../../logger.js';
 
+dotenv.config();
 
 const testPool = new Pool({
   host: process.env.DB_CONNECTION || process.env.DB_HOST || "localhost",
@@ -34,7 +35,7 @@ async function clearTestDatabase() {
     await testPool.query(`TRUNCATE TABLE ${schema}.users, ${schema}.refresh_tokens RESTART IDENTITY CASCADE`);
 
   } catch (error) {
-    console.error(`Fail to clear test database [${error.message}]`)
+    logger.error(`Fail to clear test database [${error.message}]`)
     throw new Error(error);
   }
 }

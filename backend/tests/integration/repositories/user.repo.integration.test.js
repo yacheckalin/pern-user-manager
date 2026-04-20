@@ -1,5 +1,6 @@
 import db from "../../../config/database.js";
 import UserRepository from "../../../repositories/user.repo.js";
+import logger from '../../../logger.js';
 
 import {
   setupTestDatabase,
@@ -13,16 +14,16 @@ describe("UserRepository - Integration Tests", () => {
     await setupTestDatabase();
     userRepository = new UserRepository(db);
 
-    // console.log("Checking DB connection...");
-    // console.log("DB_HOST:", process.env.DB_HOST);
-    // console.log("DB_PORT:", process.env.DB_PORT);
+    // logger.info("Checking DB connection...");
+    // logger.info("DB_HOST:", process.env.DB_HOST);
+    // logger.info("DB_PORT:", process.env.DB_PORT);
 
     // try {
     //   // Attempt a simple query to see if the network is alive
     //   await db.query("SELECT 1");
-    //   console.log("Database is REACHABLE!");
+    //   logger.info("Database is REACHABLE!");
     // } catch (err) {
-    //   console.error("Database is UNREACHABLE:", err.message);
+    //   logger.error("Database is UNREACHABLE:", err.message);
     // }
   });
 
