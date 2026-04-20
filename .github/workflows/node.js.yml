@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./node_backend
+        working-directory: node_backend
     strategy:
       matrix:
         node-version: [18.x, 20.x, 22.x]
