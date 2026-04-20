@@ -51,6 +51,9 @@ jobs:
       - name: Run migrations
         run: npm run migrate:ci
         working-directory: ./backend
+        env:
+          SCHEMA: app
+          DATABASE_URL: postgresql://postgres:password@localhost:5432/test_db?options=-csearch_path=app,public
 
       - name: Run Unit Tests
         run: npm run test:unit
