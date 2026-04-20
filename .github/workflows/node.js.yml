@@ -5,14 +5,22 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
-  build:
-
+  test:
     runs-on: ubuntu-latest
+    services: # База поднимается один раз для всех тестов
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
     defaults:
       run:
         working-directory: backend
@@ -28,22 +36,22 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-          cache-dependency-path: './backend/package-lock.json'
+          cache: "npm"
+          cache-dependency-path: "./backend/package-lock.json"
 
       - name: Install dependencies
         run: npm install
-        working-directory: ./backend 
+        working-directory: ./backend
 
       - name: Run Unit Tests
         run: npm run test:unit
-        working-directory: ./backend 
+        working-directory: ./backend
         env:
           LOG_LEVEL: warn
-          NODE_ENV: test
-          DB_HOST: localhost
-          DB_PORT: 5432
-          DB_USERNAME: postgres
-          DB_PASSWORD: password
-          DB_NAME: test_db
+          DB_CONNECTION: postgresql://postgres:password@localhost:5432/test_db
+
+      - name: Integration Tests
+        run: npm run test:integration
+        working-directory: ./backend
+        env:
           DB_CONNECTION: postgresql://postgres:password@localhost:5432/test_db
