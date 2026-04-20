@@ -8,9 +8,15 @@ on:
     branches: ["**"]
   pull_request:
     branches: ["main"]
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
     runs-on: ubuntu-latest
     services: # База поднимается один раз для всех тестов
       postgres:
