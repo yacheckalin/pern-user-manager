@@ -53,7 +53,7 @@ jobs:
         working-directory: ./backend
         env:
           SCHEMA: app
-          DATABASE_URL: postgresql://postgres:password@localhost:5432/test_db?options=-csearch_path=app,public
+          DATABASE_URL: postgresql://postgres:secret_password@localhost:5432/test_db?options=-csearch_path=app,public
 
       - name: Run Unit Tests
         run: npm run test:unit
@@ -61,7 +61,7 @@ jobs:
         env:
           LOG_LEVEL: warn
           SCHEMA: app
-          DATABASE_URL: postgresql://postgres:password@localhost:5432/test_db?options=-csearch_path=app,public
+          DATABASE_URL: postgresql://postgres:secret_password@localhost:5432/test_db?options=-csearch_path=app,public
           DB_USERNAME: postgres
           DB_PASSWORD: secret_password
           DB_NAME: my_database
@@ -72,7 +72,7 @@ jobs:
         working-directory: ./backend
         env:
           SCHEMA: app
-          DATABASE_URL: postgresql://postgres:password@localhost:5432/test_db?options=-csearch_path=app,public
+          DATABASE_URL: postgresql://postgres:secret_password@localhost:5432/test_db?options=-csearch_path=app,public
           DB_USERNAME: postgres
           DB_PASSWORD: secret_password
           DB_NAME: my_database
@@ -83,7 +83,7 @@ jobs:
         working-directory: ./backend
         env:
           SCHEMA: app
-          DATABASE_URL: postgresql://postgres:password@localhost:5432/test_db?options=-csearch_path=app,public
+          DATABASE_URL: postgresql://postgres:secret_password@localhost:5432/test_db?options=-csearch_path=app,public
           DB_USERNAME: postgres
           DB_PASSWORD: secret_password
           DB_NAME: my_database
@@ -93,4 +93,4 @@ jobs:
         working-directory: ./backend
         env:
           SCHEMA: app
-          DATABASE_URL: postgresql://postgres:password@localhost:5432/test_db?options=-csearch_path=app,public
+          DATABASE_URL: postgresql://postgres:passsecret_passwordword@localhost:5432/test_db?options=-csearch_path=app,public
