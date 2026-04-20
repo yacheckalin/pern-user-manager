@@ -49,7 +49,7 @@ describe("User Get All E2E Flow", () => {
     const allUsers = await request(app)
       .get(`${API_URL}/users`)
       .set('Authorization', `Bearer ${accessToken}`)
-      .set('Accept', 'application/json');;
+      .set('Accept', 'application/json');
 
     expect(allUsers.status).toBe(200);
     expect(allUsers.body.success).toBe(true);
