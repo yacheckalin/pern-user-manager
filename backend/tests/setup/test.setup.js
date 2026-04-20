@@ -22,21 +22,21 @@ const projectRoot = path.resolve(__dirname, "../..");
 // 3. .env (fallback - if exists)
 
 const loadEnvFiles = () => {
-  const envFiles = [
-    { path: path.join(projectRoot, ".env"), required: false },
-    { path: path.join(projectRoot, ".env.test"), required: false },
-    { path: path.join(projectRoot, ".env.test.local"), required: false },
-  ];
+  const envFiles = [".env", ".env.test", ".env.test.local"];
 
-  for (const envFile of envFiles) {
-    if (fs.existsSync(envFile.path)) {
-      const result = dotenv.config({ path: envFile.path });
-      if (result.error) {
-        logger.warn(`Warning: Error loading ${envFile.path}`, result.error);
-      } else {
-        logger.info(`✅ Loaded: ${path.basename(envFile.path)}`);
-      }
+  envFiles.forEach(file => {
+    const filePath = path.join(projectRoot, file);
+    if (fs.existsSync(filePath)) {
+      dotenv.config({ path: filePath });
+      logger.info(`✅ Loaded from file: ${file}`);
     }
+  });
+
+  const requiredVars = ['DB_PORT', 'DB_USERNAME', 'DB_NAME', 'DB_PASSWORD'];
+  const missing = requiredVars.filter(v => !process.env[v]);
+
+  if (missing.length > 0) {
+    throw new Error(`Missing environment variables: ${missing.join(", ")}`);
   }
 };
 
