@@ -49,9 +49,17 @@ jobs:
         env:
           LOG_LEVEL: warn
           DB_CONNECTION: postgresql://postgres:password@localhost:5432/test_db
+          DB_USERNAME: postgres
+          DB_PASSWORD: secret_password
+          DB_NAME: my_database
+          DB_PORT: 5432
 
       - name: Integration Tests
         run: npm run test:integration
         working-directory: ./backend
         env:
           DB_CONNECTION: postgresql://postgres:password@localhost:5432/test_db
+          DB_USERNAME: postgres
+          DB_PASSWORD: secret_password
+          DB_NAME: my_database
+          DB_PORT: 5432
