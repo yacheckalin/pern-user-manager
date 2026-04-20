@@ -4,6 +4,8 @@ import {
 } from "../../setup/test.database.js";
 import db from "../../../config/database.js";
 import {
+  API_PREFIX,
+  API_VERSION,
   BCRYPT_ROUNDS,
   HTTP_NOT_FOUND,
   HTTP_OK,
@@ -24,6 +26,9 @@ describe("Delete User By Id E2E Flow", () => {
     password: originalPassword,
     age: 25,
   };
+
+  const API_URL = API_PREFIX + '/' + API_VERSION;
+
   beforeAll(async () => {
     await setupTestDatabase();
   });
@@ -44,7 +49,7 @@ describe("Delete User By Id E2E Flow", () => {
   });
 
   it("should delete user by id successfully", async () => {
-    const response = await request(app).delete(`/users/${user.id}`);
+    const response = await request(app).delete(`${API_URL}/users/${user.id}`);
 
     expect(response.status).toBe(HTTP_OK);
     expect(response.body.message).toBe(USER_MESSAGES.DELETED);
@@ -53,7 +58,7 @@ describe("Delete User By Id E2E Flow", () => {
   });
 
   it("should return user not found", async () => {
-    const response = await request(app).delete(`/users/9999`);
+    const response = await request(app).delete(`${API_URL}/users/9999`);
 
     expect(response.status).toBe(HTTP_NOT_FOUND);
     expect(response.body.message).toBe(USER_ERRORS.NOT_FOUND);

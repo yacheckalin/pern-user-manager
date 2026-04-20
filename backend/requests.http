@@ -16,12 +16,12 @@ Content-Type: application/json
 }
 
 ### Update user by id
-PUT http://localhost:5000/api/v1/users/1
+PUT http://localhost:5000/api/v1/users/2
 Content-Type: application/json
 
 {
   "username": "test2",
-  "email":"invalidemail"
+  "email":"invalidemail@test.tt"
 }
 
 ### Get user by id

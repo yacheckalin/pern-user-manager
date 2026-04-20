@@ -6,6 +6,8 @@ import db from "../../../config/database.js";
 import request from "supertest";
 import app from "../../../index.js";
 import {
+  API_PREFIX,
+  API_VERSION,
   HTTP_BAD_REQUEST,
   HTTP_CONFLICT,
   HTTP_NOT_FOUND,
@@ -22,6 +24,9 @@ describe("User Update E2E Flow", () => {
     password: "hash",
     age: 25,
   };
+
+  const API_URL = API_PREFIX + '/' + API_VERSION;
+
   beforeAll(async () => {
     await setupTestDatabase();
   });
@@ -34,6 +39,7 @@ describe("User Update E2E Flow", () => {
   beforeEach(async () => {
     // Clean up before each test
     await db.query("TRUNCATE TABLE app.users CASCADE");
+    await db.query("TRUNCATE TABLE app.refresh_tokens CASCADE");
 
     const result = await db.query(
       `INSERT INTO app.users(username, email, password_hash, age) VALUES($1, $2, $3, $4) RETURNING *`,
@@ -51,7 +57,7 @@ describe("User Update E2E Flow", () => {
     };
 
     const result = await request(app)
-      .put(`/users/${user.id}`)
+      .put(`${API_URL}/users/${user.id}`)
       .send(updatedData);
 
     expect(result.body.success).toBe(true);
@@ -79,7 +85,7 @@ describe("User Update E2E Flow", () => {
     expect(newUser.rows[0].email).toBe(data.email);
 
     const response = await request(app)
-      .put(`/users/${user.id}`)
+      .put(`${API_URL}/users/${user.id}`)
       .send({ username: data.username });
 
     expect(response.status).toBe(HTTP_CONFLICT);
@@ -89,7 +95,7 @@ describe("User Update E2E Flow", () => {
 
   it("should handle validation errors (invalid username)", async () => {
     const response = await request(app)
-      .put(`/users/${user.id}`)
+      .put(`${API_URL}/users/${user.id}`)
       .send({ username: "ne" });
 
     expect(response.status).toBe(HTTP_BAD_REQUEST);
@@ -98,7 +104,7 @@ describe("User Update E2E Flow", () => {
   });
   it("should handle validation errors (invalid email)", async () => {
     const response = await request(app)
-      .put(`/users/${user.id}`)
+      .put(`${API_URL}/users/${user.id}`)
       .send({ email: "invalidemail" });
 
     expect(response.status).toBe(HTTP_BAD_REQUEST);
@@ -107,7 +113,7 @@ describe("User Update E2E Flow", () => {
   });
   it("should handle validation errors (invalid age < 13)", async () => {
     const response = await request(app)
-      .put(`/users/${user.id}`)
+      .put(`${API_URL}/users/${user.id}`)
       .send({ age: 12 });
 
     expect(response.status).toBe(HTTP_BAD_REQUEST);
@@ -116,7 +122,7 @@ describe("User Update E2E Flow", () => {
   });
   it("should handle validation errors (invalid age > 150)", async () => {
     const response = await request(app)
-      .put(`/users/${user.id}`)
+      .put(`${API_URL}/users/${user.id}`)
       .send({ age: 151 });
 
     expect(response.status).toBe(HTTP_BAD_REQUEST);
@@ -126,7 +132,7 @@ describe("User Update E2E Flow", () => {
 
   it("should handle user not found", async () => {
     const response = await request(app)
-      .put(`/users/9999`)
+      .put(`${API_URL}/users/9999`)
       .send({ username: "bestUserName" });
 
     expect(response.status).toBe(HTTP_NOT_FOUND);

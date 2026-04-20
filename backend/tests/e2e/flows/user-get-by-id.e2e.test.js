@@ -6,7 +6,7 @@ import db from "../../../config/database.js";
 import request from "supertest";
 import app from "../../../index.js";
 import bcrypt from 'bcrypt';
-import { BCRYPT_ROUNDS, USER_ERRORS } from "../../../constants/index.js";
+import { API_PREFIX, API_VERSION, BCRYPT_ROUNDS, USER_ERRORS } from "../../../constants/index.js";
 
 describe("User Get BY ID E2E Flow", () => {
   let user;
@@ -16,6 +16,8 @@ describe("User Get BY ID E2E Flow", () => {
     isActive: true,
     age: 39
   }
+  const API_URL = API_PREFIX + '/' + API_VERSION;
+
   beforeAll(async () => {
     await setupTestDatabase();
   });
@@ -38,7 +40,7 @@ describe("User Get BY ID E2E Flow", () => {
   });
 
   it("should complete get user by id e2e flow", async () => {
-    const response = await request(app).get(`/users/${user.id}`);
+    const response = await request(app).get(`${API_URL}/users/${user.id}`);
 
     expect(response.status).toBe(200);
     expect(response.body.success).toBe(true);
@@ -50,7 +52,7 @@ describe("User Get BY ID E2E Flow", () => {
   });
 
   it("should return 404 when user does not exist", async () => {
-    const response = await request(app).get("/users/9999");
+    const response = await request(app).get(`${API_URL}/users/9999`);
 
     expect(response.status).toBe(404);
     expect(response.body.success).toBe(false);

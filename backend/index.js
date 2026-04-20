@@ -9,7 +9,7 @@ import cookieParser from "cookie-parser";
 import { API_PREFIX, API_VERSION } from './constants/index.js'
 const { PORT } = process.env;
 
-const apiPrefix = API_PREFIX + '/' + API_VERSION
+const API_URL = API_PREFIX + '/' + API_VERSION
 
 const app = express();
 
@@ -17,8 +17,8 @@ app.use(cors());
 app.use(express.json());
 app.use(cookieParser())
 
-app.use(`${apiPrefix}/users`, userRoutes);
-app.use(`${apiPrefix}/auth`, authRoutes);
+app.use(`${API_URL}/users`, userRoutes);
+app.use(`${API_URL}/auth`, authRoutes);
 
 app.use(errorHandler);
 

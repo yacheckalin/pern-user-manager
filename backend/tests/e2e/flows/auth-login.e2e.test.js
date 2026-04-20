@@ -6,7 +6,16 @@ import db from "../../../config/database.js";
 import request from "supertest";
 import app from "../../../index.js";
 import bcrypt from "bcrypt";
-import { AUTH_ERRORS, BCRYPT_ROUNDS, HTTP_BAD_REQUEST, HTTP_OK, HTTP_UNAUTHORIZED, USER_MESSAGES } from "../../../constants/index.js";
+import {
+  API_PREFIX,
+  API_VERSION,
+  AUTH_ERRORS,
+  BCRYPT_ROUNDS,
+  HTTP_BAD_REQUEST,
+  HTTP_OK,
+  HTTP_UNAUTHORIZED,
+  USER_MESSAGES
+} from "../../../constants/index.js";
 
 import jwt from 'jsonwebtoken';
 import 'dotenv/config'
@@ -18,6 +27,8 @@ describe("User Login E2E Flow", () => {
     password: "password_hash",
     age: 33
   }
+  const API_URL = API_PREFIX + '/' + API_VERSION;
+
   beforeAll(async () => {
     await setupTestDatabase();
   });
@@ -46,7 +57,7 @@ describe("User Login E2E Flow", () => {
   it("should login an existing user via [username] successfully", async () => {
 
 
-    const response = await request(app).post("/auth/login").send({ username: 'username', password: 'password_hash' });
+    const response = await request(app).post(`${API_URL}/auth/login`).send({ username: 'username', password: 'password_hash' });
 
     expect(response.status).toBe(200);
     expect(response.body.success).toBe(true);
@@ -70,7 +81,7 @@ describe("User Login E2E Flow", () => {
   });
 
   it('should login an existing user via [email] successfully', async () => {
-    const response = await request(app).post("/auth/login").send({ username: "valid@email.com", password: 'password_hash' })
+    const response = await request(app).post(`${API_URL}/auth/login`).send({ username: "valid@email.com", password: 'password_hash' })
     expect(response.status).toBe(HTTP_OK);
     expect(response.body.success).toBe(true)
 
@@ -95,7 +106,7 @@ describe("User Login E2E Flow", () => {
 
   it(`should throw ${AUTH_ERRORS.INVALID_CRIDENTIALS} `, async () => {
     const res = await request(app)
-      .post('/auth/login')
+      .post(`${API_URL}/auth/login`)
       .send({ username: "other@email.com", password: "password" });
 
     expect(res.status).toBe(HTTP_UNAUTHORIZED);
@@ -106,7 +117,7 @@ describe("User Login E2E Flow", () => {
 
   it(`should throw ${AUTH_ERRORS.INVALID_EMAIL}`, async () => {
     const res = await request(app)
-      .post('/auth/login')
+      .post(`${API_URL}/auth/login`)
       .send({ username: "other@e", password: "password" });
 
     expect(res.status).toBe(HTTP_BAD_REQUEST);
@@ -115,7 +126,7 @@ describe("User Login E2E Flow", () => {
   })
   it(`should throw ${AUTH_ERRORS.INVALID_USERNAME}`, async () => {
     const res = await request(app)
-      .post('/auth/login')
+      .post(`${API_URL}/auth/login`)
       .send({ username: "ot", password: "password" });
 
     expect(res.status).toBe(HTTP_BAD_REQUEST);
@@ -124,7 +135,7 @@ describe("User Login E2E Flow", () => {
   });
   it(`should throw ${AUTH_ERRORS.INVALID_PASSWORD}`, async () => {
     const res = await request(app)
-      .post('/auth/login')
+      .post(`${API_URL}/auth/login`)
       .send({ username: "username", password: "pass" });
 
     expect(res.status).toBe(HTTP_BAD_REQUEST);
@@ -133,7 +144,7 @@ describe("User Login E2E Flow", () => {
   });
   it(`should throw ${AUTH_ERRORS.INVALID_PASSWORD}`, async () => {
     const res = await request(app)
-      .post('/auth/login')
+      .post(`${API_URL}/auth/login`)
       .send({
         username: "username", password: `
         00000000000
@@ -149,7 +160,7 @@ describe("User Login E2E Flow", () => {
   });
   it(`should throw ${AUTH_ERRORS.INVALID_USERNAME_OR_EMAIL}`, async () => {
     const res = await request(app)
-      .post('/auth/login')
+      .post(`${API_URL}/auth/login`)
       .send({ username: "", password: `password_hash` });
 
     expect(res.status).toBe(HTTP_BAD_REQUEST);

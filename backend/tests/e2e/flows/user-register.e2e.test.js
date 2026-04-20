@@ -6,9 +6,11 @@ import db from "../../../config/database.js";
 import request from "supertest";
 import app from "../../../index.js";
 import bcrypt from "bcrypt";
-import { BCRYPT_ROUNDS } from "../../../constants/index.js";
+import { API_PREFIX, API_VERSION, BCRYPT_ROUNDS } from "../../../constants/index.js";
 
 describe("User Create E2E Flow", () => {
+  const API_URL = API_PREFIX + '/' + API_VERSION;
+
   beforeAll(async () => {
     await setupTestDatabase();
   });
@@ -32,7 +34,7 @@ describe("User Create E2E Flow", () => {
       age: 25,
     };
 
-    const response = await request(app).post("/users/register").send(userData);
+    const response = await request(app).post(`${API_URL}/users/register`).send(userData);
 
     expect(response.status).toBe(201);
     expect(response.body.success).toBe(true);
@@ -51,7 +53,7 @@ describe("User Create E2E Flow", () => {
       age: 25,
     };
 
-    const response = await request(app).post("/users/register").send(userData);
+    const response = await request(app).post(`${API_URL}/users/register`).send(userData);
 
     expect(response.status).toBe(400);
     expect(response.body.success).toBe(false);
@@ -65,7 +67,7 @@ describe("User Create E2E Flow", () => {
       age: 25,
     };
 
-    const response = await request(app).post("/users/register").send(userData);
+    const response = await request(app).post(`${API_URL}/users/register`).send(userData);
 
     expect(response.status).toBe(400);
     expect(response.body.success).toBe(false);
@@ -79,7 +81,7 @@ describe("User Create E2E Flow", () => {
       age: 25,
     };
 
-    const response = await request(app).post("/users/register").send(userData);
+    const response = await request(app).post(`${API_URL}/users/register`).send(userData);
 
     expect(response.status).toBe(400);
     expect(response.body.success).toBe(false);
@@ -93,7 +95,7 @@ describe("User Create E2E Flow", () => {
       age: 25,
     };
 
-    const response = await request(app).post("/users/register").send(userData);
+    const response = await request(app).post(`${API_URL}/users/register`).send(userData);
 
     expect(response.status).toBe(400);
     expect(response.body.success).toBe(false);
@@ -108,7 +110,7 @@ describe("User Create E2E Flow", () => {
       age: 25,
     };
 
-    const response = await request(app).post("/users/register").send(userData);
+    const response = await request(app).post(`${API_URL}/users/register`).send(userData);
 
     expect(response.status).toBe(400);
     expect(response.body.success).toBe(false);
@@ -124,7 +126,8 @@ describe("User Create E2E Flow", () => {
       age: 25,
     };
 
-    const response = await request(app).post("/users/register").send(userData);
+    const response = await request(app).post(`${API_URL}/users/register`
+    ).send(userData);
 
     expect(response.status).toBe(400);
     expect(response.body.success).toBe(false);
@@ -140,7 +143,7 @@ describe("User Create E2E Flow", () => {
       age: 25,
     };
 
-    const response = await request(app).post("/users/register").send(userData);
+    const response = await request(app).post(`${API_URL}/users/register`).send(userData);
 
     expect(response.status).toBe(400);
     expect(response.body.success).toBe(false);
@@ -155,7 +158,7 @@ describe("User Create E2E Flow", () => {
       age: 25,
     };
 
-    const response = await request(app).post("/users/register").send(userData);
+    const response = await request(app).post(`${API_URL}/users/register`).send(userData);
 
     expect(response.status).toBe(400);
     expect(response.body.success).toBe(false);
@@ -171,7 +174,7 @@ describe("User Create E2E Flow", () => {
       age: 12,
     };
 
-    const response = await request(app).post("/users/register").send(userData);
+    const response = await request(app).post(`${API_URL}/users/register`).send(userData);
 
     expect(response.status).toBe(400);
     expect(response.body.success).toBe(false);
@@ -198,7 +201,7 @@ describe("User Create E2E Flow", () => {
       age: 30,
     };
 
-    const response = await request(app).post("/users/register").send(secondUserData);
+    const response = await request(app).post(`${API_URL}/users/register`).send(secondUserData);
 
     expect(response.status).toBe(409);
     expect(response.body.success).toBe(false);
@@ -225,7 +228,7 @@ describe("User Create E2E Flow", () => {
       age: 30,
     };
 
-    const response = await request(app).post("/users/register").send(secondUserData);
+    const response = await request(app).post(`${API_URL}/users/register`).send(secondUserData);
 
     expect(response.status).toBe(409);
     expect(response.body.success).toBe(false);
