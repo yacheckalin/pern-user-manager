@@ -54,6 +54,10 @@ jobs:
         env:
           SCHEMA: app
           DATABASE_URL: postgresql://postgres:secret_password@localhost:5432/test_db?options=-csearch_path=app,public
+          DB_USERNAME: postgres
+          DB_PASSWORD: secret_password
+          DB_NAME: my_database
+          DB_PORT: 5432
 
       - name: Run Unit Tests
         run: npm run test:unit
