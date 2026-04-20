@@ -21,6 +21,11 @@ jobs:
           POSTGRES_DB: test_db
         ports:
           - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     defaults:
       run:
         working-directory: backend
@@ -48,7 +53,7 @@ jobs:
         working-directory: ./backend
         env:
           LOG_LEVEL: warn
-          DB_CONNECTION: postgresql://postgres:password@localhost:5432/test_db
+          DATABASE_URL: postgresql://postgres:password@localhost:5432/test_db
           DB_USERNAME: postgres
           DB_PASSWORD: secret_password
           DB_NAME: my_database
@@ -58,8 +63,23 @@ jobs:
         run: npm run test:integration
         working-directory: ./backend
         env:
-          DB_CONNECTION: postgresql://postgres:password@localhost:5432/test_db
+          DATABASE_URL: postgresql://postgres:password@localhost:5432/test_db
           DB_USERNAME: postgres
           DB_PASSWORD: secret_password
           DB_NAME: my_database
           DB_PORT: 5432
+
+      - name: E2E Tests
+        run: npm run test:e2e
+        working-directory: ./backend
+        env:
+          DATABASE_URL: postgresql://postgres:password@localhost:5432/test_db
+          DB_USERNAME: postgres
+          DB_PASSWORD: secret_password
+          DB_NAME: my_database
+          DB_PORT: 5432
+      - name: CI Tests
+        run: npm run ci
+        working-directory: ./backend
+        env:
+          DATABASE_URL: postgresql://postgres:password@localhost:5432/test_db

@@ -4,13 +4,14 @@ import logger from '../../logger.js';
 
 dotenv.config();
 
-const testPool = new Pool({
-  host: process.env.DB_CONNECTION || process.env.DB_HOST || "localhost",
+const dbConfig = process.env.DATABASE_URL ? { connectionString: process.env.DATABASE_URL } : {
+  host: process.env.DB_HOST || process.env.DB_CONNECTION || "localhost",
   port: process.env.DB_PORT || 5433,
   database: process.env.DB_NAME || "myapp_test",
   user: process.env.DB_USERNAME || "postgres",
   password: process.env.DB_PASSWORD || "postgres",
-});
+}
+const testPool = new Pool(dbConfig);
 
 async function setupTestDatabase() {
   const schema = process.env.SCHEMA || 'app';

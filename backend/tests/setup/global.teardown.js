@@ -13,14 +13,15 @@ const globalTeardown = async () => {
     logger.warn("No test database name found");
     return;
   }
-
-  const adminPool = new Pool({
-    host: process.env.DB_HOST || 'db',
-    port: process.env.DB_PORT,
-    database: "postgres",
-    user: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-  });
+  const dbConfig = process.env.DATABASE_URL ?
+    { connectionString: process.env.DATABASE_URL } : {
+      host: process.env.DB_HOST || process.env.DB_CONNECTION || 'db',
+      port: process.env.DB_PORT,
+      database: "postgres",
+      user: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+    }
+  const adminPool = new Pool(dbConfig);
 
   try {
     // Terminate all connections to the test database

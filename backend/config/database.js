@@ -13,15 +13,18 @@ class Database {
       DB_MAX_CLIENTS,
       DB_IDLE_TIMEOUT,
       DB_CONNECTION_TIMEOUT,
+      DB_HOST, DATABASE_URL
     } = process.env;
-
-    this.pool = new Pool({
-      host: DB_CONNECTION,
+    this.config = DATABASE_URL ? { connectionString: DATABASE_URL } : {
+      host: DB_HOST || DB_CONNECTION,
       port: DB_PORT,
       database: DB_NAME,
       user: DB_USERNAME,
       password: DB_PASSWORD,
-      max: DB_MAX_CLIENTS,
+      max: DB_MAX_CLIENTS
+    };
+    this.pool = new Pool({
+      ...this.config,
       idleTimeoutMillis: DB_IDLE_TIMEOUT,
       connectionTimeoutMillis: DB_CONNECTION_TIMEOUT,
       options: "-c search_path=app,public",
