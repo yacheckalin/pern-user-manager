@@ -135,17 +135,19 @@ let keepDatabase = process.env.KEEP_TEST_DATABASE === "true";
 
 export const getTestPool = () => {
   if (!testPool) {
-    testPool = new Pool({
-      host: process.env.DB_CONNECTION,
-      port: parseInt(process.env.DB_PORT, 10),
-      database: process.env.DB_NAME,
-      user: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-      max: 5,
-      idleTimeoutMillis: parseInt(process.env.DB_IDLE_TIMEOUT, 10) || 1000,
-      connectionTimeoutMillis:
-        parseInt(process.env.DB_CONNECTION_TIMEOUT) || 5000,
-    });
+    const dbConfig = process.env.DATABASE_URL ?
+      { connectionString: process.env.DATABASE_URL } : {
+        host: process.env.DB_HOST || process.env.DB_CONNECTION,
+        port: parseInt(process.env.DB_PORT, 10),
+        database: process.env.DB_NAME,
+        user: process.env.DB_USERNAME,
+        password: process.env.DB_PASSWORD,
+        max: 5,
+        idleTimeoutMillis: parseInt(process.env.DB_IDLE_TIMEOUT, 10) || 1000,
+        connectionTimeoutMillis:
+          parseInt(process.env.DB_CONNECTION_TIMEOUT) || 5000,
+      }
+    testPool = new Pool(dbConfig);
   }
   return testPool;
 };
@@ -283,15 +285,16 @@ afterAll(async () => {
 // 6. EXPORT ALL UTILITIES
 // ============================================
 
-export const getTestConfig = () => ({
-  dbHost: process.env.DB_CONNECTION,
-  dbPort: process.env.DB_PORT,
-  dbName: process.env.DB_NAME,
-  dbUserName: process.env.DB_USERNAME,
-  dbPassword: process.env.DB_PASSWORD,
-  dbUrl: process.env.DB_URL,
-  logLevel: process.env.LOG_LEVEL,
-});
+export const getTestConfig = () => (process.env.DATABASE_URL ?
+  { connectionString: process.env.DATABASE_URL } : {
+    dbHost: process.env.DB_CONNECTION || process.env.DB_HOST,
+    dbPort: process.env.DB_PORT,
+    dbName: process.env.DB_NAME,
+    dbUserName: process.env.DB_USERNAME,
+    dbPassword: process.env.DB_PASSWORD,
+    dbUrl: process.env.DB_URL,
+    logLevel: process.env.LOG_LEVEL,
+  });
 
 export default {
   getTestPool,

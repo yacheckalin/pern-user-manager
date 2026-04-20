@@ -28,13 +28,15 @@ const globalSetup = async () => {
   process.env.DB_PASSWORD = process.env.DB_PASSWORD || "postgres";
 
   // Create test database
-  const adminPool = new Pool({
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    database: "postgres",
-    user: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-  });
+  const dbConfig = process.env.DATABASE_URL ?
+    { connectionString: process.env.DATABASE_URL } : {
+      host: process.env.DB_HOST || process.env.DB_CONNECTION,
+      port: process.env.DB_PORT,
+      database: "postgres",
+      user: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+    }
+  const adminPool = new Pool(dbConfig);
 
   try {
     await adminPool.query(`CREATE DATABASE ${process.env.DB_NAME}`);
@@ -47,13 +49,7 @@ const globalSetup = async () => {
   }
 
   // Create schema in the test database before migrations
-  const testPool = new Pool({
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    database: process.env.DB_NAME,
-    user: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-  });
+  const testPool = new Pool(dbConfig);
 
   try {
     await testPool.query('CREATE SCHEMA IF NOT EXISTS app');
