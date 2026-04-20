@@ -4,6 +4,8 @@ import {
 } from "../../setup/test.database.js";
 import db from "../../../config/database.js";
 import {
+  API_PREFIX,
+  API_VERSION,
   BCRYPT_ROUNDS,
   HTTP_CONFLICT,
   HTTP_NOT_FOUND,
@@ -26,6 +28,8 @@ describe("Activate User By Id E2E Flow", () => {
     password: originalPassword,
     age: 25,
   };
+  const API_URL = API_PREFIX + '/' + API_VERSION;
+
   beforeAll(async () => {
     await setupTestDatabase();
   });
@@ -62,7 +66,7 @@ describe("Activate User By Id E2E Flow", () => {
 
   it("should activate user by id successfully", async () => {
     const response = await request(app).patch(
-      `/users/${inactiveUser.id}/activate`,
+      `${API_URL}/users/${inactiveUser.id}/activate`,
     );
 
     expect(response.status).toBe(HTTP_OK);
@@ -74,7 +78,7 @@ describe("Activate User By Id E2E Flow", () => {
 
   it("should return conflict when user is already activated", async () => {
     const response = await request(app).patch(
-      `/users/${activeUser.id}/activate`,
+      `${API_URL}/users/${activeUser.id}/activate`,
     );
 
     expect(response.status).toBe(HTTP_CONFLICT);
@@ -83,7 +87,7 @@ describe("Activate User By Id E2E Flow", () => {
   });
 
   it("should return user not found", async () => {
-    const response = await request(app).patch(`/users/9999/activate`);
+    const response = await request(app).patch(`${API_URL}/users/9999/activate`);
 
     expect(response.status).toBe(HTTP_NOT_FOUND);
     expect(response.body.message).toBe(USER_ERRORS.NOT_FOUND);

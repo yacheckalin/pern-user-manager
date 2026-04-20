@@ -2,6 +2,7 @@
 export const APP_NAME = "MyApp";
 export const APP_VERSION = "1.0.0";
 export const API_VERSION = "v1";
+export const API_PREFIX = '/api'
 
 // Pagination
 export const DEFAULT_PAGE_SIZE = 2;

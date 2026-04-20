@@ -6,6 +6,8 @@ import db from "../../../config/database.js";
 import request from "supertest";
 import app from "../../../index.js";
 import {
+  API_PREFIX,
+  API_VERSION,
   HTTP_BAD_REQUEST,
   HTTP_NOT_FOUND,
   HTTP_OK,
@@ -23,6 +25,9 @@ describe("User Update Password E2E Flow", () => {
     password: originalPassword,
     age: 25,
   };
+
+  const API_URL = API_PREFIX + '/' + API_VERSION;
+
   beforeAll(async () => {
     await setupTestDatabase();
   });
@@ -52,7 +57,7 @@ describe("User Update Password E2E Flow", () => {
     };
 
     const response = await request(app)
-      .patch(`/users/${user.id}/password`)
+      .patch(`${API_URL}/users/${user.id}/password`)
       .send(data);
 
     expect(response.status).toBe(HTTP_OK);
@@ -70,7 +75,7 @@ describe("User Update Password E2E Flow", () => {
     };
 
     const response = await request(app)
-      .patch(`/users/9999/password`)
+      .patch(`${API_URL}/users/9999/password`)
       .send(data);
 
     expect(response.status).toBe(HTTP_NOT_FOUND);
@@ -86,7 +91,7 @@ describe("User Update Password E2E Flow", () => {
     };
 
     const response = await request(app)
-      .patch(`/users/${user.id}/password`)
+      .patch(`${API_URL}/users/${user.id}/password`)
       .send(data);
 
     expect(response.status).toBe(HTTP_BAD_REQUEST);
@@ -102,7 +107,7 @@ describe("User Update Password E2E Flow", () => {
     };
 
     const response = await request(app)
-      .patch(`/users/${user.id}/password`)
+      .patch(`${API_URL}/users/${user.id}/password`)
       .send(data);
 
     expect(response.status).toBe(HTTP_BAD_REQUEST);
@@ -120,7 +125,7 @@ describe("User Update Password E2E Flow", () => {
     };
 
     const response = await request(app)
-      .patch(`/users/${user.id}/password`)
+      .patch(`${API_URL}/users/${user.id}/password`)
       .send(data);
 
     expect(response.status).toBe(HTTP_BAD_REQUEST);
@@ -136,7 +141,7 @@ describe("User Update Password E2E Flow", () => {
     };
 
     const response = await request(app)
-      .patch(`/users/${user.id}/password`)
+      .patch(`${API_URL}/users/${user.id}/password`)
       .send(data);
 
     expect(response.status).toBe(HTTP_BAD_REQUEST);

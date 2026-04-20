@@ -5,7 +5,7 @@ import {
 import db from "../../../config/database.js";
 import request from "supertest";
 import app from "../../../index.js";
-import { AUTH_ERRORS, BCRYPT_ROUNDS, HTTP_UNAUTHORIZED } from "../../../constants/index.js";
+import { API_PREFIX, API_VERSION, AUTH_ERRORS, BCRYPT_ROUNDS, HTTP_UNAUTHORIZED } from "../../../constants/index.js";
 import bcrypt from 'bcrypt'
 
 describe("User Get All E2E Flow", () => {
@@ -16,6 +16,7 @@ describe("User Get All E2E Flow", () => {
     age: 22
   }
   let accessToken = null;
+  const API_URL = API_PREFIX + '/' + API_VERSION;
 
   beforeAll(async () => {
     await setupTestDatabase();
@@ -36,7 +37,7 @@ describe("User Get All E2E Flow", () => {
     const hashedPassword = await bcrypt.hash(mockUserData.password, BCRYPT_ROUNDS);
     await db.query(query, [mockUserData.username, mockUserData.email, hashedPassword, mockUserData.age]);
 
-    const result = await request(app).post('/auth/login')
+    const result = await request(app).post(`${API_URL}/auth/login`)
       .send({ username: mockUserData.username, password: mockUserData.password });
 
     accessToken = result.body.data.accessToken;
@@ -46,7 +47,7 @@ describe("User Get All E2E Flow", () => {
 
 
     const allUsers = await request(app)
-      .get("/users")
+      .get(`${API_URL}/users`)
       .set('Authorization', `Bearer ${accessToken}`)
       .set('Accept', 'application/json');;
 
@@ -56,7 +57,7 @@ describe("User Get All E2E Flow", () => {
 
   it("should return empty array when no users exist", async () => {
     const allUsers = await request(app)
-      .get("/users")
+      .get(`${API_URL}/users`)
       .set('Authorization', `Bearer ${accessToken}`)
       .set('Accept', 'application/json');
 
@@ -67,7 +68,7 @@ describe("User Get All E2E Flow", () => {
   });
 
   it(`shold return ${AUTH_ERRORS.HTTP_UNAUTHORIZED}`, async () => {
-    const users = await request(app).get('/users');
+    const users = await request(app).get(`${API_URL}/users`);
 
     expect(users.status).toBe(HTTP_UNAUTHORIZED);
     expect(users.body.success).toBe(false);
