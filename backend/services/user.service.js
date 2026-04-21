@@ -139,7 +139,11 @@ class UserService {
 
     const user = await this.userRepository.findUserById(id);
     if (!user) {
-      throw new Error(USER_ERRORS.NOT_FOUND);
+      throw new ApiError({
+        message: USER_ERRORS.NOT_FOUND,
+        status: HTTP_NOT_FOUND,
+        code: USER_CODES.USER_NOT_FOUND
+      });
     }
 
     // check old password
@@ -148,7 +152,11 @@ class UserService {
       user.passwordHash,
     );
     if (!isValidPassword) {
-      throw new Error(USER_ERRORS.OLD_PASSWORD_INVALID);
+      throw new ApiError({
+        message: USER_ERRORS.OLD_PASSWORD_INVALID,
+        status: HTTP_BAD_REQUEST,
+        code: USER_CODES.OLD_PASSWORD_INVALID
+      });
     }
 
     // check new password
@@ -158,7 +166,11 @@ class UserService {
     );
 
     if (isSameNewPassword) {
-      throw new Error(USER_ERRORS.NEW_PASSWORD_THE_SAME);
+      throw new ApiError({
+        message: USER_ERRORS.NEW_PASSWORD_THE_SAME,
+        code: USER_CODES.NEW_PASSWORD_THE_SAME,
+        status: HTTP_BAD_REQUEST
+      });
     }
 
     const newPasswordHash = await bcrypt.hash(data.new_password, BCRYPT_ROUNDS);
@@ -276,17 +288,29 @@ class UserService {
       !data.new_password ||
       data.new_password.length < USER_VALIDATION.PASSWORD_MIN_LENGTH
     ) {
-      throw new Error(USER_ERRORS.INVALID_NEW_PASSWORD);
+      throw new ApiError({
+        message: USER_ERRORS.INVALID_NEW_PASSWORD,
+        status: HTTP_BAD_REQUEST,
+        code: USER_CODES.INVALID_NEW_PASSWORD
+      });
     }
     if (
       !data.old_password ||
       data.old_password.length < USER_VALIDATION.PASSWORD_MIN_LENGTH
     ) {
-      throw new Error(USER_ERRORS.INVALID_OLD_PASSWORD);
+      throw new ApiError({
+        message: USER_ERRORS.INVALID_OLD_PASSWORD,
+        code: USER_CODES.INVALID_OLD_PASSWORD,
+        status: HTTP_BAD_REQUEST
+      });
     }
 
     if (data.confirm_password && data.confirm_password !== data.new_password) {
-      throw new Error(USER_ERRORS.INVALID_CONFIRM_PASSWORD);
+      throw new ApiError({
+        message: USER_ERRORS.INVALID_CONFIRM_PASSWORD,
+        code: USER_CODES.INVALID_CONFIRM_PASSWORD,
+        status: HTTP_BAD_REQUEST
+      });
     }
   }
 }

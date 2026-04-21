@@ -91,37 +91,16 @@ class UserController {
     }
   }
 
-  async updateUserPassword(req, res, next) {
-    try {
-      const { id } = req.params;
-      const user = await this.userService.updateUserPassword(id, req.body);
-      res.status(HTTP_OK).json({
-        success: true,
-        message: USER_MESSAGES.PASSWORD_CHANGED,
-        data: user,
-      });
-    } catch (error) {
-      // Handle validation errors
-      if (
-        error.message === USER_ERRORS.INVALID_NEW_PASSWORD ||
-        error.message === USER_ERRORS.INVALID_OLD_PASSWORD ||
-        error.message === USER_ERRORS.INVALID_CONFIRM_PASSWORD ||
-        error.message === USER_ERRORS.OLD_PASSWORD_INVALID ||
-        error.message === USER_ERRORS.NEW_PASSWORD_THE_SAME
-      ) {
+  updateUserPassword = asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
+    const user = await this.userService.updateUserPassword(id, req.body);
 
-        next({ message: error.message, statusCode: HTTP_BAD_REQUEST });
-      }
-
-      // Handle other errors
-      const statusCode =
-        error.message === USER_ERRORS.NOT_FOUND
-          ? HTTP_NOT_FOUND
-          : HTTP_INTERNAL_SERVER_ERROR;
-
-      next({ message: error.message, statusCode });
-    }
-  }
+    res.status(HTTP_OK).json({
+      success: true,
+      message: USER_MESSAGES.PASSWORD_CHANGED,
+      data: user,
+    });
+  })
 
   deleteUser = asyncHandler(async (req, res, next) => {
     const { id } = req.params;

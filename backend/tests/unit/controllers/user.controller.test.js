@@ -365,53 +365,67 @@ describe("UserController - Unit Tests", () => {
 
     it("should return not found", async () => {
       mockUserService.updateUserPassword.mockRejectedValue(
-        new Error(USER_ERRORS.NOT_FOUND),
+        new ApiError({ message: USER_ERRORS.NOT_FOUND, status: HTTP_NOT_FOUND }),
       );
 
       req.params.id = 999;
       await userController.updateUserPassword(req, res, next);
-      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.NOT_FOUND, statusCode: HTTP_NOT_FOUND });
+      expect(next).toHaveBeenCalledWith(
+        expect.objectContaining({ message: USER_ERRORS.NOT_FOUND, status: HTTP_NOT_FOUND }));
       expect(res.status).not.toHaveBeenCalled();
       expect(res.json).not.toHaveBeenCalled();
     });
 
     it(`should return ${HTTP_CONFLICT} : ${USER_ERRORS.INVALID_NEW_PASSWORD}`, async () => {
-      mockUserService.updateUserPassword.mockRejectedValue(new Error(USER_ERRORS.INVALID_NEW_PASSWORD));
+      mockUserService.updateUserPassword.mockRejectedValue(new ApiError(
+        { message: USER_ERRORS.INVALID_NEW_PASSWORD, status: HTTP_BAD_REQUEST }));
       await userController.updateUserPassword(req, res, next);
 
-      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.INVALID_NEW_PASSWORD, statusCode: HTTP_BAD_REQUEST });
+      expect(next).toHaveBeenCalledWith(
+        expect.objectContaining({ message: USER_ERRORS.INVALID_NEW_PASSWORD, status: HTTP_BAD_REQUEST }));
       expect(res.status).not.toHaveBeenCalled();
       expect(res.json).not.toHaveBeenCalled();
     });
     it(`should return ${HTTP_BAD_REQUEST} : ${USER_ERRORS.INVALID_OLD_PASSWORD}`, async () => {
-      mockUserService.updateUserPassword.mockRejectedValue(new Error(USER_ERRORS.INVALID_OLD_PASSWORD));
+      mockUserService.updateUserPassword.mockRejectedValue(new ApiError(
+        { message: USER_ERRORS.INVALID_OLD_PASSWORD, status: HTTP_BAD_REQUEST }));
       await userController.updateUserPassword(req, res, next);
 
-      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.INVALID_OLD_PASSWORD, statusCode: HTTP_BAD_REQUEST });
+      expect(next).toHaveBeenCalledWith(
+        expect.objectContaining({ message: USER_ERRORS.INVALID_OLD_PASSWORD, status: HTTP_BAD_REQUEST }));
       expect(res.status).not.toHaveBeenCalled();
       expect(res.json).not.toHaveBeenCalled();
     })
     it(`should return ${HTTP_BAD_REQUEST} : ${USER_ERRORS.INVALID_CONFIRM_PASSWORD}`, async () => {
-      mockUserService.updateUserPassword.mockRejectedValue(new Error(USER_ERRORS.INVALID_CONFIRM_PASSWORD));
+      mockUserService.updateUserPassword.mockRejectedValue(new ApiError({
+        message: USER_ERRORS.INVALID_CONFIRM_PASSWORD, status: HTTP_BAD_REQUEST
+      }));
       await userController.updateUserPassword(req, res, next);
 
-      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.INVALID_CONFIRM_PASSWORD, statusCode: HTTP_BAD_REQUEST });
+      expect(next).toHaveBeenCalledWith(
+        expect.objectContaining({ message: USER_ERRORS.INVALID_CONFIRM_PASSWORD, status: HTTP_BAD_REQUEST }));
       expect(res.status).not.toHaveBeenCalled();
       expect(res.json).not.toHaveBeenCalled();
     })
     it(`should return ${HTTP_BAD_REQUEST} : ${USER_ERRORS.OLD_PASSWORD_INVALID}`, async () => {
-      mockUserService.updateUserPassword.mockRejectedValue(new Error(USER_ERRORS.OLD_PASSWORD_INVALID));
+      mockUserService.updateUserPassword.mockRejectedValue(new ApiError({
+        message: USER_ERRORS.OLD_PASSWORD_INVALID, status: HTTP_BAD_REQUEST
+      }));
       await userController.updateUserPassword(req, res, next);
 
-      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.OLD_PASSWORD_INVALID, statusCode: HTTP_BAD_REQUEST });
+      expect(next).toHaveBeenCalledWith(
+        expect.objectContaining({ message: USER_ERRORS.OLD_PASSWORD_INVALID, status: HTTP_BAD_REQUEST }));
       expect(res.status).not.toHaveBeenCalled();
       expect(res.json).not.toHaveBeenCalled();
     })
     it(`should return ${HTTP_BAD_REQUEST} : ${USER_ERRORS.NEW_PASSWORD_THE_SAME}`, async () => {
-      mockUserService.updateUserPassword.mockRejectedValue(new Error(USER_ERRORS.NEW_PASSWORD_THE_SAME));
+      mockUserService.updateUserPassword.mockRejectedValue(new ApiError({
+        message: USER_ERRORS.NEW_PASSWORD_THE_SAME, status: HTTP_BAD_REQUEST
+      }));
       await userController.updateUserPassword(req, res, next);
 
-      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.NEW_PASSWORD_THE_SAME, statusCode: HTTP_BAD_REQUEST });
+      expect(next).toHaveBeenCalledWith(
+        expect.objectContaining({ message: USER_ERRORS.NEW_PASSWORD_THE_SAME, status: HTTP_BAD_REQUEST }));
       expect(res.status).not.toHaveBeenCalled();
       expect(res.json).not.toHaveBeenCalled();
     })
