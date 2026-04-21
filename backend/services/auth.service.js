@@ -1,8 +1,12 @@
 import db from "../config/database.js";
 import {
   AUTH_ERRORS,
+  HTTP_BAD_REQUEST,
+  HTTP_INTERNAL_SERVER_ERROR,
+  HTTP_UNAUTHORIZED,
   JWT_DEFAULTS,
   TOKEN_ERRORS,
+  USER_CODES,
   WRONG_IP,
 } from "../constants/index.js";
 import { USER_VALIDATION } from "../constants/user.constants.js";
@@ -14,6 +18,7 @@ import RefershTokensService from "./token.service.js";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
 import RefreshTokenService from "./token.service.js";
+import ApiError from "../errors/api.error.js";
 class AuthService {
   constructor() {
     this.authRepository = new AuthRepository(db);
@@ -37,7 +42,11 @@ class AuthService {
     }
 
     if (!user) {
-      throw new Error(AUTH_ERRORS.INVALID_CRIDENTIALS);
+      throw new ApiError({
+        message: AUTH_ERRORS.INVALID_CRIDENTIALS,
+        code: USER_CODES.INVALID_CRIDENTIALS,
+        status: HTTP_UNAUTHORIZED
+      });
     }
 
     // check password
@@ -46,7 +55,12 @@ class AuthService {
       user.passwordHash,
     );
     if (!isValidPassword) {
-      throw new Error(AUTH_ERRORS.INVALID_CRIDENTIALS);
+      throw new ApiError({
+        message: AUTH_ERRORS.INVALID_CRIDENTIALS,
+        code: USER_CODES.INVALID_CRIDENTIALS,
+        status: HTTP_UNAUTHORIZED
+      }
+      );
     }
 
     // add refresh_token to DB
@@ -91,7 +105,11 @@ class AuthService {
     const { username, password } = data;
     // Either username or email must be provided
     if (!this.hasUsername(username) && !this.hasEmail(username)) {
-      throw new Error(AUTH_ERRORS.INVALID_USERNAME_OR_EMAIL);
+      throw new ApiError({
+        message: AUTH_ERRORS.INVALID_USERNAME_OR_EMAIL,
+        code: USER_CODES.INVALID_USERNAME_OR_EMAIL,
+        status: HTTP_BAD_REQUEST
+      });
     }
 
     // If username is provided, validate it
@@ -100,7 +118,11 @@ class AuthService {
       (username.length < USER_VALIDATION.USERNAME_MIN_LENGTH ||
         username.length > USER_VALIDATION.USERNAME_MAX_LENGTH)
     ) {
-      throw new Error(AUTH_ERRORS.INVALID_USERNAME);
+      throw new ApiError({
+        message: AUTH_ERRORS.INVALID_USERNAME,
+        code: USER_CODES.INVALID_USERNAME,
+        status: HTTP_BAD_REQUEST
+      });
     }
 
     // If email is provided, validate it
@@ -108,17 +130,29 @@ class AuthService {
       this.hasEmail(username) &&
       !username.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/is)
     ) {
-      throw new Error(AUTH_ERRORS.INVALID_EMAIL);
+      throw new ApiError({
+        message: AUTH_ERRORS.INVALID_EMAIL,
+        code: USER_CODES.INVALID_EMAIL,
+        status: HTTP_BAD_REQUEST
+      });
     }
 
     // Password is always required
     if (!this.hasValidPassword(password)) {
-      throw new Error(AUTH_ERRORS.INVALID_PASSWORD);
+      throw new ApiError({
+        message: AUTH_ERRORS.INVALID_PASSWORD,
+        code: USER_CODES.INVALID_PASSWORD,
+        status: HTTP_BAD_REQUEST
+      });
     }
 
     // If IP provided
     if (this.ip !== undefined && !validator.isIP(this.ip)) {
-      throw new Error(WRONG_IP);
+      throw new ApiError({
+        message: WRONG_IP,
+        code: USER_CODES.WRONG_IP,
+        status: HTTP_INTERNAL_SERVER_ERROR
+      });
     }
   }
 }
