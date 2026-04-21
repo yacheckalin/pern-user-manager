@@ -2,11 +2,6 @@ import UserService from "../services/user.service.js";
 import {
   HTTP_OK,
   HTTP_CREATED,
-  HTTP_NOT_FOUND,
-  HTTP_CONFLICT,
-  HTTP_BAD_REQUEST,
-  HTTP_INTERNAL_SERVER_ERROR,
-  USER_ERRORS,
   USER_MESSAGES,
 } from "../constants/index.js";
 import asyncHandler from "../middleware/async-handler.js";
