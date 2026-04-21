@@ -6,6 +6,7 @@ import {
   HTTP_INTERNAL_SERVER_ERROR,
   HTTP_NOT_FOUND,
   HTTP_OK,
+  SERVER_ERROR,
   USER_ERRORS,
   USER_MESSAGES,
   USER_VALIDATION,
@@ -102,7 +103,7 @@ describe("UserController - Unit Tests", () => {
 
       await userController.getAllUsers(req, res, next);
 
-      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.status).toHaveBeenCalledWith(HTTP_OK);
       expect(res.json).toHaveBeenCalledWith({
         success: true,
         data: mockUsers,
@@ -110,10 +111,14 @@ describe("UserController - Unit Tests", () => {
     });
 
     it(`should return ${HTTP_INTERNAL_SERVER_ERROR}`, async () => {
-      mockUserService.getAllUsers.mockRejectedValue(HTTP_INTERNAL_SERVER_ERROR)
+      mockUserService.getAllUsers.mockRejectedValue(new ApiError({
+        message: SERVER_ERROR.INTERNAL_SERVER_ERROR,
+        status: HTTP_INTERNAL_SERVER_ERROR
+      }))
       await userController.getAllUsers(req, res, next);
 
-      expect(next).toHaveBeenCalledWith({ message: USER_VALIDATION.HTTP_INTERNAL_SERVER_ERROR, statusCode: HTTP_INTERNAL_SERVER_ERROR });
+      expect(next).toHaveBeenCalledWith(
+        expect.objectContaining({ message: SERVER_ERROR.INTERNAL_SERVER_ERROR, status: HTTP_INTERNAL_SERVER_ERROR }));
       expect(res.status).not.toHaveBeenCalled();
       expect(res.json).not.toHaveBeenCalled();
     })
@@ -565,11 +570,12 @@ describe("UserController - Unit Tests", () => {
     });
     it("should return 404", async () => {
       mockUserService.getUser.mockRejectedValue(
-        new Error(USER_ERRORS.NOT_FOUND),
+        new ApiError({ message: USER_ERRORS.NOT_FOUND, status: HTTP_NOT_FOUND }),
       );
       req.params.id = 999;
       await userController.getUser(req, res, next);
-      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.NOT_FOUND, statusCode: HTTP_NOT_FOUND });
+      expect(next).toHaveBeenCalledWith(
+        expect.objectContaining({ message: USER_ERRORS.NOT_FOUND, status: HTTP_NOT_FOUND }));
       expect(res.status).not.toHaveBeenCalled();
       expect(res.json).not.toHaveBeenCalled();
     });

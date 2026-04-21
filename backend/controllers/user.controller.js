@@ -16,34 +16,20 @@ class UserController {
     this.userService = new UserService();
   }
 
-  async getAllUsers(req, res, next) {
-    try {
-      const results = await this.userService.getAllUsers();
-      res.status(HTTP_OK).json({
-        success: true,
-        data: results,
-      });
-    } catch (error) {
-      next({ message: error.message, statusCode: HTTP_INTERNAL_SERVER_ERROR });
-    }
-  }
+  getAllUsers = asyncHandler(async (req, res, next) => {
+    const results = await this.userService.getAllUsers();
+    res.status(HTTP_OK).json({
+      success: true,
+      data: results,
+    });
+  })
 
-  async getUser(req, res, next) {
-    try {
-      const { id } = req.params;
-      const user = await this.userService.getUser(id);
+  getUser = asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
+    const user = await this.userService.getUser(id);
 
-      res.status(HTTP_OK).json({ success: true, data: user })
-    } catch (error) {
-      // Handle other errors
-      const statusCode =
-        error.message === USER_ERRORS.NOT_FOUND
-          ? HTTP_NOT_FOUND
-          : HTTP_INTERNAL_SERVER_ERROR;
-
-      next({ message: error.message, statusCode })
-    }
-  }
+    res.status(HTTP_OK).json({ success: true, data: user })
+  })
 
   createUser = asyncHandler(async (req, res, next) => {
     const user = await this.userService.createUser(req.body);

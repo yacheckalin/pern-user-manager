@@ -29,7 +29,11 @@ class UserService {
   async getUser(id) {
     const user = await this.userRepository.findUserById(id);
     if (!user) {
-      throw new Error(USER_ERRORS.NOT_FOUND)
+      throw new ApiError({
+        message: USER_ERRORS.NOT_FOUND,
+        code: USER_CODES.USER_NOT_FOUND,
+        status: HTTP_NOT_FOUND
+      })
     }
     return user;
   }
