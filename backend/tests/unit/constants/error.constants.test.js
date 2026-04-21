@@ -81,7 +81,13 @@ describe("Errors Constants", () => {
       PASSWORD_MAX_LENGTH: "PASSWORD_MAX_LENGTH",
       TOKEN_NOT_FOUND: "TOKEN_NOT_FOUND",
       INVALID_CRIDENTIALS: "INVALID_CRIDENTIALS",
-      WRONG_IP: "WRONG_IP"
+      WRONG_IP: "WRONG_IP",
+      TOKEN_EXPIRED: "TOKEN_EXPIRED",
+      TOKEN_NOT_FOUND: "TOKEN_NOT_FOUND",
+      TOKEN_REVOKED: "TOKEN_REVOKED",
+      NO_ACCESS_TOKEN: "NO_ACCESS_TOKEN",
+      INVALID_ACCESS_TOKEN: "INVALID_ACCESS_TOKEN"
+
     }
 
 
@@ -107,7 +113,13 @@ describe("Errors Constants", () => {
         "PASSWORD_MAX_LENGTH",
         "TOKEN_NOT_FOUND",
         "INVALID_CRIDENTIALS",
-        "WRONG_IP"
+        "WRONG_IP",
+        "TOKEN_EXPIRED",
+        "TOKEN_NOT_FOUND",
+        "TOKEN_REVOKED",
+        "NO_ACCESS_TOKEN",
+        "INVALID_ACCESS_TOKEN"
+
       ];
 
       validCodes.forEach((code) => {

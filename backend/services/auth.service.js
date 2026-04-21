@@ -80,7 +80,11 @@ class AuthService {
   async logout(data) {
     const result = await this.refreshTokenService.revokeToken(data);
     if (!result) {
-      throw new Error(TOKEN_ERRORS.TOKEN_NOT_FOUND);
+      throw new ApiError({
+        message: TOKEN_ERRORS.TOKEN_NOT_FOUND,
+        code: USER_CODES.TOKEN_NOT_FOUND,
+        status: HTTP_UNAUTHORIZED
+      });
     }
     return result;
   }
