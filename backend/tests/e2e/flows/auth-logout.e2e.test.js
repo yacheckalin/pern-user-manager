@@ -101,8 +101,9 @@ describe("Auth Refresh E2E Flow", () => {
   });
 
   it(`should return ${AUTH_ERRORS.UNAUTHORIZED_ACCESS} when refresh token is missing`, async () => {
-    const anonymousAgent = request.agent(app);
-    const response = await anonymousAgent.post(`${API_URL}/auth/refresh`);
+    const response = await request(app)
+      .post(`${API_URL}/auth/refresh`)
+      .set('Cookie', 'refreshToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT');
 
     expect(response.status).toBe(HTTP_FORBIDDEN);
     expect(response.body.success).toBe(false);

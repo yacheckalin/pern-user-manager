@@ -3,26 +3,23 @@ import {
   HTTP_UNAUTHORIZED,
   REFRESH_TOKEN_COOKIE_NAME,
   JWT_DEFAULTS,
-  USER_DEFAULTS,
   AUTH_ERRORS,
   HTTP_INTERNAL_SERVER_ERROR,
   ACCESS_TOKEN_COOKIE_NAME,
   TOKEN_ERRORS,
+  USER_CODES,
 } from "../constants/index.js";
 import RefreshTokenService from "../services/token.service.js";
 import "dotenv/config";
 import ms from "ms";
 import jwt from "jsonwebtoken";
-import logger from '../logger.js';
+import ApiError from "../errors/api.error.js";
 
 const verifyRefreshToken = async (req, res, next) => {
   const refreshToken =
     req.cookies?.refreshToken || req.newRefreshToken || req.body?.refreshToken;
   if (!refreshToken) {
-    next({
-      message: AUTH_ERRORS.UNAUTHORIZED_ACCESS,
-      statusCode: HTTP_FORBIDDEN,
-    });
+    throw new ApiError({ message: AUTH_ERRORS.UNAUTHORIZED_ACCESS, status: HTTP_FORBIDDEN })
   }
 
   try {
@@ -37,7 +34,6 @@ const verifyRefreshToken = async (req, res, next) => {
     });
 
     if (result.success) {
-      // logger.info(result.data.newToken.storedToken.toJSON())
       if (result.data.newToken) {
         const maxAgeRefreshTimestamp = ms(
           process.env.JWT_REFRESH_TOKEN_EXPIRES_IN ||
@@ -83,7 +79,7 @@ const verifyRefreshToken = async (req, res, next) => {
       }
     }
   } catch (error) {
-    next({ statusCode: HTTP_INTERNAL_SERVER_ERROR, message: error.message });
+    throw new ApiError({ message: error, status: HTTP_INTERNAL_SERVER_ERROR })
   }
 };
 
@@ -92,10 +88,11 @@ const verifyAccess = (req, res, next) => {
   const token = authHeader && authHeader.split(" ")[1]; // Bearer <token>
 
   if (!token)
-    res.status(HTTP_UNAUTHORIZED).json({
-      success: false,
+    throw new ApiError({
       message: TOKEN_ERRORS.NO_ACCESS_TOKEN,
-    });
+      code: USER_CODES.NO_ACCESS_TOKEN,
+      status: HTTP_UNAUTHORIZED
+    })
 
   try {
     const decoded = jwt.verify(
@@ -108,10 +105,12 @@ const verifyAccess = (req, res, next) => {
 
     next();
   } catch (err) {
-    next({
+
+    throw new ApiError({
       message: TOKEN_ERRORS.INVALID_ACCESS_TOKEN,
-      statusCode: HTTP_FORBIDDEN,
-    });
+      code: USER_CODES.INVALID_ACCESS_TOKEN,
+      status: HTTP_FORBIDDEN
+    })
   }
 };
 export { verifyRefreshToken, verifyAccess };

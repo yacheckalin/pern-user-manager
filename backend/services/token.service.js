@@ -1,9 +1,12 @@
 import db from "../config/database.js";
 import RefreshTokenRepository from "../repositories/token.repo.js";
 import {
+  HTTP_BAD_REQUEST,
+  HTTP_UNAUTHORIZED,
   JWT_DEFAULTS,
   ONE_WEEK,
   TOKEN_ERRORS,
+  USER_CODES,
   USER_ERRORS,
 } from "../constants/index.js";
 import "dotenv/config";
@@ -12,6 +15,7 @@ import ms from "ms";
 import jwt from "jsonwebtoken";
 import { sanitizeUserData } from "../utils/user.helpers.js";
 import UserRepository from "../repositories/user.repo.js";
+import ApiError from "../errors/api.error.js";
 
 class RefreshTokenService {
   constructor() {
@@ -48,21 +52,37 @@ class RefreshTokenService {
     );
 
     if (!refreshToken) {
-      throw new Error(TOKEN_ERRORS.TOKEN_NOT_FOUND);
+      throw new ApiError({
+        message: TOKEN_ERRORS.TOKEN_NOT_FOUND,
+        code: USER_CODES.TOKEN_NOT_FOUND,
+        status: HTTP_UNAUTHORIZED
+      });
     }
 
     if (refreshToken.revokedAt) {
-      throw new Error(TOKEN_ERRORS.TOKEN_REVOKED);
+      throw new ApiError({
+        message: TOKEN_ERRORS.TOKEN_REVOKED,
+        code: USER_CODES.TOKEN_REVOKED,
+        status: HTTP_UNAUTHORIZED
+      });
     }
 
     if (new Date() > refreshToken.expiresAt) {
-      throw new Error(TOKEN_ERRORS.TOKEN_EXPIRED);
+      throw new ApiError({
+        message: TOKEN_ERRORS.TOKEN_EXPIRED,
+        code: USER_CODES.TOKEN_EXPIRED,
+        status: HTTP_UNAUTHORIZED
+      });
     }
 
     // get user info
     const user = await this.userRepository.findUserById(refreshToken.userId);
     if (!user) {
-      throw new Error(USER_ERRORS.NOT_FOUND);
+      throw new ApiError({
+        message: USER_ERRORS.NOT_FOUND,
+        code: USER_CODES.NOT_FOUND,
+        status: HTTP_BAD_REQUEST
+      });
     }
     // create new token and revoke old one
     const newToken = await this.createToken({ ...data, ...user });

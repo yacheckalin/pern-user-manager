@@ -3,12 +3,18 @@ import db from "../config/database.js";
 import bcrypt from "bcrypt";
 import {
   BCRYPT_ROUNDS,
+  HTTP_BAD_REQUEST,
+  HTTP_CONFLICT,
+  HTTP_NOT_FOUND,
+  USER_CODES,
   USER_DEFAULTS,
   USER_ERRORS,
   USER_VALIDATION,
 } from "../constants/index.js";
 
 import { sanitizeUserData, sanitizeUpdateUserPassword } from "../utils/user.helpers.js";
+
+import ApiError from "../errors/api.error.js";
 
 class UserService {
   constructor() {
@@ -23,7 +29,11 @@ class UserService {
   async getUser(id) {
     const user = await this.userRepository.findUserById(id);
     if (!user) {
-      throw new Error(USER_ERRORS.NOT_FOUND)
+      throw new ApiError({
+        message: USER_ERRORS.NOT_FOUND,
+        code: USER_CODES.USER_NOT_FOUND,
+        status: HTTP_NOT_FOUND
+      })
     }
     return user;
   }
@@ -35,12 +45,20 @@ class UserService {
       data.username,
     );
     if (existingUsername) {
-      throw new Error(USER_ERRORS.USERNAME_TAKEN);
+      throw new ApiError({
+        message: USER_ERRORS.USERNAME_TAKEN,
+        code: USER_CODES.USERNAME_TAKEN,
+        status: HTTP_CONFLICT
+      });
     }
 
     const existingEmail = await this.userRepository.findUserByEmail(data.email);
     if (existingEmail) {
-      throw new Error(USER_ERRORS.EMAIL_TAKEN);
+      throw new ApiError({
+        message: USER_ERRORS.EMAIL_TAKEN,
+        code: USER_CODES.EMAIL_TAKEN,
+        status: HTTP_CONFLICT
+      });
     }
 
     // Hash password
@@ -64,17 +82,29 @@ class UserService {
       data.username,
     );
     if (existingUsername) {
-      throw new Error(USER_ERRORS.USERNAME_TAKEN);
+      throw new ApiError({
+        message: USER_ERRORS.USERNAME_TAKEN,
+        code: USER_CODES.USERNAME_TAKEN,
+        status: HTTP_CONFLICT
+      });
     }
 
     const existingEmail = await this.userRepository.findUserByEmail(data.email);
     if (existingEmail) {
-      throw new Error(USER_ERRORS.EMAIL_TAKEN);
+      throw new ApiError({
+        message: USER_ERRORS.EMAIL_TAKEN,
+        code: USER_CODES.EMAIL_TAKEN,
+        status: HTTP_CONFLICT
+      });
     }
 
     // check if password and confirm_password the same
     if (String(data.password).toUpperCase() !== String(data.confirm_password).toUpperCase()) {
-      throw new Error(USER_ERRORS.INVALID_CONFIRM_PASSWORD)
+      throw new ApiError({
+        message: USER_ERRORS.INVALID_CONFIRM_PASSWORD,
+        code: USER_CODES.INVALID_CONFIRM_PASSWORD,
+        status: HTTP_BAD_REQUEST
+      })
     }
 
     // Hash password
@@ -98,7 +128,11 @@ class UserService {
     // check if user exists
     const user = await this.userRepository.findUserById(id);
     if (!user) {
-      throw new Error(USER_ERRORS.NOT_FOUND);
+      throw new ApiError({
+        message: USER_ERRORS.NOT_FOUND,
+        status: HTTP_NOT_FOUND,
+        code: USER_CODES.USER_NOT_FOUND
+      });
     }
 
     // check if userName is empty
@@ -106,14 +140,22 @@ class UserService {
       data.username,
     );
     if (userNameExists && userNameExists.id !== id) {
-      throw new Error(USER_ERRORS.USERNAME_TAKEN);
+      throw new ApiError({
+        message: USER_ERRORS.USERNAME_TAKEN,
+        code: USER_CODES.USERNAME_TAKEN,
+        status: HTTP_CONFLICT
+      });
     }
 
     // if email changed, check if this email doesn't exist in the DB
     if (data.email && user.email !== data.email) {
       const emailExists = await this.userRepository.findUserByEmail(data.email);
       if (emailExists && emailExists.id !== id) {
-        throw new Error(USER_ERRORS.EMAIL_TAKEN);
+        throw new ApiError({
+          message: USER_ERRORS.EMAIL_TAKEN,
+          code: USER_CODES.EMAIL_TAKEN,
+          status: HTTP_CONFLICT
+        });
       }
     }
     const result = await this.userRepository.updateUser(id, data);
@@ -125,7 +167,11 @@ class UserService {
 
     const user = await this.userRepository.findUserById(id);
     if (!user) {
-      throw new Error(USER_ERRORS.NOT_FOUND);
+      throw new ApiError({
+        message: USER_ERRORS.NOT_FOUND,
+        status: HTTP_NOT_FOUND,
+        code: USER_CODES.USER_NOT_FOUND
+      });
     }
 
     // check old password
@@ -134,7 +180,11 @@ class UserService {
       user.passwordHash,
     );
     if (!isValidPassword) {
-      throw new Error(USER_ERRORS.OLD_PASSWORD_INVALID);
+      throw new ApiError({
+        message: USER_ERRORS.OLD_PASSWORD_INVALID,
+        status: HTTP_BAD_REQUEST,
+        code: USER_CODES.OLD_PASSWORD_INVALID
+      });
     }
 
     // check new password
@@ -144,7 +194,11 @@ class UserService {
     );
 
     if (isSameNewPassword) {
-      throw new Error(USER_ERRORS.NEW_PASSWORD_THE_SAME);
+      throw new ApiError({
+        message: USER_ERRORS.NEW_PASSWORD_THE_SAME,
+        code: USER_CODES.NEW_PASSWORD_THE_SAME,
+        status: HTTP_BAD_REQUEST
+      });
     }
 
     const newPasswordHash = await bcrypt.hash(data.new_password, BCRYPT_ROUNDS);
@@ -159,7 +213,11 @@ class UserService {
     // check if user exists
     const user = await this.userRepository.findUserById(id);
     if (!user) {
-      throw new Error(USER_ERRORS.NOT_FOUND);
+      throw new ApiError({
+        message: USER_ERRORS.NOT_FOUND,
+        code: USER_CODES.USER_NOT_FOUND,
+        status: HTTP_NOT_FOUND
+      });
     }
 
     const result = await this.userRepository.deleteUserById(id);
@@ -170,12 +228,20 @@ class UserService {
     // check if user exists
     const user = await this.userRepository.findUserById(id);
     if (!user) {
-      throw new Error(USER_ERRORS.NOT_FOUND);
+      throw new ApiError({
+        message: USER_ERRORS.NOT_FOUND,
+        code: USER_CODES.USER_NOT_FOUND,
+        status: HTTP_NOT_FOUND
+      });
     }
 
     // check if user has already activated
     if (user.activatedAt && user.isActive) {
-      throw new Error(USER_ERRORS.ALREADY_ACTIVATED);
+      throw new ApiError({
+        message: USER_ERRORS.ALREADY_ACTIVATED,
+        code: USER_CODES.ALREADY_ACTIVATED,
+        status: HTTP_CONFLICT
+      });
     }
     const result = await this.userRepository.activateUserById(id);
     return result;
@@ -186,22 +252,38 @@ class UserService {
       !data.username ||
       data.username.length < USER_VALIDATION.USERNAME_MIN_LENGTH
     ) {
-      throw new Error(USER_ERRORS.INVALID_USERNAME);
+      throw new ApiError({
+        message: USER_ERRORS.INVALID_USERNAME,
+        status: HTTP_BAD_REQUEST,
+        code: USER_CODES.INVALID_USERNAME
+      });
     }
     if (!data.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
-      throw new Error(USER_ERRORS.INVALID_EMAIL);
+      throw new ApiError({
+        message: USER_ERRORS.INVALID_EMAIL,
+        status: HTTP_BAD_REQUEST,
+        code: USER_CODES.INVALID_EMAIL
+      });
     }
     if (
       !data.password ||
       data.password.length < USER_VALIDATION.PASSWORD_MIN_LENGTH
     ) {
-      throw new Error(USER_ERRORS.INVALID_PASSWORD);
+      throw new ApiError({
+        message: USER_ERRORS.INVALID_PASSWORD,
+        status: HTTP_BAD_REQUEST,
+        code: USER_CODES.INVALID_PASSWORD
+      });
     }
     if (
       data.age &&
       (data.age < USER_VALIDATION.AGE_MIN || data.age > USER_VALIDATION.AGE_MAX)
     ) {
-      throw new Error(USER_ERRORS.INVALID_AGE);
+      throw new ApiError({
+        message: USER_ERRORS.INVALID_AGE,
+        status: HTTP_BAD_REQUEST,
+        code: USER_CODES.INVALID_AGE
+      });
     }
   }
 
@@ -211,13 +293,21 @@ class UserService {
         !data.username ||
         data.username.length < USER_VALIDATION.USERNAME_MIN_LENGTH
       ) {
-        throw new Error(USER_ERRORS.INVALID_USERNAME);
+        throw new ApiError({
+          message: USER_ERRORS.INVALID_USERNAME,
+          code: USER_CODES.INVALID_USERNAME,
+          status: HTTP_BAD_REQUEST
+        });
       }
     }
 
     if (data.email !== undefined) {
       if (!data.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
-        throw new Error(USER_ERRORS.INVALID_EMAIL);
+        throw new ApiError({
+          message: USER_ERRORS.INVALID_EMAIL,
+          status: HTTP_BAD_REQUEST,
+          code: USER_CODES.INVALID_EMAIL
+        });
       }
     }
 
@@ -225,7 +315,11 @@ class UserService {
       data.age !== undefined &&
       (data.age < USER_VALIDATION.AGE_MIN || data.age > USER_VALIDATION.AGE_MAX)
     ) {
-      throw new Error(USER_ERRORS.INVALID_AGE);
+      throw new ApiError({
+        message: USER_ERRORS.INVALID_AGE,
+        code: USER_CODES.INVALID_AGE,
+        status: HTTP_BAD_REQUEST
+      });
     }
   }
 
@@ -234,17 +328,29 @@ class UserService {
       !data.new_password ||
       data.new_password.length < USER_VALIDATION.PASSWORD_MIN_LENGTH
     ) {
-      throw new Error(USER_ERRORS.INVALID_NEW_PASSWORD);
+      throw new ApiError({
+        message: USER_ERRORS.INVALID_NEW_PASSWORD,
+        status: HTTP_BAD_REQUEST,
+        code: USER_CODES.INVALID_NEW_PASSWORD
+      });
     }
     if (
       !data.old_password ||
       data.old_password.length < USER_VALIDATION.PASSWORD_MIN_LENGTH
     ) {
-      throw new Error(USER_ERRORS.INVALID_OLD_PASSWORD);
+      throw new ApiError({
+        message: USER_ERRORS.INVALID_OLD_PASSWORD,
+        code: USER_CODES.INVALID_OLD_PASSWORD,
+        status: HTTP_BAD_REQUEST
+      });
     }
 
     if (data.confirm_password && data.confirm_password !== data.new_password) {
-      throw new Error(USER_ERRORS.INVALID_CONFIRM_PASSWORD);
+      throw new ApiError({
+        message: USER_ERRORS.INVALID_CONFIRM_PASSWORD,
+        code: USER_CODES.INVALID_CONFIRM_PASSWORD,
+        status: HTTP_BAD_REQUEST
+      });
     }
   }
 }

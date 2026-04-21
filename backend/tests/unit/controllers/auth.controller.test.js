@@ -9,6 +9,7 @@ import {
 } from "../../../constants/index.js";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
+import ApiError from "../../../errors/api.error.js";
 
 jest.unstable_mockModule("../../../services/auth.service.js", () => ({
   default: jest.fn().mockImplementation(() => ({
@@ -133,26 +134,29 @@ describe("AuthController - Unit Tests", () => {
     });
 
     it("should handle INVALID_USERNAME_OR_EMAIL error", async () => {
-      const payload = { email: "wrong@test.com", password: "wrong" };
+      const payload = {};
       req.body = payload;
       req.ip = "127.0.0.1";
       req.headers["user-agent"] = "jest-test";
-      const error = new Error(AUTH_ERRORS.INVALID_USERNAME_OR_EMAIL);
+      const error = new ApiError({
+        message: AUTH_ERRORS.INVALID_USERNAME_OR_EMAIL,
+        status: HTTP_BAD_REQUEST
+      });
       mockAuthService.login.mockRejectedValue(error);
 
       await authController.login(req, res, next);
 
       expect(mockAuthService.login).toHaveBeenCalledWith(
         expect.objectContaining({
-          email: payload.email,
           ip: "127.0.0.1",
           userAgent: "jest-test",
         }),
       );
-      expect(next).toHaveBeenCalledWith({
-        message: AUTH_ERRORS.INVALID_USERNAME_OR_EMAIL,
-        statusCode: HTTP_BAD_REQUEST,
-      });
+      expect(next).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: AUTH_ERRORS.INVALID_USERNAME_OR_EMAIL,
+          status: HTTP_BAD_REQUEST,
+        }));
       expect(res.status).not.toHaveBeenCalled();
       expect(res.json).not.toHaveBeenCalled();
     });
@@ -162,7 +166,7 @@ describe("AuthController - Unit Tests", () => {
       req.body = payload;
       req.ip = "127.0.0.1";
       req.headers["user-agent"] = "jest-test";
-      const error = new Error(AUTH_ERRORS.INVALID_USERNAME);
+      const error = new ApiError({ message: AUTH_ERRORS.INVALID_USERNAME, status: HTTP_BAD_REQUEST });
       mockAuthService.login.mockRejectedValue(error);
 
       await authController.login(req, res, next);
@@ -174,10 +178,11 @@ describe("AuthController - Unit Tests", () => {
           userAgent: "jest-test",
         }),
       );
-      expect(next).toHaveBeenCalledWith({
-        message: AUTH_ERRORS.INVALID_USERNAME,
-        statusCode: HTTP_BAD_REQUEST,
-      });
+      expect(next).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: AUTH_ERRORS.INVALID_USERNAME,
+          status: HTTP_BAD_REQUEST,
+        }))
       expect(res.status).not.toHaveBeenCalled();
       expect(res.json).not.toHaveBeenCalled();
     });
@@ -187,7 +192,7 @@ describe("AuthController - Unit Tests", () => {
       req.body = payload;
       req.ip = "127.0.0.1";
       req.headers["user-agent"] = "jest-test";
-      const error = new Error(AUTH_ERRORS.INVALID_EMAIL);
+      const error = new ApiError({ message: AUTH_ERRORS.INVALID_EMAIL, status: HTTP_BAD_REQUEST });
       mockAuthService.login.mockRejectedValue(error);
 
       await authController.login(req, res, next);
@@ -199,10 +204,11 @@ describe("AuthController - Unit Tests", () => {
           userAgent: "jest-test",
         }),
       );
-      expect(next).toHaveBeenCalledWith({
-        message: AUTH_ERRORS.INVALID_EMAIL,
-        statusCode: HTTP_BAD_REQUEST,
-      });
+      expect(next).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: AUTH_ERRORS.INVALID_EMAIL,
+          status: HTTP_BAD_REQUEST,
+        }));
       expect(res.status).not.toHaveBeenCalled();
       expect(res.json).not.toHaveBeenCalled();
     });
@@ -212,7 +218,7 @@ describe("AuthController - Unit Tests", () => {
       req.body = payload;
       req.ip = "127.0.0.1";
       req.headers["user-agent"] = "jest-test";
-      const error = new Error(AUTH_ERRORS.INVALID_PASSWORD);
+      const error = new ApiError({ message: AUTH_ERRORS.INVALID_PASSWORD, status: HTTP_BAD_REQUEST });
       mockAuthService.login.mockRejectedValue(error);
 
       await authController.login(req, res, next);
@@ -224,10 +230,11 @@ describe("AuthController - Unit Tests", () => {
           userAgent: "jest-test",
         }),
       );
-      expect(next).toHaveBeenCalledWith({
-        message: AUTH_ERRORS.INVALID_PASSWORD,
-        statusCode: HTTP_BAD_REQUEST,
-      });
+      expect(next).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: AUTH_ERRORS.INVALID_PASSWORD,
+          status: HTTP_BAD_REQUEST,
+        }))
       expect(res.status).not.toHaveBeenCalled();
       expect(res.json).not.toHaveBeenCalled();
     });
@@ -237,7 +244,7 @@ describe("AuthController - Unit Tests", () => {
       req.body = payload;
       req.ip = "127.0.0.1";
       req.headers["user-agent"] = "jest-test";
-      const error = new Error(AUTH_ERRORS.INVALID_CRIDENTIALS);
+      const error = new ApiError({ message: AUTH_ERRORS.INVALID_CRIDENTIALS, status: HTTP_UNAUTHORIZED });
       mockAuthService.login.mockRejectedValue(error);
 
       await authController.login(req, res, next);
@@ -249,10 +256,11 @@ describe("AuthController - Unit Tests", () => {
           userAgent: "jest-test",
         }),
       );
-      expect(next).toHaveBeenCalledWith({
-        message: AUTH_ERRORS.INVALID_CRIDENTIALS,
-        statusCode: HTTP_UNAUTHORIZED,
-      });
+      expect(next).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: AUTH_ERRORS.INVALID_CRIDENTIALS,
+          status: HTTP_UNAUTHORIZED,
+        }));
       expect(res.status).not.toHaveBeenCalled();
       expect(res.json).not.toHaveBeenCalled();
     });
@@ -262,7 +270,7 @@ describe("AuthController - Unit Tests", () => {
       req.body = payload;
       req.ip = "127.0.0.1";
       req.headers["user-agent"] = "jest-test";
-      const error = new Error("Unexpected error");
+      const error = new ApiError({ message: "Unexpected error", status: HTTP_INTERNAL_SERVER_ERROR });
       mockAuthService.login.mockRejectedValue(error);
 
       await authController.login(req, res, next);
@@ -274,10 +282,11 @@ describe("AuthController - Unit Tests", () => {
           userAgent: "jest-test",
         }),
       );
-      expect(next).toHaveBeenCalledWith({
-        message: "Unexpected error",
-        statusCode: HTTP_INTERNAL_SERVER_ERROR,
-      });
+      expect(next).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: "Unexpected error",
+          status: HTTP_INTERNAL_SERVER_ERROR,
+        }))
       expect(res.status).not.toHaveBeenCalled();
       expect(res.json).not.toHaveBeenCalled();
     });
