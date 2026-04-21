@@ -9,6 +9,7 @@ import {
   USER_ERRORS,
   USER_MESSAGES,
 } from "../constants/index.js";
+import asyncHandler from "../middleware/async-handler.js";
 
 class UserController {
   constructor() {
@@ -150,24 +151,16 @@ class UserController {
     }
   }
 
-  async deleteUser(req, res, next) {
-    try {
-      const { id } = req.params;
-      const user = await this.userService.deleteUser(id);
-      res.status(HTTP_OK).json({
-        success: true,
-        message: USER_MESSAGES.DELETED,
-        data: user,
-      });
-    } catch (error) {
-      const statusCode =
-        error.message === USER_ERRORS.NOT_FOUND
-          ? HTTP_NOT_FOUND
-          : HTTP_INTERNAL_SERVER_ERROR;
+  deleteUser = asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
+    const user = await this.userService.deleteUser(id);
 
-      next({ message: error.message, statusCode });
-    }
-  }
+    res.status(HTTP_OK).json({
+      success: true,
+      message: USER_MESSAGES.DELETED,
+      data: user,
+    });
+  })
 
   async activateUser(req, res, next) {
     try {

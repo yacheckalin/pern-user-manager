@@ -3,12 +3,16 @@ import db from "../config/database.js";
 import bcrypt from "bcrypt";
 import {
   BCRYPT_ROUNDS,
+  HTTP_NOT_FOUND,
+  USER_CODES,
   USER_DEFAULTS,
   USER_ERRORS,
   USER_VALIDATION,
 } from "../constants/index.js";
 
 import { sanitizeUserData, sanitizeUpdateUserPassword } from "../utils/user.helpers.js";
+
+import ApiError from "../errors/api.error.js";
 
 class UserService {
   constructor() {
@@ -159,7 +163,11 @@ class UserService {
     // check if user exists
     const user = await this.userRepository.findUserById(id);
     if (!user) {
-      throw new Error(USER_ERRORS.NOT_FOUND);
+      throw new ApiError({
+        message: USER_ERRORS.NOT_FOUND,
+        code: USER_CODES.ERRORS.NOT_FOUND,
+        status: HTTP_NOT_FOUND
+      });
     }
 
     const result = await this.userRepository.deleteUserById(id);

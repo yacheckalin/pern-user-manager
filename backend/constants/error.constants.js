@@ -16,6 +16,12 @@ export const USER_ERRORS = {
   ALREADY_ACTIVATED: "User has already activated",
 };
 
+export const USER_CODES = {
+  ERRORS: {
+    NOT_FOUND: 'USER_NOT_FOUND'
+  }
+}
+
 // Database errors
 export const DB_ERRORS = {
   CONNECTION_FAILED: "Database connection failed",
@@ -42,3 +48,6 @@ export const TOKEN_ERRORS = {
 };
 
 export const WRONG_IP = "Wrong IP Address";
+export const SERVER_ERROR = {
+  INTERNAL_SERVER_ERROR: 'Internal Server Error'
+}
