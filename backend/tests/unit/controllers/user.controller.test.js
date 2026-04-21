@@ -10,6 +10,7 @@ import {
   USER_MESSAGES,
   USER_VALIDATION,
 } from "../../../constants";
+import ApiError from "../../../errors/api.error.js";
 
 jest.unstable_mockModule("../../../services/user.service.js", () => ({
   default: jest.fn().mockImplementation(() => ({
@@ -157,8 +158,8 @@ describe("UserController - Unit Tests", () => {
       });
     });
 
-    it("should call next with error when service fails", async () => {
-      const error = new Error("Database connection failed");
+    it("should call with error when service fails", async () => {
+      const error = new ApiError({ message: "Database connection failed" });
       mockUserService.createUser.mockRejectedValue(error);
 
       req.body = {
@@ -166,57 +167,84 @@ describe("UserController - Unit Tests", () => {
       };
       await userController.createUser(req, res, next);
 
-      expect(next).toHaveBeenCalledWith({ message: error.message, statusCode: HTTP_INTERNAL_SERVER_ERROR });
+      expect(next).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: error.message,
+          status: HTTP_INTERNAL_SERVER_ERROR
+        }));
       expect(res.status).not.toHaveBeenCalled();
       expect(res.json).not.toHaveBeenCalled();
     });
 
     it(`should return ${HTTP_CONFLICT} ; ${USER_ERRORS.EMAIL_TAKEN}`, async () => {
-      mockUserService.createUser.mockRejectedValue(new Error(USER_ERRORS.EMAIL_TAKEN));
+      mockUserService.createUser.mockRejectedValue(new ApiError({
+        message: USER_ERRORS.EMAIL_TAKEN,
+        status: HTTP_CONFLICT
+      }));
       await userController.createUser(req, res, next);
 
-      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.EMAIL_TAKEN, statusCode: HTTP_CONFLICT });
+      expect(next).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: USER_ERRORS.EMAIL_TAKEN,
+          status: HTTP_CONFLICT
+        }));
       expect(res.status).not.toHaveBeenCalled();
       expect(res.json).not.toHaveBeenCalled();
     })
 
     it(`should return ${HTTP_CONFLICT} : ${USER_ERRORS.USERNAME_TAKEN}`, async () => {
-      mockUserService.createUser.mockRejectedValue(new Error(USER_ERRORS.USERNAME_TAKEN));
+      mockUserService.createUser.mockRejectedValue(new ApiError({
+        message: USER_ERRORS.USERNAME_TAKEN,
+        status: HTTP_CONFLICT
+      }));
       await userController.createUser(req, res, next);
 
-      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.USERNAME_TAKEN, statusCode: HTTP_CONFLICT });
+      expect(next).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: USER_ERRORS.USERNAME_TAKEN,
+          status: HTTP_CONFLICT
+        }));
       expect(res.status).not.toHaveBeenCalled();
       expect(res.json).not.toHaveBeenCalled();
     });
     it(`should return ${HTTP_BAD_REQUEST} : ${USER_ERRORS.INVALID_USERNAME}`, async () => {
-      mockUserService.createUser.mockRejectedValue(new Error(USER_ERRORS.INVALID_USERNAME));
+      mockUserService.createUser.mockRejectedValue(new ApiError({
+        message: USER_ERRORS.INVALID_USERNAME,
+        status: HTTP_BAD_REQUEST
+      }));
       await userController.createUser(req, res, next);
 
-      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.INVALID_USERNAME, statusCode: HTTP_BAD_REQUEST });
+      expect(next).toHaveBeenCalledWith(
+        expect.objectContaining({ message: USER_ERRORS.INVALID_USERNAME, status: HTTP_BAD_REQUEST }));
       expect(res.status).not.toHaveBeenCalled();
       expect(res.json).not.toHaveBeenCalled();
     });
     it(`should return ${HTTP_BAD_REQUEST} : ${USER_ERRORS.INVALID_AGE}`, async () => {
-      mockUserService.createUser.mockRejectedValue(new Error(USER_ERRORS.INVALID_AGE));
+      mockUserService.createUser.mockRejectedValue(new ApiError({ message: USER_ERRORS.INVALID_AGE, status: HTTP_BAD_REQUEST }));
       await userController.createUser(req, res, next);
 
-      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.INVALID_AGE, statusCode: HTTP_BAD_REQUEST });
+      expect(next).toHaveBeenCalledWith(
+        expect.objectContaining({ message: USER_ERRORS.INVALID_AGE, status: HTTP_BAD_REQUEST })
+      )
       expect(res.status).not.toHaveBeenCalled();
       expect(res.json).not.toHaveBeenCalled();
     });
+
     it(`should return ${HTTP_BAD_REQUEST} : ${USER_ERRORS.INVALID_EMAIL}`, async () => {
-      mockUserService.createUser.mockRejectedValue(new Error(USER_ERRORS.INVALID_EMAIL));
+      mockUserService.createUser.mockRejectedValue(new ApiError({ message: USER_ERRORS.INVALID_EMAIL, status: HTTP_BAD_REQUEST }));
       await userController.createUser(req, res, next);
 
-      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.INVALID_EMAIL, statusCode: HTTP_BAD_REQUEST });
+      expect(next).toHaveBeenCalledWith(
+        expect.objectContaining({ message: USER_ERRORS.INVALID_EMAIL, status: HTTP_BAD_REQUEST }));
       expect(res.status).not.toHaveBeenCalled();
       expect(res.json).not.toHaveBeenCalled();
     });
     it(`should return ${HTTP_BAD_REQUEST} : ${USER_ERRORS.INVALID_PASSWORD}`, async () => {
-      mockUserService.createUser.mockRejectedValue(new Error(USER_ERRORS.INVALID_PASSWORD));
+      mockUserService.createUser.mockRejectedValue(new ApiError({ message: USER_ERRORS.INVALID_PASSWORD, status: HTTP_BAD_REQUEST }));
       await userController.createUser(req, res, next);
 
-      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.INVALID_PASSWORD, statusCode: HTTP_BAD_REQUEST });
+      expect(next).toHaveBeenCalledWith(
+        expect.objectContaining({ message: USER_ERRORS.INVALID_PASSWORD, status: HTTP_BAD_REQUEST }));
       expect(res.status).not.toHaveBeenCalled();
       expect(res.json).not.toHaveBeenCalled();
     })
@@ -392,11 +420,12 @@ describe("UserController - Unit Tests", () => {
   describe("deleteUser", () => {
     it("should return 404", async () => {
       mockUserService.deleteUser.mockRejectedValue(
-        new Error(USER_ERRORS.NOT_FOUND),
+        new ApiError({ message: USER_ERRORS.NOT_FOUND, status: HTTP_NOT_FOUND }),
       );
       req.params.id = 999;
       await userController.deleteUser(req, res, next);
-      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.NOT_FOUND, statusCode: HTTP_NOT_FOUND });
+      expect(next).toHaveBeenCalledWith(
+        expect.objectContaining({ message: USER_ERRORS.NOT_FOUND, status: HTTP_NOT_FOUND }));
       expect(res.status).not.toHaveBeenCalled();
       expect(res.json).not.toHaveBeenCalled();
     });
@@ -460,21 +489,23 @@ describe("UserController - Unit Tests", () => {
     });
     it("should return 404", async () => {
       mockUserService.activateUser.mockRejectedValue(
-        new Error(USER_ERRORS.NOT_FOUND),
+        new ApiError({ message: USER_ERRORS.NOT_FOUND, status: HTTP_NOT_FOUND }),
       );
       req.params.id = 999;
       await userController.activateUser(req, res, next);
-      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.NOT_FOUND, statusCode: HTTP_NOT_FOUND });
+      expect(next).toHaveBeenCalledWith(
+        expect.objectContaining({ message: USER_ERRORS.NOT_FOUND, status: HTTP_NOT_FOUND }));
       expect(res.status).not.toHaveBeenCalled();
       expect(res.json).not.toHaveBeenCalled();
     });
     it("should return 409", async () => {
       mockUserService.activateUser.mockRejectedValue(
-        new Error(USER_ERRORS.ALREADY_ACTIVATED),
+        new ApiError({ message: USER_ERRORS.ALREADY_ACTIVATED, status: HTTP_CONFLICT }),
       );
       req.params.id = 999;
       await userController.activateUser(req, res, next);
-      expect(next).toHaveBeenCalledWith({ message: USER_ERRORS.ALREADY_ACTIVATED, statusCode: HTTP_CONFLICT });
+      expect(next).toHaveBeenCalledWith(
+        expect.objectContaining({ message: USER_ERRORS.ALREADY_ACTIVATED, status: HTTP_CONFLICT }));
       expect(res.status).not.toHaveBeenCalled();
       expect(res.json).not.toHaveBeenCalled();
     });

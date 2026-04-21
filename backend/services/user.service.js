@@ -3,6 +3,7 @@ import db from "../config/database.js";
 import bcrypt from "bcrypt";
 import {
   BCRYPT_ROUNDS,
+  HTTP_BAD_REQUEST,
   HTTP_CONFLICT,
   HTTP_NOT_FOUND,
   USER_CODES,
@@ -40,12 +41,20 @@ class UserService {
       data.username,
     );
     if (existingUsername) {
-      throw new Error(USER_ERRORS.USERNAME_TAKEN);
+      throw new ApiError({
+        message: USER_ERRORS.USERNAME_TAKEN,
+        code: USER_CODES.USERNAME_TAKEN,
+        status: HTTP_CONFLICT
+      });
     }
 
     const existingEmail = await this.userRepository.findUserByEmail(data.email);
     if (existingEmail) {
-      throw new Error(USER_ERRORS.EMAIL_TAKEN);
+      throw new ApiError({
+        message: USER_ERRORS.EMAIL_TAKEN,
+        code: USER_CODES.EMAIL_TAKEN,
+        status: HTTP_CONFLICT
+      });
     }
 
     // Hash password
@@ -180,7 +189,7 @@ class UserService {
     const user = await this.userRepository.findUserById(id);
     if (!user) {
       throw new ApiError({
-        message: USER_ERRORS.USER_NOT_FOUND,
+        message: USER_ERRORS.NOT_FOUND,
         code: USER_CODES.USER_NOT_FOUND,
         status: HTTP_NOT_FOUND
       });
@@ -203,22 +212,38 @@ class UserService {
       !data.username ||
       data.username.length < USER_VALIDATION.USERNAME_MIN_LENGTH
     ) {
-      throw new Error(USER_ERRORS.INVALID_USERNAME);
+      throw new ApiError({
+        message: USER_ERRORS.INVALID_USERNAME,
+        status: HTTP_BAD_REQUEST,
+        code: USER_CODES.INVALID_USERNAME
+      });
     }
     if (!data.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
-      throw new Error(USER_ERRORS.INVALID_EMAIL);
+      throw new ApiError({
+        message: USER_ERRORS.INVALID_EMAIL,
+        status: HTTP_BAD_REQUEST,
+        code: USER_CODES.INVALID_EMAIL
+      });
     }
     if (
       !data.password ||
       data.password.length < USER_VALIDATION.PASSWORD_MIN_LENGTH
     ) {
-      throw new Error(USER_ERRORS.INVALID_PASSWORD);
+      throw new ApiError({
+        message: USER_ERRORS.INVALID_PASSWORD,
+        status: HTTP_BAD_REQUEST,
+        code: USER_CODES.INVALID_PASSWORD
+      });
     }
     if (
       data.age &&
       (data.age < USER_VALIDATION.AGE_MIN || data.age > USER_VALIDATION.AGE_MAX)
     ) {
-      throw new Error(USER_ERRORS.INVALID_AGE);
+      throw new ApiError({
+        message: USER_ERRORS.INVALID_AGE,
+        status: HTTP_BAD_REQUEST,
+        code: USER_CODES.INVALID_AGE
+      });
     }
   }
 
