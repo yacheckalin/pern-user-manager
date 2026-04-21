@@ -17,9 +17,8 @@ export const USER_ERRORS = {
 };
 
 export const USER_CODES = {
-  ERRORS: {
-    NOT_FOUND: 'USER_NOT_FOUND'
-  }
+  USER_NOT_FOUND: 'USER_NOT_FOUND',
+  ALREADY_ACTIVATED: "USER_ALREADY_ACTIVATED"
 }
 
 // Database errors

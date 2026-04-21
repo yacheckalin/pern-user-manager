@@ -3,6 +3,7 @@ import db from "../config/database.js";
 import bcrypt from "bcrypt";
 import {
   BCRYPT_ROUNDS,
+  HTTP_CONFLICT,
   HTTP_NOT_FOUND,
   USER_CODES,
   USER_DEFAULTS,
@@ -165,7 +166,7 @@ class UserService {
     if (!user) {
       throw new ApiError({
         message: USER_ERRORS.NOT_FOUND,
-        code: USER_CODES.ERRORS.NOT_FOUND,
+        code: USER_CODES.USER_NOT_FOUND,
         status: HTTP_NOT_FOUND
       });
     }
@@ -178,12 +179,20 @@ class UserService {
     // check if user exists
     const user = await this.userRepository.findUserById(id);
     if (!user) {
-      throw new Error(USER_ERRORS.NOT_FOUND);
+      throw new ApiError({
+        message: USER_ERRORS.USER_NOT_FOUND,
+        code: USER_CODES.USER_NOT_FOUND,
+        status: HTTP_NOT_FOUND
+      });
     }
 
     // check if user has already activated
     if (user.activatedAt && user.isActive) {
-      throw new Error(USER_ERRORS.ALREADY_ACTIVATED);
+      throw new ApiError({
+        message: USER_ERRORS.ALREADY_ACTIVATED,
+        code: USER_CODES.ALREADY_ACTIVATED,
+        status: HTTP_CONFLICT
+      });
     }
     const result = await this.userRepository.activateUserById(id);
     return result;

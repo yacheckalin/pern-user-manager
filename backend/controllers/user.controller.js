@@ -162,31 +162,16 @@ class UserController {
     });
   })
 
-  async activateUser(req, res, next) {
-    try {
-      const { id } = req.params;
-      const user = await this.userService.activateUser(id);
-      res.status(HTTP_OK).json({
-        success: true,
-        message: USER_MESSAGES.ACTIVATED,
-        data: user,
-      });
-    } catch (error) {
-      // Handle conflict error (already activated)
-      if (error.message === USER_ERRORS.ALREADY_ACTIVATED) {
+  activateUser = asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
+    const user = await this.userService.activateUser(id);
 
-        next({ message: error.message, statusCode: HTTP_CONFLICT });
-      }
-
-      // Handle other errors
-      const statusCode =
-        error.message === USER_ERRORS.NOT_FOUND
-          ? HTTP_NOT_FOUND
-          : HTTP_INTERNAL_SERVER_ERROR;
-
-      next({ message: error.message, statusCode });
-    }
-  }
+    res.status(HTTP_OK).json({
+      success: true,
+      message: USER_MESSAGES.ACTIVATED,
+      data: user,
+    });
+  })
 
   async registerUser(req, res, next) {
     try {
