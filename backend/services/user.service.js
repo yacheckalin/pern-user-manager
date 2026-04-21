@@ -78,17 +78,29 @@ class UserService {
       data.username,
     );
     if (existingUsername) {
-      throw new Error(USER_ERRORS.USERNAME_TAKEN);
+      throw new ApiError({
+        message: USER_ERRORS.USERNAME_TAKEN,
+        code: USER_CODES.USERNAME_TAKEN,
+        status: HTTP_CONFLICT
+      });
     }
 
     const existingEmail = await this.userRepository.findUserByEmail(data.email);
     if (existingEmail) {
-      throw new Error(USER_ERRORS.EMAIL_TAKEN);
+      throw new ApiError({
+        message: USER_ERRORS.EMAIL_TAKEN,
+        code: USER_CODES.EMAIL_TAKEN,
+        status: HTTP_CONFLICT
+      });
     }
 
     // check if password and confirm_password the same
     if (String(data.password).toUpperCase() !== String(data.confirm_password).toUpperCase()) {
-      throw new Error(USER_ERRORS.INVALID_CONFIRM_PASSWORD)
+      throw new ApiError({
+        message: USER_ERRORS.INVALID_CONFIRM_PASSWORD,
+        code: USER_CODES.INVALID_CONFIRM_PASSWORD,
+        status: HTTP_BAD_REQUEST
+      })
     }
 
     // Hash password

@@ -98,43 +98,15 @@ class UserController {
     });
   })
 
-  async registerUser(req, res, next) {
-    try {
-      const user = await this.userService.registerUser(req.body);
-      res.status(HTTP_CREATED).json({
-        success: true,
-        message: USER_MESSAGES.REGISTERED,
-        data: user,
-      });
-    } catch (error) {
-      // Handle conflict errors (duplicate username/email)
-      if (
-        error.message === USER_ERRORS.EMAIL_TAKEN ||
-        error.message === USER_ERRORS.USERNAME_TAKEN
-      ) {
-        next({ message: error.message, statusCode: HTTP_CONFLICT });
-      }
+  registerUser = asyncHandler(async (req, res, next) => {
+    const user = await this.userService.registerUser(req.body);
 
-      // Handle validation errors
-      if (
-        error.message === USER_ERRORS.INVALID_USERNAME ||
-        error.message === USER_ERRORS.INVALID_EMAIL ||
-        error.message === USER_ERRORS.INVALID_PASSWORD ||
-        error.message === USER_ERRORS.INVALID_AGE ||
-        error.message === USER_ERRORS.INVALID_CONFIRM_PASSWORD
-      ) {
-        next({ message: error.message, statusCode: HTTP_BAD_REQUEST });
-      }
-
-      // Handle other errors
-      const statusCode =
-        error.message === USER_ERRORS.NOT_FOUND
-          ? HTTP_NOT_FOUND
-          : HTTP_INTERNAL_SERVER_ERROR;
-
-      next({ message: error.message, statusCode });
-    }
-  }
+    res.status(HTTP_CREATED).json({
+      success: true,
+      message: USER_MESSAGES.REGISTERED,
+      data: user,
+    });
+  })
 }
 
 export default UserController;
