@@ -19,11 +19,16 @@ const errorHandler = (err, req, res, next) => {
     { err: error, path: req.path, method: req.method, requestId: req.headers['x-request-id'] },
   )
 
-  const statusCode = err.statusCode || HTTP_INTERNAL_SERVER_ERROR;
-  const message = err.toJSON ? { ...err.toJSON() } : err.message || SERVER_ERROR.INTERNAL_SERVER_ERROR
-  res.status(statusCode).json({
+  const status = err.status || HTTP_INTERNAL_SERVER_ERROR;
+
+  const message = err.toJSON ? { ...err.toJSON() } : err.message || SERVER_ERROR.INTERNAL_SERVER_ERROR;
+  const serializeMessage = message instanceof Object ? {
+    ...message
+  } : message;
+
+  res.status(status).json({
     success: false,
-    ...message,
+    ...serializeMessage,
     stack: traceEnvironment ? err.stack : undefined,
   });
 };
