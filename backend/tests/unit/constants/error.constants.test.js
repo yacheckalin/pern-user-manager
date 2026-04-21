@@ -3,6 +3,7 @@ import {
   DB_ERRORS,
   AUTH_ERRORS,
   WRONG_IP,
+  USER_CODES,
 } from "../../../constants/index.js";
 
 describe("Errors Constants", () => {
@@ -58,6 +59,58 @@ describe("Errors Constants", () => {
       expect(USER_ERRORS).toEqual(expectedErrors);
     });
   });
+  describe('User Codes', () => {
+    const expectedCodes = {
+      USER_NOT_FOUND: 'USER_NOT_FOUND',
+      ALREADY_ACTIVATED: "USER_ALREADY_ACTIVATED",
+      INVALID_USERNAME: "INVALID_USERNAME",
+      INVALID_EMAIL: "INVALID_EMAIL",
+      INVALID_PASSWORD: "INVALID_PASSWORD",
+      INVALID_AGE: "INVALID_AGE",
+      USERNAME_TAKEN: "USERNAME_TAKEN",
+      EMAIL_TAKEN: "EMAIL_TAKEN",
+      INVALID_NEW_PASSWORD: "INVALID_NEW_PASSWORD",
+      INVALID_OLD_PASSWORD: "INVALID_OLD_PASSWORD",
+      INVALID_CONFIRM_PASSWORD: "INVALID_CONFIRM_PASSWORD",
+      OLD_PASSWORD_INVALID: "OLD_PASSWORD_INVALID",
+      NEW_PASSWORD_THE_SAME: "NEW_PASSWORD_THE_SAME"
+    }
+
+
+    it('should have only valid types codes', () => {
+      const validCodes = [
+        'USER_NOT_FOUND',
+        "ALREADY_ACTIVATED",
+        "INVALID_USERNAME",
+        "INVALID_EMAIL",
+        "INVALID_PASSWORD",
+        "INVALID_AGE",
+        "USERNAME_TAKEN",
+        "EMAIL_TAKEN",
+        "INVALID_NEW_PASSWORD",
+        "INVALID_OLD_PASSWORD",
+        "INVALID_CONFIRM_PASSWORD",
+        "OLD_PASSWORD_INVALID",
+        "NEW_PASSWORD_THE_SAME"
+      ];
+
+      validCodes.forEach((code) => {
+        expect(USER_CODES[code]).toBeDefined();
+        expect(typeof USER_CODES[code]).toBe('string');
+      })
+    })
+
+    it('user codes should have unique value names', () => {
+      const keys = Object.keys(expectedCodes);
+      const uniqueKeys = new Set(keys);
+      expect(uniqueKeys.size).toBe(keys.length);
+    })
+
+    it('should contain all codes with the valid values', () => {
+      expect(USER_CODES).toEqual(expectedCodes)
+    })
+
+  })
 
   describe("Database Errors", () => {
     it("should define CONNECTION_FAILED", () => {
