@@ -24,6 +24,7 @@ export default {
     "<rootDir>/constants/**",
     "<rootDir>/controllers/**",
     "<rootDir>/middleware/**",
+    "<rootDir>/errors/**",
     "<rootDir>/models/**",
     "<rootDir>/repositories/**",
     "<rootDir>/services/**",

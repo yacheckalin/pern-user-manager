@@ -17,7 +17,7 @@ class ApiError extends Error {
       message: this.message,
       code: this.code,
       status: this.status,
-      detials: this.detials
+      details: this.details
     }
   }
 }
