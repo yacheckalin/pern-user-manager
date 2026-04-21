@@ -112,7 +112,11 @@ class UserService {
     // check if user exists
     const user = await this.userRepository.findUserById(id);
     if (!user) {
-      throw new Error(USER_ERRORS.NOT_FOUND);
+      throw new ApiError({
+        message: USER_ERRORS.NOT_FOUND,
+        status: HTTP_NOT_FOUND,
+        code: USER_CODES.USER_NOT_FOUND
+      });
     }
 
     // check if userName is empty
@@ -120,14 +124,22 @@ class UserService {
       data.username,
     );
     if (userNameExists && userNameExists.id !== id) {
-      throw new Error(USER_ERRORS.USERNAME_TAKEN);
+      throw new ApiError({
+        message: USER_ERRORS.USERNAME_TAKEN,
+        code: USER_CODES.USERNAME_TAKEN,
+        status: HTTP_CONFLICT
+      });
     }
 
     // if email changed, check if this email doesn't exist in the DB
     if (data.email && user.email !== data.email) {
       const emailExists = await this.userRepository.findUserByEmail(data.email);
       if (emailExists && emailExists.id !== id) {
-        throw new Error(USER_ERRORS.EMAIL_TAKEN);
+        throw new ApiError({
+          message: USER_ERRORS.EMAIL_TAKEN,
+          code: USER_CODES.EMAIL_TAKEN,
+          status: HTTP_CONFLICT
+        });
       }
     }
     const result = await this.userRepository.updateUser(id, data);
@@ -265,13 +277,21 @@ class UserService {
         !data.username ||
         data.username.length < USER_VALIDATION.USERNAME_MIN_LENGTH
       ) {
-        throw new Error(USER_ERRORS.INVALID_USERNAME);
+        throw new ApiError({
+          message: USER_ERRORS.INVALID_USERNAME,
+          code: USER_CODES.INVALID_USERNAME,
+          status: HTTP_BAD_REQUEST
+        });
       }
     }
 
     if (data.email !== undefined) {
       if (!data.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
-        throw new Error(USER_ERRORS.INVALID_EMAIL);
+        throw new ApiError({
+          message: USER_ERRORS.INVALID_EMAIL,
+          status: HTTP_BAD_REQUEST,
+          code: USER_CODES.INVALID_EMAIL
+        });
       }
     }
 
@@ -279,7 +299,11 @@ class UserService {
       data.age !== undefined &&
       (data.age < USER_VALIDATION.AGE_MIN || data.age > USER_VALIDATION.AGE_MAX)
     ) {
-      throw new Error(USER_ERRORS.INVALID_AGE);
+      throw new ApiError({
+        message: USER_ERRORS.INVALID_AGE,
+        code: USER_CODES.INVALID_AGE,
+        status: HTTP_BAD_REQUEST
+      });
     }
   }
 

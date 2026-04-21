@@ -54,42 +54,16 @@ class UserController {
     });
   })
 
-  async updateUser(req, res, next) {
-    try {
-      const { id } = req.params;
+  updateUser = asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
+    const user = await this.userService.updateUser(id, req.body);
 
-      const user = await this.userService.updateUser(id, req.body);
-      res.status(HTTP_OK).json({
-        success: true,
-        message: USER_MESSAGES.UPDATED,
-        data: user,
-      });
-    } catch (error) {
-      // Handle conflict errors (duplicate username/email)
-      if (error.message === USER_ERRORS.USERNAME_TAKEN) {
-
-        next({ message: error.message, statusCode: HTTP_CONFLICT });
-      }
-
-      // Handle validation errors
-      if (
-        error.message === USER_ERRORS.INVALID_USERNAME ||
-        error.message === USER_ERRORS.INVALID_EMAIL ||
-        error.message === USER_ERRORS.INVALID_AGE
-      ) {
-
-        next({ message: error.message, statusCode: HTTP_BAD_REQUEST });
-      }
-
-      // Handle other errors
-      const statusCode =
-        error.message === USER_ERRORS.NOT_FOUND
-          ? HTTP_NOT_FOUND
-          : HTTP_INTERNAL_SERVER_ERROR;
-
-      next({ message: error.message, statusCode });
-    }
-  }
+    res.status(HTTP_OK).json({
+      success: true,
+      message: USER_MESSAGES.UPDATED,
+      data: user,
+    });
+  })
 
   updateUserPassword = asyncHandler(async (req, res, next) => {
     const { id } = req.params;
