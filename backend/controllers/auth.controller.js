@@ -92,7 +92,7 @@ class AuthController {
     });
   })
 
-  async refresh(req, res, next) {
+  refresh = asyncHandler(async (req, res, next) => {
     const accessToken = req.accessToken;
 
     res.status(HTTP_OK).json({
@@ -100,7 +100,7 @@ class AuthController {
       message: TOKEN_MESSAGES.ROTATED,
       data: { accessToken },
     });
-  }
+  })
 }
 
 export default AuthController;
