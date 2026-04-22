@@ -7,6 +7,7 @@ import {
   API_PREFIX,
   API_VERSION,
   BCRYPT_ROUNDS,
+  HTTP_NO_CONTENT,
   HTTP_NOT_FOUND,
   HTTP_OK,
   USER_ERRORS,
@@ -50,11 +51,7 @@ describe("Delete User By Id E2E Flow", () => {
 
   it("should delete user by id successfully", async () => {
     const response = await request(app).delete(`${API_URL}/users/${user.id}`);
-
-    expect(response.status).toBe(HTTP_OK);
-    expect(response.body.message).toBe(USER_MESSAGES.DELETED);
-    expect(response.body.data).toBeDefined();
-    expect(response.body.data.id).toBe(user.id);
+    expect(response.status).toBe(HTTP_NO_CONTENT);
   });
 
   it("should return user not found", async () => {

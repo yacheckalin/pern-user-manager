@@ -4,6 +4,7 @@ import {
   HTTP_CONFLICT,
   HTTP_CREATED,
   HTTP_INTERNAL_SERVER_ERROR,
+  HTTP_NO_CONTENT,
   HTTP_NOT_FOUND,
   HTTP_OK,
   SERVER_ERROR,
@@ -487,22 +488,8 @@ describe("UserController - Unit Tests", () => {
 
       req.params.id = 1;
       await userController.deleteUser(req, res, next);
-      expect(res.status).toHaveBeenCalledWith(HTTP_OK);
-      expect(res.json).toHaveBeenCalledWith({
-        success: true,
-        message: USER_MESSAGES.DELETED,
-        data: {
-          id: "1",
-          username: "test1",
-          email: "test1@tt.tt",
-          age: 18,
-          isActive: false,
-          createdAt: "2026-04-08T07:08:00.823Z",
-          updatedAt: "2026-04-08T07:08:00.823Z",
-          activatedAt: null,
-          lastLogin: null,
-        },
-      });
+      expect(res.status).toHaveBeenCalledWith(HTTP_NO_CONTENT);
+
     });
   });
 
