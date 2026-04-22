@@ -91,41 +91,6 @@ if (process.env.MOCK_DATE === "true" && !isIntegrationTest && !isE2eTest) {
   jest.setSystemTime(MOCK_DATE);
 }
 
-// Export common test utilities
-export const testUtils = {
-  wait: (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
-
-  randomString: (length = 10) => {
-    return Math.random()
-      .toString(36)
-      .substring(2, length + 2);
-  },
-
-  randomEmail: () => {
-    return `test_${Date.now()}_${Math.random().toString(36).substring(7)}@example.com`;
-  },
-
-  randomNumber: (min = 1, max = 1000) => {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  },
-
-  cloneObject: (obj) => {
-    return JSON.parse(JSON.stringify(obj));
-  },
-
-  expectError: async (fn, expectedMessage) => {
-    try {
-      await fn();
-      throw new Error("Expected function to throw");
-    } catch (error) {
-      if (expectedMessage) {
-        expect(error.message).toContain(expectedMessage);
-      }
-      return error;
-    }
-  },
-};
-
 // ============================================
 // 4. DATABASE HELPERS
 // ============================================
