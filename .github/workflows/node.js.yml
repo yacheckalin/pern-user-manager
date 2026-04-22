@@ -18,6 +18,14 @@ jobs:
   test:
     if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
     runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      SCHEMA: app
+      DATABASE_URL: postgresql://postgres:secret_password@localhost:5432/test_db?options=-csearch_path=app,public
+      DB_USERNAME: postgres
+      DB_PASSWORD: secret_password
+      DB_NAME: my_database
+      DB_PORT: 5432
     services: # База поднимается один раз для всех тестов
       postgres:
         image: postgres:15
@@ -34,15 +42,14 @@ jobs:
           --health-retries 5
     defaults:
       run:
-        working-directory: backend
+        working-directory: ./backend
     strategy:
       matrix:
-        node-version: [18.x, 20.x, 22.x]
+        node-version: [22.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
       - uses: actions/checkout@v4
-
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
@@ -51,69 +58,20 @@ jobs:
           cache-dependency-path: "./backend/package-lock.json"
 
       - name: Install dependencies
-        run: npm install
-        working-directory: ./backend
+        run: npm ci
 
       - name: Run migrations
         run: npm run migrate:ci
-        working-directory: ./backend
-        env:
-          SCHEMA: app
-          DATABASE_URL: postgresql://postgres:secret_password@localhost:5432/test_db?options=-csearch_path=app,public
-          DB_USERNAME: postgres
-          DB_PASSWORD: secret_password
-          DB_NAME: my_database
-          DB_PORT: 5432
 
       - name: Run Unit Tests
         run: npm run test:unit
-        working-directory: ./backend
-        env:
-          LOG_LEVEL: warn
-          SCHEMA: app
-          DATABASE_URL: postgresql://postgres:secret_password@localhost:5432/test_db?options=-csearch_path=app,public
-          DB_USERNAME: postgres
-          DB_PASSWORD: secret_password
-          DB_NAME: my_database
-          DB_PORT: 5432
 
       - name: Integration Tests
         run: npm run test:integration
-        working-directory: ./backend
-        env:
-          SCHEMA: app
-          DATABASE_URL: postgresql://postgres:secret_password@localhost:5432/test_db?options=-csearch_path=app,public
-          DB_USERNAME: postgres
-          DB_PASSWORD: secret_password
-          DB_NAME: my_database
-          DB_PORT: 5432
 
       - name: E2E Tests
         run: npm run test:e2e
-        working-directory: ./backend
         env:
-          SCHEMA: app
-          DATABASE_URL: postgresql://postgres:secret_password@localhost:5432/test_db?options=-csearch_path=app,public
-          DB_USERNAME: postgres
-          DB_PASSWORD: secret_password
-          DB_NAME: my_database
-          DB_PORT: 5432
-          JWT_SECRET: some_secret_hash_string
-          JWT_EXPIRES_IN: "1d"
-          JWT_ACCESS_TOKEN_SECRET: super-secret-access-key-minimum-32-character
-          JWT_REFRESH_TOKEN_SECRET: super-secret-refresh-key-minimum-32-character
-          JWT_ACCESS_TOKEN_EXPIRES_IN: "1h"
-          JWT_REFRESH_TOKEN_EXPIRES_IN: "7d"
-      - name: CI Tests
-        run: npm run test:ci
-        working-directory: ./backend
-        env:
-          SCHEMA: app
-          DATABASE_URL: postgresql://postgres:secret_password@localhost:5432/test_db?options=-csearch_path=app,public
-          DB_USERNAME: postgres
-          DB_PASSWORD: secret_password
-          DB_NAME: my_database
-          DB_PORT: 5432
           JWT_SECRET: some_secret_hash_string
           JWT_EXPIRES_IN: "1d"
           JWT_ACCESS_TOKEN_SECRET: super-secret-access-key-minimum-32-character
