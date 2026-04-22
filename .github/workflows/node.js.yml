@@ -72,3 +72,10 @@ jobs:
 
       - name: E2E Tests
         run: npm run test:e2e
+        env:
+          JWT_SECRET: some_secret_hash_string
+          JWT_EXPIRES_IN: "1d"
+          JWT_ACCESS_TOKEN_SECRET: super-secret-access-key-minimum-32-character
+          JWT_REFRESH_TOKEN_SECRET: super-secret-refresh-key-minimum-32-character
+          JWT_ACCESS_TOKEN_EXPIRES_IN: "1h"
+          JWT_REFRESH_TOKEN_EXPIRES_IN: "7d"
