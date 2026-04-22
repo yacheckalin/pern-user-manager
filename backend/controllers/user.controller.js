@@ -28,7 +28,8 @@ class UserController {
 
   createUser = asyncHandler(async (req, res, next) => {
     const user = await this.userService.createUser(req.body);
-    res.status(HTTP_CREATED).json({
+    const location = req.protocol + "://" + req.get("host") + req.originalUrl + "/" + user.id;
+    res.status(HTTP_CREATED).set('Location', location).json({
       success: true,
       message: USER_MESSAGES.CREATED,
       data: user,
@@ -81,8 +82,8 @@ class UserController {
 
   registerUser = asyncHandler(async (req, res, next) => {
     const user = await this.userService.registerUser(req.body);
-
-    res.status(HTTP_CREATED).json({
+    const location = req.protocol + '://' + req.get('host') + req.originalUrl + '/' + user.id;
+    res.status(HTTP_CREATED).set('Location', location).json({
       success: true,
       message: USER_MESSAGES.REGISTERED,
       data: user,
