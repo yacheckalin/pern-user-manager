@@ -10,8 +10,9 @@ import {
   USER_ERRORS,
   USER_MESSAGES,
   USER_VALIDATION,
-} from "../../../constants";
+} from "../../../constants/index.js";
 import ApiError from "../../../errors/api.error.js";
+import logger from "../../../logger.js";
 
 jest.unstable_mockModule("../../../services/user.service.js", () => ({
   default: jest.fn().mockImplementation(() => ({
@@ -54,9 +55,13 @@ describe("UserController - Unit Tests", () => {
       params: {},
       body: {},
       query: {},
+      protocol: 'http',
+      get: jest.fn().mockReturnValue('localhost'),
+      originalUrl: '/api/users',
     };
     res = {
       status: jest.fn().mockReturnThis(),
+      set: jest.fn().mockReturnThis(),
       json: jest.fn().mockReturnThis(),
     };
     next = jest.fn();
@@ -142,9 +147,10 @@ describe("UserController - Unit Tests", () => {
         username: "test1",
         email: "test1@tt.tt",
         age: 18,
-        is_ctive: false,
+        is_active: false,
       };
       await userController.createUser(req, res, next);
+      expect(res.set).toHaveBeenCalledWith('Location', expect.any(String));
       expect(res.status).toHaveBeenCalledWith(HTTP_CREATED);
       expect(res.json).toHaveBeenCalledWith({
         success: true,
@@ -599,9 +605,12 @@ describe("UserController - Unit Tests", () => {
         username: "test1",
         email: "test1@tt.tt",
         age: 18,
-        is_ctive: false,
+        is_active: false,
       };
+
       await userController.registerUser(req, res, next);
+
+      expect(res.set).toHaveBeenCalledWith('Location', expect.any(String));
       expect(res.status).toHaveBeenCalledWith(HTTP_CREATED);
       expect(res.json).toHaveBeenCalledWith({
         success: true,
