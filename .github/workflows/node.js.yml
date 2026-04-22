@@ -18,7 +18,7 @@ jobs:
   test:
     if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 3
     env:
       SCHEMA: app
       DATABASE_URL: postgresql://postgres:secret_password@localhost:5432/test_db?options=-csearch_path=app,public
@@ -45,11 +45,12 @@ jobs:
         working-directory: ./backend
     strategy:
       matrix:
-        node-version: [22.x]
+        node-version: [20.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
       - uses: actions/checkout@v4
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
@@ -63,18 +64,11 @@ jobs:
       - name: Run migrations
         run: npm run migrate:ci
 
-      # - name: Run Unit Tests
-      #   run: npm run test:unit
+      - name: Run Unit Tests
+        run: npm run test:unit
 
       - name: Integration Tests
         run: npm run test:integration
 
       - name: E2E Tests
         run: npm run test:e2e
-        env:
-          JWT_SECRET: some_secret_hash_string
-          JWT_EXPIRES_IN: "1d"
-          JWT_ACCESS_TOKEN_SECRET: super-secret-access-key-minimum-32-character
-          JWT_REFRESH_TOKEN_SECRET: super-secret-refresh-key-minimum-32-character
-          JWT_ACCESS_TOKEN_EXPIRES_IN: "1h"
-          JWT_REFRESH_TOKEN_EXPIRES_IN: "7d"
