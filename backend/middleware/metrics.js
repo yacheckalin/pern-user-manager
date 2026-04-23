@@ -1,9 +1,12 @@
 import { httpRequestDuration } from "../metrics.js";
 
-export const metrics = () => {
+export default function metrics() {
   return (req, res, next) => {
-    const end = httpRequestDuration.startTimer();
+    if (req.path.endsWith("metrics")) {
+      return next();
+    }
 
+    const end = httpRequestDuration.startTimer();
     res.on("finish", () => {
       end({
         method: req.method,
@@ -11,7 +14,6 @@ export const metrics = () => {
         status_code: res.statusCode,
       });
     });
-
     next();
   };
-};
+}

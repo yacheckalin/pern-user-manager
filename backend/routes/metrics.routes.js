@@ -4,6 +4,6 @@ import MetricsController from "../controllers/metrics.controller.js";
 const router = express.Router();
 const metricsController = new MetricsController();
 
-router.get("/metrics", metricsController.metrics.bind(metricsController));
+router.get("/", metricsController.getMetrics.bind(metricsController));
 
 export default router;

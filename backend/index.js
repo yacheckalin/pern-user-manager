@@ -10,6 +10,7 @@ import cookieParser from "cookie-parser";
 import { API_PREFIX, API_VERSION } from "./constants/index.js";
 import logger from "./logger.js";
 import morganMiddleware from "./middleware/morgan.js";
+import metrics from "./middleware/metrics.js";
 const { PORT } = process.env;
 
 const API_URL = API_PREFIX + "/" + API_VERSION;
@@ -21,9 +22,11 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(morganMiddleware);
 
+app.use(`${API_URL}/metrics`, metricsRoutes);
+app.use(metrics());
+
 app.use(`${API_URL}/users`, userRoutes);
 app.use(`${API_URL}/auth`, authRoutes);
-app.use(`${API_URL}/metrics`, metricsRoutes);
 
 app.use(errorHandler);
 

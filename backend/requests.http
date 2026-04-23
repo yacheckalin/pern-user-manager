@@ -75,3 +75,7 @@ POST http://localhost:5000/api/v1/auth/logout
 
 ### Refresh token
 POST http://localhost:5000/api/v1/auth/refresh
+
+
+### Get metrics
+GET http://localhost:5000/api/v1/metrics
