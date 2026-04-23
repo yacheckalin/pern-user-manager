@@ -144,8 +144,9 @@ services:
       - 8.8.4.4
     dns_search: .
     ports:
-      - "${REACT_PORT}:3000"
+      - "5173:5173"
     stdin_open: true
+    tty: true
     logging:
       driver: "json-file"
       options:
@@ -153,9 +154,12 @@ services:
         max-file: "3"
     depends_on:
       - backend
-    # volumes:
-    #   - ./frontend:/app
-    #   - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:5000
+      - VITE_HOST=0.0.0.0
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
 
 volumes:
   pgdata:

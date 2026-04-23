@@ -40,14 +40,14 @@ This will:
 - Start PostgreSQL database on port 5432
 - Run database migrations automatically
 - Start the Express.js backend on port 5000
-- Start the React frontend on port 3000
+- Start the React frontend on port 5173
 - Start pgAdmin on port 5050
 
 ### 2. Access the Application
 
 Once running, access the following URLs:
 
-- **Frontend**: http://localhost:3000
+- **Frontend**: http://localhost:5173
 - **Backend API**: http://localhost:5000
 - **pgAdmin**: http://localhost:5050
   - Email: `admin@admin.com`
@@ -117,7 +117,7 @@ npm install
 npm start
 ```
 
-The frontend will open at `http://localhost:3000`
+The frontend will open at `http://localhost:5173`
 
 ### 3. Setup Database (if not using Docker)
 
@@ -176,16 +176,16 @@ Navigate to `frontend/` directory:
 
 ```bash
 # Start development server
-npm start
+npm run dev
 
 # Build for production
-npm build
+npm run build
 
-# Run tests
-npm test
+# Run linter
+npm run lint
 
-# Eject configuration (not recommended)
-npm eject
+# Start preview
+npm run preview
 ```
 
 ## 🏗️ Project Structure
@@ -242,7 +242,7 @@ root/
 |   ├── package.json
 |   ├── index.js                # Entry point
 │
-├── frontend/                   # React frontend
+├── frontend/                   # React frontend (Vite)
 │   ├── src/
 │   │   ├── App.js
 │   │   ├── App.css
@@ -252,6 +252,7 @@ root/
 │   └── Dockerfile
 │
 ├── docker-compose.yml         # Docker Compose configuration
+├── docker-compose.test.yml    # Docker Compose configuration (Integration & E2E)
 └── README.md
 ```
 
@@ -279,6 +280,30 @@ CREATE TABLE IF NOT EXISTS users(
 CREATE INDEX IF NOT EXISTS idx_users_created_at ON users(created_at);
 CREATE INDEX IF NOT EXISTS idx_users_username_created_at ON users(username, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_users_activated_at ON users(activated_at) WHERE activated_at IS NULL;
+
+
+CREATE TABLE IF NOT EXISTS app.refresh_tokens(
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      user_id BIGINT NOT NULL REFERENCES app.users(id) ON DELETE CASCADE,
+      token_hash TEXT NOT NULL,
+      expires_at TIMESTAMPTZ,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      revoked_at TIMESTAMPTZ,
+      replaced_by_token_id UUID,
+      user_agent TEXT,
+      ip_address INET
+);
+
+ ALTER TABLE app.refresh_tokens DROP CONSTRAINT IF EXISTS fk_replaced_by_token_id;
+
+ALTER TABLE app.refresh_tokens
+    ADD CONSTRAINT fk_replaced_by_token_id FOREIGN KEY (replaced_by_token_id)
+    REFERENCES app.refresh_tokens(id) ON DELETE SET NULL
+
+CREATE INDEX IF NOT EXISTS idx_refresh_tokens_user_id ON app.refresh_tokens(user_id);
+CREATE INDEX IF NOT EXISTS idx_refresh_tokens_token_hash ON app.refresh_tokens(token_hash);
+CREATE INDEX IF NOT EXISTS idx_refresh_tokens_expires_at ON app.refresh_tokens(expires_at);
+
 
 ```
 
@@ -416,7 +441,7 @@ If you get "port already in use" errors:
 lsof -i :5000
 
 # Find process using port 3000 (frontend)
-lsof -i :3000
+lsof -i :5173
 
 # Find process using port 5432 (database)
 lsof -i :5432
@@ -493,8 +518,7 @@ docker compose up
 
 - **react** - UI library
 - **react-dom** - React DOM rendering
-- **react-scripts** - Create React App scripts
-- **@testing-library/react** - React testing utilities
+- **vite** - Vite
 
 ## 🤝 Contributing
 
