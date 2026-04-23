@@ -303,6 +303,8 @@ Base URL: `http://localhost:5000/users`
 - `POST /api/v1/auth/logout` - Logout user
 - `POST /api/v1/auth/refresh` - Rotate Access/Refresh Tokens
 
+- `GET /api/v1/metrics` - Get metrics
+
 ## ✅ Testing
 
 ### Backend Tests
