@@ -17,8 +17,20 @@ services:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
+  victoriametrics:
+    container_name: victoriametrics
+    image: victoriametrics/victoria-metrics:v1.101.0
+    ports:
+      - "8428:8428"
+    volumes:
+      - vmdata:/storage
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - "--promscrape.config=/etc/prometheus/prometheus.yml"
+      - "--storageDataPath=/storage"
+    restart: always
 
-  # Visualization Tool (~1Gb)
+  # Visualization Tool (~2Gb)
   # grafana:
   #   image: grafana/grafana:latest
   #   ports:
@@ -144,3 +156,4 @@ volumes:
   pgdata:
   # grafana_data:
   prometheus:
+  vmdata:
