@@ -474,9 +474,15 @@ components:
         error:
           type: string
           example: User not found
-        statusCode:
+        status:
           type: integer
           example: 404
+        success:
+          type: boolean
+          example: false
+        code:
+          type: string
+          example: USER_NOT_FOUND
 
   responses:
     BadRequest:
@@ -486,8 +492,10 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponse"
           example:
-            error: Validation failed
-            statusCode: 400
+            message: Validation failed
+            code: VALIDATION_FAILED
+            status: 400
+            success: false
 
     Unauthorized:
       description: Missing or invalid authentication token
@@ -496,8 +504,10 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponse"
           example:
-            error: Unauthorized
-            statusCode: 401
+            message: Unauthorized
+            status: 401
+            code: UNAUTHORIZED
+            success: false
 
     Forbidden:
       description: Insufficient permissions
@@ -506,8 +516,10 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponse"
           example:
-            error: Forbidden
-            statusCode: 403
+            success: false
+            message: Forbidden
+            status: 403
+            code: FORBIDDEN
 
     NotFound:
       description: Resource not found
@@ -516,8 +528,10 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponse"
           example:
-            error: User not found
-            statusCode: 404
+            message: User not found
+            status: 404
+            code: USER_NOT_FOUND
+            success: false
 
     Conflict:
       description: Resource already exists
@@ -526,5 +540,7 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponse"
           example:
-            error: Email already in use
-            statusCode: 409
+            message: Email already in use
+            status: 409
+            code: EMAIL_ALREADY_TAKEN
+            success: false
