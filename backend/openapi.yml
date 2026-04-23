@@ -64,8 +64,6 @@ paths:
                 $ref: "#/components/schemas/User"
         "400":
           $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
         "409":
           $ref: "#/components/responses/Conflict"
 
@@ -298,9 +296,10 @@ components:
       name: id
       in: path
       required: true
-      description: Unique user ID
+      description: Unique user ID (positive integer)
       schema:
         type: integer
+        minimum: 1
         example: 42
 
   schemas:
@@ -312,12 +311,15 @@ components:
           example: 42
         username:
           type: string
-          example: ivan_dev
+          example: ivandev
         email:
           type: string
           format: email
           example: ivan@example.com
-        isActive:
+        age:
+          type: integer
+          example: 25
+        is_active:
           type: boolean
           example: true
         createdAt:
@@ -335,7 +337,11 @@ components:
       properties:
         username:
           type: string
-          example: ivan_dev
+          pattern: "^[a-zA-Z0-9]+$"
+          minLength: 3
+          maxLength: 30
+          description: Alphanumeric characters only
+          example: ivandev
         email:
           type: string
           format: email
@@ -343,16 +349,29 @@ components:
         password:
           type: string
           format: password
-          minLength: 8
-          example: securePassword123
+          minLength: 6
+          example: securePass123
+        age:
+          type: integer
+          minimum: 18
+          maximum: 120
+          example: 25
+        is_active:
+          type: boolean
+          example: true
 
     RegisterRequest:
       type: object
-      required: [username, email, password]
+      required: [username, email, password, confirm_password]
+      description: password and confirm_password must match
       properties:
         username:
           type: string
-          example: ivan_dev
+          pattern: "^[a-zA-Z0-9]+$"
+          minLength: 3
+          maxLength: 30
+          description: Alphanumeric characters only
+          example: ivandev
         email:
           type: string
           format: email
@@ -360,46 +379,72 @@ components:
         password:
           type: string
           format: password
-          minLength: 8
-          example: securePassword123
+          minLength: 6
+          maxLength: 72
+          example: securePass123
+        confirm_password:
+          type: string
+          format: password
+          minLength: 6
+          maxLength: 72
+          description: Must match password
+          example: securePass123
+        age:
+          type: integer
+          example: 25
 
     UpdateUserRequest:
       type: object
+      description: All fields optional. id is taken from path param.
       properties:
         username:
           type: string
-          example: ivan_dev_updated
+          pattern: "^[a-zA-Z0-9]+$"
+          maxLength: 30
+          description: Alphanumeric characters only
+          example: ivandev2
         email:
           type: string
           format: email
           example: ivan_new@example.com
+        age:
+          type: integer
+          example: 26
 
     ChangePasswordRequest:
       type: object
-      required: [currentPassword, newPassword]
+      required: [old_password, new_password, confirm_password]
+      description: new_password and confirm_password must match
       properties:
-        currentPassword:
+        old_password:
           type: string
           format: password
+          minLength: 6
           example: oldPassword123
-        newPassword:
+        new_password:
           type: string
           format: password
-          minLength: 8
-          example: newSecurePassword456
+          minLength: 6
+          example: newSecurePass456
+        confirm_password:
+          type: string
+          format: password
+          minLength: 6
+          description: Must match new_password
+          example: newSecurePass456
 
     LoginRequest:
       type: object
       required: [login, password]
       properties:
-        login:
+        username:
           type: string
           description: Username or email
-          example: ivan_dev
+          example: ivandev
         password:
           type: string
           format: password
-          example: securePassword123
+          example: securePass123
 
     RefreshRequest:
       type: object
