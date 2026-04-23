@@ -42,6 +42,9 @@ This will:
 - Start the Express.js backend on port 5000
 - Start the React frontend on port 5173
 - Start pgAdmin on port 5050
+- Start Prometheus on port 9090
+- Start VictoriaMetrics on port 8428
+- Start Dozzle on port 8888
 
 ### 2. Access the Application
 
@@ -52,6 +55,9 @@ Once running, access the following URLs:
 - **pgAdmin**: http://localhost:5050
   - Email: `admin@admin.com`
   - Password: `admin`
+- **Prometheus**: http://localhost:9090
+- **Dozzle**: http://localhost:8888
+- **VictoriaMetrics**: http://localhost:8428
 
 ### 3. Database Access
 
@@ -430,6 +436,26 @@ NODE_ENV=development
 
 When using Docker Compose, these are configured in `docker-compose.yml`
 
+---
+
+## 📊 Monitoring & Observability
+
+The project includes a built-in system for metrics collection and real-time log viewing. To keep the development environment lightweight, these services are managed via **Docker Profiles** and are disabled by default.
+
+### Key Components:
+
+- **VictoriaMetrics** – A high-performance time-series database used as the primary metrics storage.
+- **Prometheus** – The industry-standard interface for running PromQL queries and monitoring target health.
+- **Dozzle** – A lightweight, web-based real-time log viewer for all running containers.
+
+### How to Enable Monitoring
+
+To start the application with the full monitoring stack, use the `--profile` flag:
+
+```bash
+docker compose --profile monitoring up -d
+```
+
 ## 🐛 Troubleshooting
 
 ### Port Already in Use
@@ -513,6 +539,12 @@ docker compose up
 - **validator** - Sanitizing request data (Business Layer)
 - **nodemon** - Development auto-reload
 - **supertest** - HTTP testing
+- **morgan** - HTTP request logger
+- **winston** - Universal logging library
+- **jsonwebtoken** - JSON Web Token implementation
+- **yamljs** - YAML parser and stringifier
+- **swagger-ui-express** - API Documentation UI
+- **dotenv-cli** - CLI for dotenv
 
 ### Frontend
 
