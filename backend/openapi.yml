@@ -1,0 +1,530 @@
+openapi: 3.0.3
+
+info:
+  title: Users & Auth API
+  version: 1.0.0
+  description: REST API for user management, authentication, and metrics
+
+servers:
+  - url: http://localhost:5000/api/v1
+    description: Local development
+
+tags:
+  - name: Users
+    description: User management
+  - name: Auth
+    description: Authentication & token management
+  - name: Metrics
+    description: Prometheus metrics
+
+paths:
+  # ─── Users ───────────────────────────────────────────────────────────────────
+
+  /users:
+    get:
+      tags: [Users]
+      summary: Get all users
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+    post:
+      tags: [Users]
+      summary: Create a new user
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserRequest"
+      responses:
+        "201":
+          description: User created
+          headers:
+            Location:
+              description: URL of the newly created user
+              schema:
+                type: string
+                example: /api/v1/users/42
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "409":
+          $ref: "#/components/responses/Conflict"
+
+  /users/register:
+    post:
+      tags: [Users]
+      summary: Register a new user (public)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+      responses:
+        "201":
+          description: User registered successfully
+          headers:
+            Location:
+              description: URL of the newly created user
+              schema:
+                type: string
+                example: /api/v1/users/42
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "409":
+          $ref: "#/components/responses/Conflict"
+
+  /users/{id}:
+    parameters:
+      - $ref: "#/components/parameters/UserId"
+
+    get:
+      tags: [Users]
+      summary: Get user by ID
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: User found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    put:
+      tags: [Users]
+      summary: Update user by ID
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserRequest"
+      responses:
+        "200":
+          description: User updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    delete:
+      tags: [Users]
+      summary: Delete user by ID
+      security:
+        - bearerAuth: []
+      responses:
+        "204":
+          description: User deleted successfully
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /users/{id}/password:
+    patch:
+      tags: [Users]
+      summary: Change user password by ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/UserId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangePasswordRequest"
+      responses:
+        "204":
+          description: Password changed successfully
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /users/{id}/activate:
+    patch:
+      tags: [Users]
+      summary: Activate user by ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/UserId"
+      responses:
+        "204":
+          description: User activated successfully
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: User is already active
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ─── Auth ─────────────────────────────────────────────────────────────────────
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Authenticate user
+      description: Accepts username or email along with password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /auth/logout:
+    post:
+      tags: [Auth]
+      summary: Logout user
+      description: Invalidates the current refresh token
+      security:
+        - bearerAuth: []
+      responses:
+        "204":
+          description: Logged out successfully
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /auth/refresh:
+    post:
+      tags: [Auth]
+      summary: Rotate access and refresh tokens
+      description: Issues a new access/refresh token pair using a valid refresh token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RefreshRequest"
+      responses:
+        "200":
+          description: Tokens rotated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  # ─── Metrics ──────────────────────────────────────────────────────────────────
+
+  /metrics:
+    get:
+      tags: [Metrics]
+      summary: Get Prometheus metrics
+      description: Returns metrics in Prometheus exposition format. View in Prometheus UI at http://localhost:9090
+      responses:
+        "200":
+          description: Metrics in Prometheus text format
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: |
+                  # HELP http_requests_total Total number of HTTP requests
+                  # TYPE http_requests_total counter
+                  http_requests_total{method="GET",route="/api/v1/users",status="200"} 42
+
+# ─── Components ───────────────────────────────────────────────────────────────
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    UserId:
+      name: id
+      in: path
+      required: true
+      description: Unique user ID (positive integer)
+      schema:
+        type: integer
+        minimum: 1
+        example: 42
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 42
+        username:
+          type: string
+          example: ivandev
+        email:
+          type: string
+          format: email
+          example: ivan@example.com
+        age:
+          type: integer
+          example: 25
+        is_active:
+          type: boolean
+          example: true
+        createdAt:
+          type: string
+          format: date-time
+          example: "2026-01-15T10:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2026-03-20T14:00:00Z"
+
+    CreateUserRequest:
+      type: object
+      required: [username, email, password]
+      properties:
+        username:
+          type: string
+          pattern: "^[a-zA-Z0-9]+$"
+          minLength: 3
+          maxLength: 30
+          description: Alphanumeric characters only
+          example: ivandev
+        email:
+          type: string
+          format: email
+          example: ivan@example.com
+        password:
+          type: string
+          format: password
+          minLength: 6
+          example: securePass123
+        age:
+          type: integer
+          minimum: 18
+          maximum: 120
+          example: 25
+        is_active:
+          type: boolean
+          example: true
+
+    RegisterRequest:
+      type: object
+      required: [username, email, password, confirm_password]
+      description: password and confirm_password must match
+      properties:
+        username:
+          type: string
+          pattern: "^[a-zA-Z0-9]+$"
+          minLength: 3
+          maxLength: 30
+          description: Alphanumeric characters only
+          example: ivandev
+        email:
+          type: string
+          format: email
+          example: ivan@example.com
+        password:
+          type: string
+          format: password
+          minLength: 6
+          maxLength: 72
+          example: securePass123
+        confirm_password:
+          type: string
+          format: password
+          minLength: 6
+          maxLength: 72
+          description: Must match password
+          example: securePass123
+        age:
+          type: integer
+          example: 25
+
+    UpdateUserRequest:
+      type: object
+      description: All fields optional. id is taken from path param.
+      properties:
+        username:
+          type: string
+          pattern: "^[a-zA-Z0-9]+$"
+          maxLength: 30
+          description: Alphanumeric characters only
+          example: ivandev2
+        email:
+          type: string
+          format: email
+          example: ivan_new@example.com
+        age:
+          type: integer
+          example: 26
+
+    ChangePasswordRequest:
+      type: object
+      required: [old_password, new_password, confirm_password]
+      description: new_password and confirm_password must match
+      properties:
+        old_password:
+          type: string
+          format: password
+          minLength: 6
+          example: oldPassword123
+        new_password:
+          type: string
+          format: password
+          minLength: 6
+          example: newSecurePass456
+        confirm_password:
+          type: string
+          format: password
+          minLength: 6
+          description: Must match new_password
+          example: newSecurePass456
+
+    LoginRequest:
+      type: object
+      required: [login, password]
+      properties:
+        username:
+          type: string
+          description: Username or email
+          example: ivandev
+        password:
+          type: string
+          format: password
+          example: securePass123
+
+    RefreshRequest:
+      type: object
+      required: [refreshToken]
+      properties:
+        refreshToken:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+    TokenResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        refreshToken:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        expiresIn:
+          type: integer
+          description: Access token TTL in seconds
+          example: 900
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          example: User not found
+        statusCode:
+          type: integer
+          example: 404
+
+  responses:
+    BadRequest:
+      description: Invalid request body or parameters
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error: Validation failed
+            statusCode: 400
+
+    Unauthorized:
+      description: Missing or invalid authentication token
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error: Unauthorized
+            statusCode: 401
+
+    Forbidden:
+      description: Insufficient permissions
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error: Forbidden
+            statusCode: 403
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error: User not found
+            statusCode: 404
+
+    Conflict:
+      description: Resource already exists
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error: Email already in use
+            statusCode: 409

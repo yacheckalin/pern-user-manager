@@ -11,9 +11,13 @@ import { API_PREFIX, API_VERSION } from "./constants/index.js";
 import logger from "./logger.js";
 import morganMiddleware from "./middleware/morgan.js";
 import metrics from "./middleware/metrics.js";
-const { PORT } = process.env;
+import YAML from "yamljs";
+import swaggerUi from "swagger-ui-express";
 
+const { PORT } = process.env;
 const API_URL = API_PREFIX + "/" + API_VERSION;
+
+const swaggerDocument = YAML.load("./openapi.yml");
 
 const app = express();
 
@@ -27,6 +31,7 @@ app.use(metrics());
 
 app.use(`${API_URL}/users`, userRoutes);
 app.use(`${API_URL}/auth`, authRoutes);
+app.use(`${API_URL}/docs`, swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use(errorHandler);
 
