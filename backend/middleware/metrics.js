@@ -1,15 +1,17 @@
-import { httpRequestDuration } from "../metrics.js"
+import { httpRequestDuration } from "../metrics.js";
 
-export function metrics () {
-  return (req, res, next) {
+export const metrics = () => {
+  return (req, res, next) => {
     const end = httpRequestDuration.startTimer();
 
     res.on("finish", () => {
-      end({method: req.method, route: req.route ? req.route.path : req.path,
-        status_code: res.statusCode
-      })
-    })
+      end({
+        method: req.method,
+        route: req.route ? req.route.path : req.path,
+        status_code: res.statusCode,
+      });
+    });
 
-    next()
-  }
-}
+    next();
+  };
+};
