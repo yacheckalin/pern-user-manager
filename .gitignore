@@ -26,3 +26,10 @@ npm-debug.log*
 coverage/
 test-results/
 *.test.db
+
+# Docker volumes / Databases
+pgdata/
+grafana_data/
+prometheus_data/
+
+*/data/

@@ -11,6 +11,48 @@ services:
       # - DOZZLE_USERNAME=admin
       # - DOZZLE_PASSWORD=password
     restart: unless-stopped
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+  victoriametrics:
+    container_name: victoriametrics
+    image: victoriametrics/victoria-metrics:v1.101.0
+    ports:
+      - "8428:8428"
+    volumes:
+      - vmdata:/storage
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - "--promscrape.config=/etc/prometheus/prometheus.yml"
+      - "--storageDataPath=/storage"
+    restart: always
+
+  # Visualization Tool (~2Gb)
+  # grafana:
+  #   image: grafana/grafana:latest
+  #   ports:
+  #     - "3003:3000"
+  #   environment:
+  #     - GF_SECURITY_ADMIN_PASSWORD=admin
+  #   volumes:
+  #     - ./grafana_data:/var/lib/grafana
+
+  # This with show metrics of Docker Containers as well in Grafana
+  # cadvisor:
+  #   image: gcr.io/cadvisor/cadvisor:v0.47.2
+  #   container_name: cadvisor
+  #   restart: unless-stopped
+  #   volumes:
+  #     - /:/rootfs:ro
+  #     - /var/run:/var/run:rw
+  #     - /sys:/sys:ro
+  #     - /var/lib/docker/:/var/lib/docker:ro
+  #     - /dev/disk/:/dev/disk:ro
+  #   ports:
+  #     - "8081:8080"
   # PostgreSQL
   db:
     image: postgres:15-alpine
@@ -112,3 +154,6 @@ services:
 
 volumes:
   pgdata:
+  # grafana_data:
+  prometheus:
+  vmdata:
