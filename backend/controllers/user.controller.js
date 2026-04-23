@@ -3,6 +3,7 @@ import {
   HTTP_OK,
   HTTP_CREATED,
   USER_MESSAGES,
+  HTTP_NO_CONTENT,
 } from "../constants/index.js";
 import asyncHandler from "../middleware/async-handler.js";
 
@@ -28,7 +29,8 @@ class UserController {
 
   createUser = asyncHandler(async (req, res, next) => {
     const user = await this.userService.createUser(req.body);
-    res.status(HTTP_CREATED).json({
+    const location = req.protocol + "://" + req.get("host") + req.originalUrl + "/" + user.id;
+    res.status(HTTP_CREATED).set('Location', location).json({
       success: true,
       message: USER_MESSAGES.CREATED,
       data: user,
@@ -61,11 +63,7 @@ class UserController {
     const { id } = req.params;
     const user = await this.userService.deleteUser(id);
 
-    res.status(HTTP_OK).json({
-      success: true,
-      message: USER_MESSAGES.DELETED,
-      data: user,
-    });
+    res.status(HTTP_NO_CONTENT).send();
   })
 
   activateUser = asyncHandler(async (req, res, next) => {
@@ -81,8 +79,8 @@ class UserController {
 
   registerUser = asyncHandler(async (req, res, next) => {
     const user = await this.userService.registerUser(req.body);
-
-    res.status(HTTP_CREATED).json({
+    const location = req.protocol + '://' + req.get('host') + req.originalUrl + '/' + user.id;
+    res.status(HTTP_CREATED).set('Location', location).json({
       success: true,
       message: USER_MESSAGES.REGISTERED,
       data: user,
