@@ -10,6 +10,8 @@ const queryClient = new QueryClient({
         return failureCount < 2; // for 500 — 2 repeat
       },
       staleTime: 1000 * 60 * 5,
+      gcTime: 1000 * 60 * 5, // store data in cache for 5 minute
+      refetchOnReconnect: true,
     },
   },
 });
