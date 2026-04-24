@@ -1,6 +1,7 @@
 import { jest } from "@jest/globals";
 import { HTTP_BAD_REQUEST } from "../../../constants/http.constants.js";
 import { validate } from "../../../middleware/validation.js";
+import ApiError from "../../../errors/api.error.js";
 
 describe("Validation Middleware", () => {
   let req, res, next;
@@ -54,13 +55,11 @@ describe("Validation Middleware", () => {
     const middleware = validate(schema);
     middleware(req, res, next);
 
-    expect(res.status).toHaveBeenCalledWith(HTTP_BAD_REQUEST);
-    expect(res.json).toHaveBeenCalledWith({
-      success: false,
-      error: "username is required",
-      trace: "Error stack trace",
-    });
-    expect(next).not.toHaveBeenCalled();
+    expect(next).toHaveBeenCalledWith(expect.any(ApiError));
+    const callArg = next.mock.calls[0][0];
+    expect(callArg.message).toBe("username is required");
+    expect(callArg.status).toBe(HTTP_BAD_REQUEST);
+    expect(res.status).not.toHaveBeenCalled();
   });
 
   it("should use HTTP_BAD_REQUEST when statusCode is not provided", () => {
@@ -79,7 +78,11 @@ describe("Validation Middleware", () => {
     const middleware = validate(schema);
     middleware(req, res, next);
 
-    expect(res.status).toHaveBeenCalledWith(HTTP_BAD_REQUEST);
+    expect(next).toHaveBeenCalledWith(expect.any(ApiError));
+    const callArg = next.mock.calls[0][0];
+    expect(callArg.message).toBe("Invalid email");
+    expect(callArg.status).toBe(HTTP_BAD_REQUEST);
+    expect(res.status).not.toHaveBeenCalled();
   });
 
   it("should not include trace in production environment", () => {
@@ -101,11 +104,12 @@ describe("Validation Middleware", () => {
     const middleware = validate(schema);
     middleware(req, res, next);
 
-    expect(res.json).toHaveBeenCalledWith({
-      success: false,
-      error: "Validation error",
-      trace: undefined,
-    });
+    expect(next).toHaveBeenCalledWith(expect.any(ApiError));
+    const callArg = next.mock.calls[0][0];
+    expect(callArg.message).toBe("Validation error");
+    expect(callArg.status).toBe(HTTP_BAD_REQUEST);
+    expect(callArg.details).toBe("");
+    expect(res.status).not.toHaveBeenCalled();
   });
 
   it("should merge params, body, and query data for validation", () => {

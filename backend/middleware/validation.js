@@ -15,7 +15,7 @@ function validate(schema) {
         code: ""
       });
 
-      next(errObj)
+      return next(errObj);
     }
 
     // attach validated data to request

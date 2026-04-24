@@ -112,7 +112,7 @@ describe("User Update Password E2E Flow", () => {
 
     expect(response.status).toBe(HTTP_BAD_REQUEST);
     expect(response.body.success).toBe(false);
-    expect(response.body.error).toBe(
+    expect(response.body.message).toBe(
       "Password must be at least 6 characters long",
     );
   });
@@ -130,7 +130,7 @@ describe("User Update Password E2E Flow", () => {
 
     expect(response.status).toBe(HTTP_BAD_REQUEST);
     expect(response.body.success).toBe(false);
-    expect(response.body.error).toBe("Password do not match");
+    expect(response.body.message).toBe("Password do not match");
   });
 
   it("should return validation error for new password same as old", async () => {
