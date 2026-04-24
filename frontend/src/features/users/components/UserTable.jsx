@@ -1,9 +1,9 @@
-import React from "react";
 import "./UserTable.css";
 import { formatDate } from "../utils/user.helpers"; // Обычный CSS или CSS Modules
+import { Spinner } from "@shared/Spinner";
 
 export const UserTable = ({ users = [], isLoading, onDelete, total }) => {
-  if (isLoading) return <div className="status-message">Loading data...</div>;
+  if (isLoading) return <Spinner size="lg" lable="Loading Users ..." />;
   if (!users.length)
     return <div className="status-message">Users list is empty!</div>;
 

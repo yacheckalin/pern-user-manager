@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { UserTable, useUsers } from "@/features/users";
 import { ErrorState } from "@shared/ErrorState";
+import { Spinner } from "@shared/Spinner";
 
 const UsersPage = () => {
   const [filters] = useState({ page: 1, search: "", limit: 10, offset: 0 });
@@ -11,7 +12,7 @@ const UsersPage = () => {
       <h1>User Management</h1>
 
       {isLoading ? (
-        <p>Loading...</p>
+        <Spinner lable="Loading Users ..." />
       ) : (
         <>
           {isError && (
