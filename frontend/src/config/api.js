@@ -16,9 +16,29 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-api.interceptors.response.use((response) => {
-  if (response.data?.success) {
-    return { ...response, data: response.data.data }
+api.interceptors.response.use(
+  (response) => {
+    if (response.data?.success) {
+      return { ...response, data: response.data.data }
+    }
+    return response
+  },
+  (error) => {
+    const status = error.response?.status;
+
+    if (status === 401) {
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+    }
+
+    const standardizedError = {
+      message: error.response?.data?.message ?? 'Network error',
+      code: error.response?.data?.code ?? 'NETWORK_ERROR',
+      status: status ?? 0,
+      details: error.response?.data?.details ?? ''
+    };
+
+    return Promise.reject(standardizedError);
   }
-  return response
-})
+)
+

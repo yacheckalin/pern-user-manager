@@ -6,6 +6,7 @@ import {
   HTTP_NO_CONTENT,
 } from "../constants/index.js";
 import asyncHandler from "../middleware/async-handler.js";
+import ApiError from "../errors/api.error.js";
 
 class UserController {
   constructor() {

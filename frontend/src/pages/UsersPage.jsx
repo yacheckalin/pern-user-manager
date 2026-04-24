@@ -3,12 +3,8 @@ import { useState } from "react";
 
 const UsersPage = () => {
   const [filters, setFilters] = useState({ page: 1, search: "" });
+  const { data, isLoading, isError, error } = useUsers(filters);
 
-  // Вся сложная логика запроса скрыта в хуке фичи
-  const {
-    data: { data },
-    isLoading,
-  } = useUsers(filters);
   return (
     <div className="page-container">
       <h1>User Management</h1>
@@ -17,6 +13,14 @@ const UsersPage = () => {
         <p>Loading...</p>
       ) : (
         <>
+          {isError && (
+            <div>
+              <div>{error?.message}</div>
+              <div>{error?.status}</div>
+              <div>{error?.code}</div>
+              <div>{error?.details}</div>
+            </div>
+          )}
           <UserTable users={data} />
         </>
       )}

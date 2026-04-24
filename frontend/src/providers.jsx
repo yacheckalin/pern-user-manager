@@ -5,7 +5,11 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
-      retry: 1,
+      retry: (failureCount, error) => {
+        if ([400, 401, 403, 404].includes(error?.status)) return false;
+        return failureCount < 2; // for 500 — 2 repeat
+      },
+      staleTime: 1000 * 60 * 5,
     },
   },
 });
