@@ -3,7 +3,9 @@ import { UserTable, useUsers } from "@/features/users";
 import { ErrorState } from "@shared/ErrorState";
 import { Spinner } from "@shared/Spinner";
 import { ConfirmModal } from "@shared/ConfirmModal";
+import { UserEditModal } from "@features/users/components/UserEditModal";
 import { useDeleteUser } from "@features/users/hooks/useDeleteUser";
+import { useUpdateUser } from "@features/users/hooks/useUpdateUser";
 
 const UsersPage = () => {
   const [filters] = useState({ page: 1, search: "", limit: 10, offset: 0 });
@@ -13,6 +15,23 @@ const UsersPage = () => {
   const handleDelete = async () => {
     await deleteMutation.mutateAsync(userToDelete);
     setUserToDelete(null);
+  };
+
+  const [selectedUser, setSelectedUser] = useState(null);
+  const updateMutation = useUpdateUser();
+
+  const handleSaveUser = async (formData) => {
+    try {
+      await updateMutation.mutateAsync({
+        id: selectedUser.id,
+        ...formData,
+      });
+
+      setSelectedUser(null);
+    } catch (error) {
+      throw error;
+      console.error("Failed to update user:", error);
+    }
   };
 
   return (
@@ -35,6 +54,7 @@ const UsersPage = () => {
             users={data?.items}
             total={data?.total}
             onDelete={(info) => setUserToDelete(info)}
+            onEdit={(info) => setSelectedUser(info)}
           />
           <ConfirmModal
             isOpen={Boolean(userToDelete)}
@@ -43,6 +63,17 @@ const UsersPage = () => {
             onConfirm={handleDelete}
             onCancel={() => setUserToDelete(null)}
             isLoading={deleteMutation.isPending}
+          />
+
+          <UserEditModal
+            isOpen={!!selectedUser}
+            user={selectedUser}
+            onClose={() => setSelectedUser(null)}
+            // onSave={(data) =>
+            //   updateMutation.mutate({ id: selectedUser.id, ...data })
+            // }
+            onSave={handleSaveUser}
+            isLoading={updateMutation.isPending}
           />
         </>
       )}

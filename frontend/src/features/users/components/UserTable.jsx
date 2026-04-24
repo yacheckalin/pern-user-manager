@@ -2,7 +2,13 @@ import "./UserTable.css";
 import { formatDate } from "../utils/user.helpers"; // Обычный CSS или CSS Modules
 import { Spinner } from "@shared/Spinner";
 
-export const UserTable = ({ users = [], isLoading, onDelete, total }) => {
+export const UserTable = ({
+  users = [],
+  isLoading,
+  onDelete,
+  total,
+  onEdit,
+}) => {
   if (isLoading) return <Spinner size="lg" lable="Loading Users ..." />;
   if (!users.length)
     return <div className="status-message">Users list is empty!</div>;
@@ -55,7 +61,11 @@ export const UserTable = ({ users = [], isLoading, onDelete, total }) => {
               <td className="cell-date">{formatDate(user.lastLogin)}</td>
               <td className="text-right">
                 <div className="action-group">
-                  <button className="btn-icon" title="Edit">
+                  <button
+                    className="btn-icon"
+                    title="Edit"
+                    onClick={() => onEdit({ ...user, id: user.id })}
+                  >
                     ✏️
                   </button>
                   <button
