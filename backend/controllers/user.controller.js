@@ -15,7 +15,7 @@ class UserController {
 
   getAllUsers = asyncHandler(async (req, res, next) => {
     const results = await this.userService.getAllUsers();
-    res.status(HTTP_OK).json({
+    res.status(HTTP_OK).set('x-total-count', results.length).json({
       success: true,
       data: results,
     });

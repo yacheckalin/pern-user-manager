@@ -1,10 +1,10 @@
-import { UserTable, useUsers } from "@/features/users";
 import { useState } from "react";
-import { ErrorState } from "../shared/ErrorState";
+import { UserTable, useUsers } from "@/features/users";
+import { ErrorState } from "@shared/ErrorState";
 
 const UsersPage = () => {
-  const [filters] = useState({ page: 1, search: "" });
-  const { data, isLoading, isError, error } = useUsers(filters);
+  const [filters] = useState({ page: 1, search: "", limit: 10, offset: 0 });
+  const { data, isLoading, isError, error, total } = useUsers(filters);
 
   return (
     <div className="page-container">
@@ -22,7 +22,7 @@ const UsersPage = () => {
               details={error?.details}
             />
           )}
-          <UserTable users={data} />
+          <UserTable users={data} total={total} />
         </>
       )}
     </div>

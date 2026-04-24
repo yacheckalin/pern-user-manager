@@ -1,4 +1,3 @@
-/* src/shared/styles/variables.css */
 :root {
   --color-text-primary: #111827;
   --color-text-secondary: #6b7280;
@@ -15,7 +14,6 @@
   --border-radius-lg: 12px;
 }
 
-/* тёмная тема */
 @media (prefers-color-scheme: dark) {
   :root {
     --color-text-primary: #f9fafb;
