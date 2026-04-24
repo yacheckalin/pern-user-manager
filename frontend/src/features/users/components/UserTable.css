@@ -79,23 +79,50 @@
 }
 
 .btn-icon {
-  background: #f1f5f9;
-  border: none;
-  border-radius: 6px;
-  width: 32px;
-  height: 32px;
-  cursor: pointer;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s;
+  background: var(--color-background-secondary);
+  border: 1px solid var(--color-border-secondary);
+  color: var(--color-text-secondary);
+  border-radius: var(--border-radius-md);
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .btn-icon:hover {
-  background: #e2e8f0;
+  background: var(--color-border-secondary);
+  color: var(--color-text-primary);
 }
-.btn-danger:hover {
-  background: #fee2e2;
+
+.btn-icon.btn-danger:hover {
+  background: var(--color-button-danger);
+  color: white;
+  border-color: var(--color-text-danger);
+}
+
+.btn-icon svg {
+  flex-shrink: 0;
+}
+
+.text-success {
+  color: var(--color-text-success) !important;
+}
+
+.text-danger {
+  color: var(--color-text-danger) !important;
+}
+
+.btn-icon.text-success:hover {
+  background: var(--color-bg-success-light);
+  border-color: var(--color-text-success);
+}
+
+.btn-icon.text-danger:hover {
+  background: rgba(220, 38, 38, 0.1); /* light danger bg */
+  border-color: var(--color-text-danger);
 }
 
 .status-message {

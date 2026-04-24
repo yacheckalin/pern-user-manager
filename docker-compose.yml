@@ -141,6 +141,7 @@ services:
     build: ./frontend
     container_name: react_frontend
     restart: always
+    platform: linux/amd64
     dns:
       - 8.8.8.8
       - 8.8.4.4

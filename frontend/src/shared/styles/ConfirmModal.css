@@ -56,19 +56,19 @@
 }
 
 .btn-danger {
-  background: var(--color-text-danger);
+  background: var(--color-button-danger);
   color: #ffffff;
   border: none;
   padding: 10px 16px;
   border-radius: var(--border-radius-md);
   cursor: pointer;
-  font-weight: 500;
+  font-weight: 600;
   transition: opacity 0.2s;
 }
 
 .btn-danger:hover {
-  opacity: 0.9;
-  color: var(--color-text-tertiary);
+  opacity: 0.8;
+  color: #ffffff;
 }
 
 .btn-danger:disabled {
