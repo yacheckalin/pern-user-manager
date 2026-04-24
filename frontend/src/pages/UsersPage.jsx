@@ -7,9 +7,11 @@ import { UserEditModal } from "@features/users/components/UserEditModal";
 import { useDeleteUser } from "@features/users/hooks/useDeleteUser";
 import { useUpdateUser } from "@features/users/hooks/useUpdateUser";
 import { useActivateUser } from "@features/users/hooks/useActivateUser";
-import { USER_ITEM_FADE_IN_TIMEOUT } from "../features/users/constants";
-import { UserChangePasswordModal } from "../features/users/components/UserChangePasswordModal";
-import { useChangePasswordUser } from "../features/users/hooks/useChangePasswordUser";
+import { USER_ITEM_FADE_IN_TIMEOUT } from "@features/users/constants";
+import { UserChangePasswordModal } from "@features/users/components/UserChangePasswordModal";
+import { useChangePasswordUser } from "@features/users/hooks/useChangePasswordUser";
+import { UserCreateNewModal } from "@features/users/components/UserCreateNewModal";
+import { useCreateUser } from "../features/users/hooks/useCreateUser";
 
 const UsersPage = () => {
   const [filters] = useState({ page: 1, search: "", limit: 10, offset: 0 });
@@ -81,6 +83,24 @@ const UsersPage = () => {
     }
   };
 
+  const [createdUser, setCreatedUser] = useState(null);
+  const createUserMutation = useCreateUser();
+  const handleCreateUser = async (data) => {
+    try {
+      const response = await createUserMutation.mutateAsync({
+        ...data,
+      });
+      setChangedUser(null);
+      setHighlightedUserId(response.data.id);
+    } catch (e) {
+      throw e;
+    } finally {
+      setTimeout(() => {
+        setHighlightedUserId(null);
+      }, USER_ITEM_FADE_IN_TIMEOUT);
+    }
+  };
+
   return (
     <div className="page-container">
       <h1>User Management</h1>
@@ -97,6 +117,9 @@ const UsersPage = () => {
               details={error?.details}
             />
           )}
+          <div className="btn-primary " onClick={() => setCreatedUser(true)}>
+            Create New User
+          </div>
           <UserTable
             users={data?.items}
             total={data?.total}
@@ -121,13 +144,20 @@ const UsersPage = () => {
             onSave={handleEditUser}
             isLoading={updateMutation.isPending}
           />
-          {changedUser?.id && (
-            <UserChangePasswordModal
-              isOpen={!!changedUser?.id}
-              user={changedUser}
-              onClose={() => setChangedUser(null)}
-              onSave={handleChangePasswordUser}
-              isLoading={changePasswordMutation.isPending}
+
+          <UserChangePasswordModal
+            isOpen={!!changedUser?.id}
+            user={changedUser}
+            onClose={() => setChangedUser(null)}
+            onSave={handleChangePasswordUser}
+            isLoading={changePasswordMutation.isPending}
+          />
+
+          {createdUser && (
+            <UserCreateNewModal
+              onSave={handleCreateUser}
+              onClose={() => setCreatedUser(null)}
+              isLoading={createUserMutation.isPending}
             />
           )}
         </>
