@@ -30,7 +30,6 @@ const UsersPage = () => {
       setSelectedUser(null);
     } catch (error) {
       throw error;
-      console.error("Failed to update user:", error);
     }
   };
 
