@@ -6,6 +6,8 @@ import { ConfirmModal } from "@shared/ConfirmModal";
 import { UserEditModal } from "@features/users/components/UserEditModal";
 import { useDeleteUser } from "@features/users/hooks/useDeleteUser";
 import { useUpdateUser } from "@features/users/hooks/useUpdateUser";
+import { useActivateUser } from "@features/users/hooks/useActivateUser";
+import { USER_ITEM_FADE_IN_TIMEOUT } from "../features/users/constants";
 
 const UsersPage = () => {
   const [filters] = useState({ page: 1, search: "", limit: 10, offset: 0 });
@@ -32,11 +34,30 @@ const UsersPage = () => {
 
       setHighlightedUserId(selectedUser.id);
       setSelectedUser(null);
-      setTimeout(() => {
-        setHighlightedUserId(null);
-      }, 3000);
     } catch (error) {
       throw error;
+    } finally {
+      setTimeout(() => {
+        setHighlightedUserId(null);
+      }, USER_ITEM_FADE_IN_TIMEOUT);
+    }
+  };
+
+  const activateMutation = useActivateUser();
+
+  const handleActivateUser = async ({ id }) => {
+    try {
+      await activateMutation.mutateAsync({
+        id,
+      });
+      setHighlightedUserId(id);
+      setSelectedUser(null);
+    } catch (error) {
+      throw error;
+    } finally {
+      setTimeout(() => {
+        setHighlightedUserId(null);
+      }, USER_ITEM_FADE_IN_TIMEOUT);
     }
   };
 
@@ -61,6 +82,7 @@ const UsersPage = () => {
             total={data?.total}
             onDelete={(info) => setUserToDelete(info)}
             onEdit={(info) => setSelectedUser(info)}
+            onActivate={handleActivateUser}
             highlightedId={highlightedUserId}
           />
           <ConfirmModal

@@ -18,6 +18,7 @@ export const UserTable = ({
   total,
   onEdit,
   highlightedId,
+  onActivate,
 }) => {
   if (isLoading) return <Spinner size="lg" lable="Loading Users ..." />;
   if (!users.length)
@@ -88,7 +89,11 @@ export const UserTable = ({
                   {/* Activate / Deactivate */}
                   <button
                     className={`btn-icon ${user.isActive ? "text-danger" : "text-success"}`}
-                    title={user.isActive ? "Deactivate User" : "Activate User"}
+                    title={
+                      user.isActive ? "Already Activated" : "Activate User"
+                    }
+                    onClick={() => onActivate({ id: user.id })}
+                    disabled={!!user.isActive}
                   >
                     {user.isActive ? (
                       <UserMinus size={18} />

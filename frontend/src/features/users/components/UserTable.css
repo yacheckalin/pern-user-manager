@@ -121,8 +121,26 @@
 }
 
 .btn-icon.text-danger:hover {
-  background: rgba(220, 38, 38, 0.1); /* light danger bg */
+  background: rgba(220, 38, 38, 0.1);
   border-color: var(--color-text-danger);
+}
+
+.btn-icon:disabled {
+  opacity: 0.6;
+  cursor: grabbing;
+  filter: grayscale(1);
+
+  color: var(--color-text-tertiary); /* Your grey variable */
+  border-color: var(--color-border-secondary);
+  background: var(--color-background-secondary);
+}
+.btn-icon:disabled:hover {
+  background: var(--color-background-secondary);
+  transform: none;
+}
+
+.btn-icon:disabled svg {
+  color: var(--color-text-tertiary);
 }
 
 .status-message {

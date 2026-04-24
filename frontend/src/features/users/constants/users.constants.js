@@ -1,0 +1,1 @@
+export const USER_ITEM_FADE_IN_TIMEOUT = 3000;
