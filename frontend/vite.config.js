@@ -14,5 +14,11 @@ export default defineConfig({
     },
     strictPort: true,
   },
+  resolve: {
+    alias: {
+      '@': '/src',
+      '@features': '/src/features',
+    }
+  }
 });
 
