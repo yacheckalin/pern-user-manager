@@ -9,7 +9,9 @@ import { useUpdateUser } from "@features/users/hooks/useUpdateUser";
 
 const UsersPage = () => {
   const [filters] = useState({ page: 1, search: "", limit: 10, offset: 0 });
+
   const { data, isLoading, isError, error } = useUsers(filters);
+
   const [userToDelete, setUserToDelete] = useState(null);
   const deleteMutation = useDeleteUser();
   const handleDelete = async () => {
@@ -20,6 +22,7 @@ const UsersPage = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const updateMutation = useUpdateUser();
 
+  const [highlightedUserId, setHighlightedUserId] = useState(null);
   const handleSaveUser = async (formData) => {
     try {
       await updateMutation.mutateAsync({
@@ -27,7 +30,11 @@ const UsersPage = () => {
         ...formData,
       });
 
+      setHighlightedUserId(selectedUser.id);
       setSelectedUser(null);
+      setTimeout(() => {
+        setHighlightedUserId(null);
+      }, 3000);
     } catch (error) {
       throw error;
     }
@@ -54,6 +61,7 @@ const UsersPage = () => {
             total={data?.total}
             onDelete={(info) => setUserToDelete(info)}
             onEdit={(info) => setSelectedUser(info)}
+            highlightedId={highlightedUserId}
           />
           <ConfirmModal
             isOpen={Boolean(userToDelete)}
@@ -68,9 +76,6 @@ const UsersPage = () => {
             isOpen={!!selectedUser}
             user={selectedUser}
             onClose={() => setSelectedUser(null)}
-            // onSave={(data) =>
-            //   updateMutation.mutate({ id: selectedUser.id, ...data })
-            // }
             onSave={handleSaveUser}
             isLoading={updateMutation.isPending}
           />

@@ -28,8 +28,6 @@ export const UserEditModal = ({ isOpen, user, onSave, onClose, isLoading }) => {
     try {
       await onSave(formData);
     } catch (err) {
-      console.log("Caught error in modal:", err);
-
       const newErrors = {};
 
       if (err.code === "INVALID_AGE") {
@@ -38,15 +36,12 @@ export const UserEditModal = ({ isOpen, user, onSave, onClose, isLoading }) => {
       if (err.code === "EMAIL_TAKEN" || err.code === "INVALID_EMAIL") {
         newErrors.email = err.message;
       }
-
       if (err.code === "USERNAME_TAKEN" || err.code === "INVALID_USERNAME") {
         newErrors.username = err.message;
       }
-
       if (err.fields) {
         Object.assign(newErrors, err.fields);
       }
-
       if (Object.keys(newErrors).length === 0) {
         newErrors.general = err.message || "Something went wrong";
       }

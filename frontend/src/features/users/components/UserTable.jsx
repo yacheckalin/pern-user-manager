@@ -8,6 +8,7 @@ export const UserTable = ({
   onDelete,
   total,
   onEdit,
+  highlightedId,
 }) => {
   if (isLoading) return <Spinner size="lg" lable="Loading Users ..." />;
   if (!users.length)
@@ -33,7 +34,13 @@ export const UserTable = ({
         </thead>
         <tbody>
           {users.map((user) => (
-            <tr key={user.id} className={!user.isActive ? "row-disabled" : ""}>
+            <tr
+              key={user.id}
+              className={`
+              ${!user.isActive ? "row-disabled" : ""}
+              ${highlightedId === user.id ? "row-highlight" : ""}
+            `.trim()}
+            >
               <td className="cell-id">#{user.id}</td>
               <td className="cell-username">{user.username}</td>
               <td>{user.email}</td>

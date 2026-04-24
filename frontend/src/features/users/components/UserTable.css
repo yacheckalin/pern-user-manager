@@ -118,3 +118,18 @@
   background-color: #fafafa;
   opacity: 0.8;
 }
+
+tr {
+  background-color: var(--color-background-primary);
+  transition: background-color 2s ease-out;
+}
+
+tr.row-highlight {
+  background-color: rgba(59, 130, 246, 0.15);
+
+  transition: background-color 0.2s ease-in;
+}
+
+tr.row-highlight td:first-child {
+  border-left: 4px solid var(--color-text-primary);
+}
