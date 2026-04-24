@@ -20,8 +20,16 @@ const API_URL = API_PREFIX + "/" + API_VERSION;
 const swaggerDocument = YAML.load("./openapi.yml");
 
 const app = express();
+const corsOptions = {
+  origin: 'http://localhost:5173',
+  exposedHeaders: ['x-total-count'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
 
-app.use(cors());
+app.use(cors(corsOptions));
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(morganMiddleware);

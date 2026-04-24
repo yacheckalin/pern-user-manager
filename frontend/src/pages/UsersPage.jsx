@@ -4,7 +4,7 @@ import { ErrorState } from "@shared/ErrorState";
 
 const UsersPage = () => {
   const [filters] = useState({ page: 1, search: "", limit: 10, offset: 0 });
-  const { data, isLoading, isError, error, total } = useUsers(filters);
+  const { data, isLoading, isError, error } = useUsers(filters);
 
   return (
     <div className="page-container">
@@ -22,7 +22,7 @@ const UsersPage = () => {
               details={error?.details}
             />
           )}
-          <UserTable users={data} total={total} />
+          <UserTable users={data.items} total={data.total} />
         </>
       )}
     </div>

@@ -2,7 +2,7 @@ import React from "react";
 import "./UserTable.css";
 import { formatDate } from "../utils/user.helpers"; // Обычный CSS или CSS Modules
 
-export const UserTable = ({ users = [], isLoading, onDelete, total = 0 }) => {
+export const UserTable = ({ users = [], isLoading, onDelete, total }) => {
   if (isLoading) return <div className="status-message">Loading data...</div>;
   if (!users.length)
     return <div className="status-message">Users list is empty!</div>;
