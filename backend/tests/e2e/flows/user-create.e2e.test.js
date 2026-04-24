@@ -70,7 +70,7 @@ describe("User Create E2E Flow", () => {
 
     expect(response.status).toBe(400);
     expect(response.body.success).toBe(false);
-    expect(response.body.error).toBeDefined();
+    expect(response.body.message).toBeDefined();
   });
 
   it("should return error when password is missing", async () => {
@@ -84,7 +84,7 @@ describe("User Create E2E Flow", () => {
 
     expect(response.status).toBe(400);
     expect(response.body.success).toBe(false);
-    expect(response.body.error).toBeDefined();
+    expect(response.body.message).toBeDefined();
   });
 
   it("should return error when username is too short", async () => {
@@ -99,7 +99,7 @@ describe("User Create E2E Flow", () => {
 
     expect(response.status).toBe(400);
     expect(response.body.success).toBe(false);
-    expect(response.body.error).toBeDefined();
+    expect(response.body.message).toBeDefined();
   });
 
   it("should return error when email is invalid", async () => {
@@ -114,7 +114,7 @@ describe("User Create E2E Flow", () => {
 
     expect(response.status).toBe(400);
     expect(response.body.success).toBe(false);
-    expect(response.body.error).toBeDefined();
+    expect(response.body.message).toBeDefined();
   });
 
   it("should return error when password is too short", async () => {
@@ -129,7 +129,7 @@ describe("User Create E2E Flow", () => {
 
     expect(response.status).toBe(400);
     expect(response.body.success).toBe(false);
-    expect(response.body.error).toBeDefined();
+    expect(response.body.message).toBeDefined();
   });
 
   it("should return error when age is too young", async () => {
@@ -144,7 +144,7 @@ describe("User Create E2E Flow", () => {
 
     expect(response.status).toBe(400);
     expect(response.body.success).toBe(false);
-    expect(response.body.error).toBeDefined();
+    expect(response.body.message).toBeDefined();
   });
 
   it("should return error when email already exists", async () => {

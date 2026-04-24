@@ -1,6 +1,15 @@
 import "./UserTable.css";
 import { formatDate } from "../utils/user.helpers"; // Обычный CSS или CSS Modules
 import { Spinner } from "@shared/Spinner";
+import {
+  Trash2,
+  KeyRound,
+  UserCheck,
+  UserMinus,
+  RefreshCw,
+  LogOut,
+  Pencil,
+} from "lucide-react";
 
 export const UserTable = ({
   users = [],
@@ -9,6 +18,8 @@ export const UserTable = ({
   total,
   onEdit,
   highlightedId,
+  onActivate,
+  onChangePassword,
 }) => {
   if (isLoading) return <Spinner size="lg" lable="Loading Users ..." />;
   if (!users.length)
@@ -68,19 +79,59 @@ export const UserTable = ({
               <td className="cell-date">{formatDate(user.lastLogin)}</td>
               <td className="text-right">
                 <div className="action-group">
+                  {/* Change Password */}
+                  <button
+                    className="btn-icon text-success"
+                    title="Change Password"
+                    onClick={() => onChangePassword({ id: user.id })}
+                  >
+                    <KeyRound size={18} />
+                  </button>
+
+                  {/* Activate / Deactivate */}
+                  <button
+                    className={`btn-icon ${user.isActive ? "text-danger" : "text-success"}`}
+                    title={
+                      user.isActive ? "Already Activated" : "Activate User"
+                    }
+                    onClick={() => onActivate({ id: user.id })}
+                    disabled={!!user.isActive}
+                  >
+                    {user.isActive ? (
+                      <UserMinus size={18} />
+                    ) : (
+                      <UserCheck size={18} />
+                    )}
+                  </button>
+
+                  {/* Refresh Token */}
+                  <button
+                    className="btn-icon text-success"
+                    title="Refresh Token"
+                  >
+                    <RefreshCw size={18} />
+                  </button>
+
                   <button
                     className="btn-icon"
-                    title="Edit"
                     onClick={() => onEdit({ ...user, id: user.id })}
+                    title="Edit User"
                   >
-                    ✏️
+                    <Pencil size={18} />
+                  </button>
+                  {/* Revoke / Logout */}
+                  <button
+                    className="btn-icon btn-danger"
+                    title="Revoke Session"
+                  >
+                    <LogOut size={18} />
                   </button>
                   <button
                     className="btn-icon btn-danger"
                     onClick={() => onDelete(user)}
                     title="Delete"
                   >
-                    🗑️
+                    <Trash2 size={18} />
                   </button>
                 </div>
               </td>

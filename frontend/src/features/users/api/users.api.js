@@ -31,3 +31,19 @@ export const updateUserById = async ({ id, ...payload }) => {
     data: response.data,
   };
 };
+
+export const activateUserById = async ({ id }) => {
+  const response = await api.patch(`${API_PREFIX}/users/${id}/activate`);
+  return {
+    data: response.data
+  }
+}
+
+export const changeUserPassword = async ({ id, ...payload }) => {
+  const response = await api.patch(`${API_PREFIX}/users/${id}/password`, {
+    ...payload
+  });
+  return {
+    data: response.data
+  }
+}
