@@ -1,8 +1,9 @@
 import { UserTable, useUsers } from "@/features/users";
 import { useState } from "react";
+import { ErrorState } from "../shared/ErrorState";
 
 const UsersPage = () => {
-  const [filters, setFilters] = useState({ page: 1, search: "" });
+  const [filters] = useState({ page: 1, search: "" });
   const { data, isLoading, isError, error } = useUsers(filters);
 
   return (
@@ -14,12 +15,12 @@ const UsersPage = () => {
       ) : (
         <>
           {isError && (
-            <div>
-              <div>{error?.message}</div>
-              <div>{error?.status}</div>
-              <div>{error?.code}</div>
-              <div>{error?.details}</div>
-            </div>
+            <ErrorState
+              message={error?.message}
+              code={error?.code}
+              status={error?.status}
+              details={error?.details}
+            />
           )}
           <UserTable users={data} />
         </>

@@ -19,7 +19,8 @@ export default defineConfig({
       '@': '/src',
       '@features': '/src/features',
       '@constants': '/src/constants',
-      '@configs': '/src/config'
+      '@configs': '/src/config',
+      '@shared': '/src/shared'
     }
   }
 });
