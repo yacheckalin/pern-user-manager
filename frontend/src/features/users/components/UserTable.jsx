@@ -3,10 +3,9 @@ import "./UserTable.css";
 import { formatDate } from "../utils/user.helpers"; // Обычный CSS или CSS Modules
 
 export const UserTable = ({ users = [], isLoading, onDelete }) => {
-  if (isLoading)
-    return <div className="status-message">Загрузка данных...</div>;
+  if (isLoading) return <div className="status-message">Loading data...</div>;
   if (!users.length)
-    return <div className="status-message">Список пользователей пуст</div>;
+    return <div className="status-message">Users list is empty!</div>;
 
   return (
     <div className="table-wrapper">
@@ -19,6 +18,7 @@ export const UserTable = ({ users = [], isLoading, onDelete }) => {
             <th>Age</th>
             <th>Status</th>
             <th>Created</th>
+            <th>Updated</th>
             <th>Activated</th>
             <th className="text-right">Actions</th>
           </tr>
@@ -34,7 +34,7 @@ export const UserTable = ({ users = [], isLoading, onDelete }) => {
                 <span
                   className={`status-pill ${user.isActive ? "active" : "inactive"}`}
                 >
-                  {user.isActive ? "Active" : "Banned"}
+                  {user.isActive ? "Active" : "Not Active"}
                 </span>
               </td>
               <td
@@ -42,6 +42,12 @@ export const UserTable = ({ users = [], isLoading, onDelete }) => {
                 title={`Updated: ${formatDate(user.updatedAt)}`}
               >
                 {formatDate(user.createdAt)}
+              </td>
+              <td
+                className="cell-date"
+                title={`Updated: ${formatDate(user.updatedAt)}`}
+              >
+                {formatDate(user.updatedAt)}
               </td>
               <td className="cell-date">{formatDate(user.activatedAt)}</td>
               <td className="text-right">

@@ -18,7 +18,8 @@ export default defineConfig({
     alias: {
       '@': '/src',
       '@features': '/src/features',
-      '@contants': '/src/constants'
+      '@constants': '/src/constants',
+      '@configs': '/src/config'
     }
   }
 });
