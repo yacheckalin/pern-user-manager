@@ -8,6 +8,8 @@ import { useDeleteUser } from "@features/users/hooks/useDeleteUser";
 import { useUpdateUser } from "@features/users/hooks/useUpdateUser";
 import { useActivateUser } from "@features/users/hooks/useActivateUser";
 import { USER_ITEM_FADE_IN_TIMEOUT } from "../features/users/constants";
+import { UserChangePasswordModal } from "../features/users/components/UserChangePasswordModal";
+import { useChangePasswordUser } from "../features/users/hooks/useChangePasswordUser";
 
 const UsersPage = () => {
   const [filters] = useState({ page: 1, search: "", limit: 10, offset: 0 });
@@ -44,7 +46,6 @@ const UsersPage = () => {
   };
 
   const activateMutation = useActivateUser();
-
   const handleActivateUser = async ({ id }) => {
     try {
       await activateMutation.mutateAsync({
@@ -52,6 +53,25 @@ const UsersPage = () => {
       });
       setHighlightedUserId(id);
       setSelectedUser(null);
+    } catch (error) {
+      throw error;
+    } finally {
+      setTimeout(() => {
+        setHighlightedUserId(null);
+      }, USER_ITEM_FADE_IN_TIMEOUT);
+    }
+  };
+
+  const [changedUser, setChangedUser] = useState(null);
+  const changePasswordMutation = useChangePasswordUser();
+  const handleChangePasswordUser = async (data) => {
+    try {
+      await changePasswordMutation.mutateAsync({
+        id: changedUser.id,
+        ...data,
+      });
+      setHighlightedUserId(changedUser.id);
+      setChangedUser(null);
     } catch (error) {
       throw error;
     } finally {
@@ -84,6 +104,7 @@ const UsersPage = () => {
             onEdit={(info) => setSelectedUser(info)}
             onActivate={handleActivateUser}
             highlightedId={highlightedUserId}
+            onChangePassword={(info) => setChangedUser(info)}
           />
           <ConfirmModal
             isOpen={Boolean(userToDelete)}
@@ -93,7 +114,6 @@ const UsersPage = () => {
             onCancel={() => setUserToDelete(null)}
             isLoading={deleteMutation.isPending}
           />
-
           <UserEditModal
             isOpen={!!selectedUser}
             user={selectedUser}
@@ -101,6 +121,15 @@ const UsersPage = () => {
             onSave={handleEditUser}
             isLoading={updateMutation.isPending}
           />
+          {changedUser?.id && (
+            <UserChangePasswordModal
+              isOpen={!!changedUser?.id}
+              user={changedUser}
+              onClose={() => setChangedUser(null)}
+              onSave={handleChangePasswordUser}
+              isLoading={changePasswordMutation.isPending}
+            />
+          )}
         </>
       )}
     </div>

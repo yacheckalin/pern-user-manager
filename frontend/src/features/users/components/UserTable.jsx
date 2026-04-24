@@ -19,6 +19,7 @@ export const UserTable = ({
   onEdit,
   highlightedId,
   onActivate,
+  onChangePassword,
 }) => {
   if (isLoading) return <Spinner size="lg" lable="Loading Users ..." />;
   if (!users.length)
@@ -82,6 +83,7 @@ export const UserTable = ({
                   <button
                     className="btn-icon text-success"
                     title="Change Password"
+                    onClick={() => onChangePassword({ id: user.id })}
                   >
                     <KeyRound size={18} />
                   </button>

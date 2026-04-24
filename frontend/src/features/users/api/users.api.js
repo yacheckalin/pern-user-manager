@@ -38,3 +38,12 @@ export const activateUserById = async ({ id }) => {
     data: response.data
   }
 }
+
+export const changeUserPassword = async ({ id, ...payload }) => {
+  const response = await api.patch(`${API_PREFIX}/users/${id}/password`, {
+    ...payload
+  });
+  return {
+    data: response.data
+  }
+}

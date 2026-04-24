@@ -32,7 +32,10 @@ const userSchemas = {
     id: Joi.number().integer().required(),
     old_password: Joi.string()
       .min(USER_VALIDATION.PASSWORD_MIN_LENGTH)
-      .required(),
+      .required()
+      .messages({
+        "string.min": "Password mus be at least 6 characters long"
+      }),
     new_password: Joi.string()
       .min(USER_VALIDATION.PASSWORD_MIN_LENGTH)
       .required()
