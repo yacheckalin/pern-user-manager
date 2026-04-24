@@ -23,7 +23,7 @@ const UsersPage = () => {
               details={error?.details}
             />
           )}
-          <UserTable users={data.items} total={data.total} />
+          <UserTable users={data?.items} total={data?.total} />
         </>
       )}
     </div>
