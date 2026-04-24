@@ -1,13 +1,23 @@
-import { API_PREFIX } from '@constants';
-import { api } from '@configs';
+import { API_PREFIX } from "@constants";
+import { api } from "@configs";
 
-export const getUsers = async ({ page = 1, limit = 10, search = '', role = '' }) => {
+export const getUsers = async ({
+  page = 1,
+  limit = 10,
+  search = "",
+  role = "",
+}) => {
   const response = await api.get(`${API_PREFIX}/users`, {
-    params: { _page: page, _limit: limit, q: search, role }
+    params: { _page: page, _limit: limit, q: search, role },
   });
-  const total = parseInt(response.headers['x-total-count'] || 0);
+  const total = parseInt(response.headers["x-total-count"] || 0);
   return {
     data: response.data,
-    total
+    total,
   };
+};
+
+export const deleteUserById = async ({ id = null }) => {
+  const response = await api.delete(`${API_PREFIX}/users/${id}`);
+  return { data: response.data };
 };
