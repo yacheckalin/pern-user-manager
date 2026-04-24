@@ -36,28 +36,30 @@ services:
           memory: 256M
 
   # Visualization Tool (~2Gb)
-  # grafana:
-  #   image: grafana/grafana:latest
-  #   ports:
-  #     - "3003:3000"
-  #   environment:
-  #     - GF_SECURITY_ADMIN_PASSWORD=admin
-  #   volumes:
-  #     - ./grafana_data:/var/lib/grafana
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3003:3000"
+    profiles: ["grafana"]
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./grafana_data:/var/lib/grafana
 
   # This with show metrics of Docker Containers as well in Grafana
-  # cadvisor:
-  #   image: gcr.io/cadvisor/cadvisor:v0.47.2
-  #   container_name: cadvisor
-  #   restart: unless-stopped
-  #   volumes:
-  #     - /:/rootfs:ro
-  #     - /var/run:/var/run:rw
-  #     - /sys:/sys:ro
-  #     - /var/lib/docker/:/var/lib/docker:ro
-  #     - /dev/disk/:/dev/disk:ro
-  #   ports:
-  #     - "8081:8080"
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.47.2
+    container_name: cadvisor
+    restart: unless-stopped
+    profiles: ["grafana"]
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    ports:
+      - "8081:8080"
   # PostgreSQL
   db:
     image: postgres:15-alpine

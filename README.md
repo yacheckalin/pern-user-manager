@@ -448,13 +448,32 @@ The project includes a built-in system for metrics collection and real-time log 
 - **Prometheus** – The industry-standard interface for running PromQL queries and monitoring target health.
 - **Dozzle** – A lightweight, web-based real-time log viewer for all running containers.
 
+## 🐳 Docker Environments
+
+I use **Docker Profiles** to manage auxiliary services.
+
+### Profiles:
+
+- `monitoring`: Starts the metrics storage (**VictoriaMetrics**).
+- `grafana`: Starts the visualization dashboard (**Grafana**) and container monitoring (**cAdvisor**).
+
+### Commands:
+
+#### 1. Standard Run (App + DB only)
+
+````bash
+docker-compose up -d
+
 ### How to Enable Monitoring
 
 To start the application with the full monitoring stack, use the `--profile` flag:
 
 ```bash
 docker compose --profile monitoring up -d
-```
+### How to Enable Several Features
+
+docker compose --profile monitoring --profile grafana up -d
+````
 
 ## 🐛 Troubleshooting
 

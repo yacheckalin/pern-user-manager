@@ -1,0 +1,41 @@
+:root {
+  --color-text-primary: #111827;
+  --color-text-secondary: #6b7280;
+  --color-text-tertiary: #9ca3af;
+  --color-text-danger: #dc2626;
+
+  --color-border-secondary: #d1d5db;
+  --color-border-danger: #fca5a5;
+
+  --color-background-primary: #ffffff;
+  --color-background-secondary: #f9fafb;
+
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-text-primary: #f9fafb;
+    --color-text-secondary: #9ca3af;
+    --color-text-tertiary: #6b7280;
+    --color-text-danger: #f87171;
+
+    --color-border-secondary: #374151;
+    --color-border-danger: #7f1d1d;
+
+    --color-background-primary: #111827;
+    --color-background-secondary: #1f2937;
+  }
+}
+
+@keyframes spin {
+  from {
+    opacity: 0;
+    transform: rotate(0deg);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(360deg);
+  }
+}
