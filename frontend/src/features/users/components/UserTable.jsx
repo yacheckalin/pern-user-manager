@@ -60,7 +60,7 @@ export const UserTable = ({ users = [], isLoading, onDelete, total }) => {
                   </button>
                   <button
                     className="btn-icon btn-danger"
-                    onClick={() => onDelete(user.id)}
+                    onClick={() => onDelete(user)}
                     title="Delete"
                   >
                     🗑️
