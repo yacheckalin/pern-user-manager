@@ -1,0 +1,120 @@
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  border: 1px solid #eef2f6;
+}
+
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 14px;
+  color: #334155;
+}
+
+.custom-table th {
+  background-color: #f8fafc;
+  padding: 16px;
+  text-align: left;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.025em;
+  border-bottom: 2px solid #f1f5f9;
+}
+
+.custom-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.custom-table tr:hover {
+  background-color: #f1f5f9;
+  transition: background 0.2s ease;
+}
+
+/* Стили для ID и Username */
+.cell-id {
+  color: #94a3b8;
+  font-family: monospace;
+}
+.cell-username {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+/* Статусы (Pills) */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-pill.active {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.status-pill.inactive {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+/* Даты */
+.cell-date {
+  font-size: 13px;
+  color: #64748b;
+  white-space: nowrap;
+}
+
+/* Кнопки действий */
+.action-group {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.btn-icon {
+  background: #f1f5f9;
+  border: none;
+  border-radius: 6px;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.btn-icon:hover {
+  background: #e2e8f0;
+}
+.btn-danger:hover {
+  background: #fee2e2;
+}
+
+/* Сообщения */
+.status-message {
+  padding: 40px;
+  text-align: center;
+  color: #64748b;
+  background: #f8fafc;
+  border-radius: 12px;
+}
+
+.text-right {
+  text-align: right;
+}
+.row-disabled {
+  background-color: #fafafa;
+  opacity: 0.8;
+}
