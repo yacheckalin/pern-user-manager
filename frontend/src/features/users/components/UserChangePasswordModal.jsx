@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./UserEditModal.css";
 import { ErrorState } from "@shared/ErrorState";
+import { KeyRound, Loader2, X } from "lucide-react";
 
 export const UserChangePasswordModal = ({
   isOpen,
@@ -15,6 +16,7 @@ export const UserChangePasswordModal = ({
     confirm_password: "",
   });
   const [errors, setErrors] = useState({});
+  const [generalError, setGeneralError] = useState(null);
   useEffect(() => {
     if (user) {
       setFormData({
@@ -51,14 +53,13 @@ export const UserChangePasswordModal = ({
         err.code === "NEW_PASSWORD_THE_SAME"
       ) {
         newErrors.confirm_password = err.message;
-      } else {
-        newErrors.general = err.message;
       }
       if (err.fields) {
         Object.assign(newErrors, err.fields);
       }
       if (Object.keys(newErrors).length === 0) {
         newErrors.general = err.message || "Something went wrong";
+        setGeneralError(err.message);
       }
 
       setErrors(newErrors);
@@ -76,14 +77,12 @@ export const UserChangePasswordModal = ({
         <div className="modal-header">
           <h2>Change User Password</h2>
           <button className="btn-close" onClick={onClose}>
-            &times;
+            <X size={24} />
           </button>
         </div>
-        {errors.general && (
-          <span className="error-message">{errors.general}</span>
-        )}
+        {generalError && <div className="general-error">{generalError}</div>}
 
-        <form onSubmit={handleSubmit} className="change-password-form">
+        <form onSubmit={handleSubmit} className="edit-form">
           <div
             className={`form-group ${errors.old_password ? "has-error" : ""}`}
           >
@@ -141,8 +140,14 @@ export const UserChangePasswordModal = ({
             <button type="button" className="btn-secondary" onClick={onClose}>
               Cancel
             </button>
+
             <button type="submit" className="btn-primary" disabled={isLoading}>
-              {isLoading ? <span className="loader-icon" /> : "Save Changes"}
+              {isLoading ? (
+                <Loader2 className="loader-icon" />
+              ) : (
+                <KeyRound size={18} />
+              )}
+              Update Password
             </button>
           </div>
         </form>

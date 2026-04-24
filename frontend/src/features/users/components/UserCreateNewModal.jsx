@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { X, UserPlus, Loader2 } from "lucide-react";
 
-export const ModalCreateUser = ({ onSave, onClose }) => {
+export const UserCreateNewModal = ({ onSave, onClose }) => {
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -28,7 +28,6 @@ export const ModalCreateUser = ({ onSave, onClose }) => {
     if (formData.password !== formData.confirm_password) {
       setErrors({ confirm_password: "Passwords do not match" });
       setIsLoading(false);
-      return;
     }
 
     try {
@@ -36,14 +35,41 @@ export const ModalCreateUser = ({ onSave, onClose }) => {
       onClose();
     } catch (err) {
       const newErrors = {};
-      if (err.response?.data?.errors) {
-        err.response.data.errors.forEach((error) => {
-          newErrors[error.field] = error.message;
-        });
-        setErrors(newErrors);
-      } else {
-        setGeneralError(err.response?.data?.message || "Failed to create user");
+
+      if (err.code === "INVALID_USERNAME") {
+        newErrors.username = err.message;
       }
+      if (
+        err.code === "INVALID_PASSWORD" ||
+        err.code === "INVALID_NEW_PASSWORD"
+      ) {
+        newErrors.password = err.message;
+      }
+      if (
+        err.code === "INVALID_CONFIRM_PASSWORD" ||
+        err.code === "NEW_PASSWORD_THE_SAME"
+      ) {
+        newErrors.confirm_password = err.message;
+      }
+      if (err.code === "INVALID_AGE") {
+        newErrors.age = err.message;
+      }
+      if (err.code === "EMAIL_TAKEN" || err.code === "INVALID_EMAIL") {
+        newErrors.email = err.message;
+      }
+      if (err.code === "USERNAME_TAKEN" || err.code === "INVALID_USERNAME") {
+        newErrors.username = err.message;
+      }
+
+      if (err.fields) {
+        Object.assign(newErrors, err.fields);
+      }
+      if (Object.keys(newErrors).length === 0) {
+        newErrors.general = err.message || "Something went wrong";
+        setGeneralError(err.message);
+      }
+
+      setErrors(newErrors);
     } finally {
       setIsLoading(false);
     }

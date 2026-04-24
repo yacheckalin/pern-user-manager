@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./UserEditModal.css";
+import { Loader2, Pencil, X } from "lucide-react";
 
 export const UserEditModal = ({ isOpen, user, onSave, onClose, isLoading }) => {
   const [formData, setFormData] = useState({
@@ -8,6 +9,7 @@ export const UserEditModal = ({ isOpen, user, onSave, onClose, isLoading }) => {
     age: "",
   });
   const [errors, setErrors] = useState({});
+  const [generalError, setGeneralError] = useState(null);
   useEffect(() => {
     if (user) {
       setFormData({
@@ -39,11 +41,13 @@ export const UserEditModal = ({ isOpen, user, onSave, onClose, isLoading }) => {
       if (err.code === "USERNAME_TAKEN" || err.code === "INVALID_USERNAME") {
         newErrors.username = err.message;
       }
+
       if (err.fields) {
         Object.assign(newErrors, err.fields);
       }
       if (Object.keys(newErrors).length === 0) {
         newErrors.general = err.message || "Something went wrong";
+        setGeneralError(err.message);
       }
 
       setErrors(newErrors);
@@ -61,9 +65,10 @@ export const UserEditModal = ({ isOpen, user, onSave, onClose, isLoading }) => {
         <div className="modal-header">
           <h2>Edit User</h2>
           <button className="btn-close" onClick={onClose}>
-            &times;
+            <X size={24} />
           </button>
         </div>
+        {generalError && <div className="general-error">{generalError}</div>}
 
         <form onSubmit={handleSubmit} className="edit-form">
           <div className={`form-group ${errors.username ? "has-error" : ""}`}>
@@ -115,8 +120,14 @@ export const UserEditModal = ({ isOpen, user, onSave, onClose, isLoading }) => {
             <button type="button" className="btn-secondary" onClick={onClose}>
               Cancel
             </button>
+
             <button type="submit" className="btn-primary" disabled={isLoading}>
-              {isLoading ? <span className="loader-icon" /> : "Save Changes"}
+              {isLoading ? (
+                <Loader2 className="loader-icon" />
+              ) : (
+                <Pencil size={18} />
+              )}
+              Save Changes
             </button>
           </div>
         </form>
