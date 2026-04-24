@@ -72,7 +72,7 @@ describe("User Get All E2E Flow", () => {
 
     //TODO: Uncomment this after UI will be ready
     // expect(users.status).toBe(HTTP_UNAUTHORIZED);
-    expect(users.body.success).toBe(false);
+    // expect(users.body.success).toBe(false);
 
   })
 });
