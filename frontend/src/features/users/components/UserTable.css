@@ -38,7 +38,6 @@
   transition: background 0.2s ease;
 }
 
-/* Стили для ID и Username */
 .cell-id {
   color: #94a3b8;
   font-family: monospace;
@@ -48,7 +47,6 @@
   color: #1e293b;
 }
 
-/* Статусы (Pills) */
 .status-pill {
   display: inline-flex;
   align-items: center;
@@ -68,14 +66,12 @@
   color: #b91c1c;
 }
 
-/* Даты */
 .cell-date {
   font-size: 13px;
   color: #64748b;
   white-space: nowrap;
 }
 
-/* Кнопки действий */
 .action-group {
   display: flex;
   gap: 8px;
@@ -102,7 +98,6 @@
   background: #fee2e2;
 }
 
-/* Сообщения */
 .status-message {
   padding: 40px;
   text-align: center;
@@ -126,7 +121,6 @@ tr {
 
 tr.row-highlight {
   background-color: rgba(59, 130, 246, 0.15);
-
   transition: background-color 0.2s ease-in;
 }
 

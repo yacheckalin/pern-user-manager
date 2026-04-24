@@ -3,13 +3,13 @@
   --color-text-secondary: #6b7280;
   --color-text-tertiary: #9ca3af;
   --color-text-danger: #dc2626;
-
   --color-border-secondary: #d1d5db;
   --color-border-danger: #fca5a5;
-
   --color-background-primary: #ffffff;
   --color-background-secondary: #f9fafb;
-
+  --color-button-primary: #3eb164;
+  --color-button-secondary: #8ebc9d;
+  --color-button-tertiary: #b2e4c3;
   --border-radius-md: 8px;
   --border-radius-lg: 12px;
 }
@@ -26,6 +26,10 @@
 
     --color-background-primary: #111827;
     --color-background-secondary: #1f2937;
+
+    --color-button-primary: #3eb164;
+    --color-button-secondary: #8ebc9d;
+    --color-button-tertiary: #b2e4c3;
   }
 }
 
