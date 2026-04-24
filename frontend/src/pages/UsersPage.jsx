@@ -23,7 +23,7 @@ const UsersPage = () => {
   const updateMutation = useUpdateUser();
 
   const [highlightedUserId, setHighlightedUserId] = useState(null);
-  const handleSaveUser = async (formData) => {
+  const handleEditUser = async (formData) => {
     try {
       await updateMutation.mutateAsync({
         id: selectedUser.id,
@@ -76,7 +76,7 @@ const UsersPage = () => {
             isOpen={!!selectedUser}
             user={selectedUser}
             onClose={() => setSelectedUser(null)}
-            onSave={handleSaveUser}
+            onSave={handleEditUser}
             isLoading={updateMutation.isPending}
           />
         </>

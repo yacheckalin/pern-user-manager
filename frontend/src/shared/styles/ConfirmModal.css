@@ -24,7 +24,7 @@
 
 .modal-header h3 {
   margin: 0 0 12px 0;
-  color: #1e293b;
+  color: var(--color-text-secondary);
 }
 .modal-body p {
   color: #64748b;
