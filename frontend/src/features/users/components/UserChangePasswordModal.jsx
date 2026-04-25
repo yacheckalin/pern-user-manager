@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import "./UserEditModal.css";
-import { ErrorState } from "@shared/ErrorState";
 import { KeyRound, Loader2, X } from "lucide-react";
 
 export const UserChangePasswordModal = ({
@@ -32,6 +31,7 @@ export const UserChangePasswordModal = ({
 
   const handleSubmit = async (e) => {
     setErrors({});
+    setGeneralError(null);
     e.preventDefault();
     try {
       const result = await onSave({ id: user.id, ...formData });

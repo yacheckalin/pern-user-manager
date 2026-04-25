@@ -94,7 +94,7 @@ export const UserTable = ({
                     title={
                       user.isActive ? "Already Activated" : "Activate User"
                     }
-                    onClick={() => onActivate({ id: user.id })}
+                    onClick={() => onActivate(user)}
                     disabled={!!user.isActive}
                   >
                     {user.isActive ? (
