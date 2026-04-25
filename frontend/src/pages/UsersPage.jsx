@@ -12,6 +12,7 @@ import { useChangePasswordUser } from "@features/users/hooks/useChangePasswordUs
 import { UserCreateNewModal } from "@features/users/components/UserCreateNewModal";
 import { useCreateUser } from "../features/users/hooks/useCreateUser";
 import { UserDeleteModal } from "../features/users/components/UserDeleteModal";
+import { UserActivateModal } from "../features/users/components/UserActivateStatusModal";
 
 const UsersPage = () => {
   const [filters] = useState({ page: 1, search: "", limit: 10, offset: 0 });
@@ -40,6 +41,7 @@ const UsersPage = () => {
     }
   };
 
+  const [activatedUser, setActivatedUser] = useState(null);
   const activateMutation = useActivateUser();
   const handleActivateUser = async ({ id }) => {
     try {
@@ -128,7 +130,7 @@ const UsersPage = () => {
             total={data?.total}
             onDelete={(info) => setDeletedUser(info)}
             onEdit={(info) => setSelectedUser(info)}
-            onActivate={handleActivateUser}
+            onActivate={(info) => setActivatedUser(info)}
             highlightedId={highlightedUserId}
             onChangePassword={(info) => setChangedUser(info)}
           />
@@ -162,6 +164,13 @@ const UsersPage = () => {
             onClose={() => setDeletedUser(null)}
             onSave={handleDeleteUser}
             isLoading={deleleUserMutation.isPending}
+          />
+          <UserActivateModal
+            isOpen={!!activatedUser}
+            user={activatedUser}
+            onClose={() => setActivatedUser(null)}
+            onSave={handleActivateUser}
+            isLoading={activateMutation.isPending}
           />
         </>
       )}
