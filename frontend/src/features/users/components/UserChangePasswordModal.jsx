@@ -31,6 +31,7 @@ export const UserChangePasswordModal = ({
 
   const handleSubmit = async (e) => {
     setErrors({});
+    setGeneralError(null);
     e.preventDefault();
     try {
       const result = await onSave({ id: user.id, ...formData });

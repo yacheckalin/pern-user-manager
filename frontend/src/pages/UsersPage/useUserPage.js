@@ -15,6 +15,13 @@ export const useUserPage = () => {
   const [highlightedId, triggerHighlight] = useFlashHighlight(
     USER_ITEM_FADE_IN_TIMEOUT || 3000,
   );
+  const [modals, setModals] = useState({
+    create: null,
+    edit: null,
+    changePassword: null,
+    activate: null,
+    delete: null,
+  });
   const [selectedUser, setSelectedUser] = useState(null);
   const updateMutation = useUpdateUser();
 
@@ -33,7 +40,6 @@ export const useUserPage = () => {
     }
   };
 
-  const [activatedUser, setActivatedUser] = useState(null);
   const activateMutation = useActivateUser();
   const handleActivateUser = async ({ id }) => {
     try {
@@ -47,16 +53,15 @@ export const useUserPage = () => {
     }
   };
 
-  const [changedUser, setChangedUser] = useState(null);
   const changePasswordMutation = useChangePasswordUser();
   const handleChangePasswordUser = async (data) => {
     try {
       await changePasswordMutation.mutateAsync({
-        id: changedUser.id,
+        id: selectedUser?.id,
         ...data,
       });
-      triggerHighlight(changedUser.id);
-      setChangedUser(null);
+      triggerHighlight(selectedUser?.id);
+      setSelectedUser(null);
     } catch (error) {
       throw error;
     }
@@ -69,18 +74,17 @@ export const useUserPage = () => {
       const response = await createUserMutation.mutateAsync({
         ...data,
       });
-      setChangedUser(null);
       triggerHighlight(response.data.id);
     } catch (e) {
       throw e;
     }
   };
 
-  const [deletedUser, setDeletedUser] = useState(null);
   const deleleUserMutation = useDeleteUser();
   const handleDeleteUser = async (data) => {
     try {
       await deleleUserMutation.mutateAsync(data);
+      setSelectedUser(null);
     } catch (e) {
       throw e;
     }
@@ -96,6 +100,10 @@ export const useUserPage = () => {
     /**filters */
     filters,
 
+    /** modals state */
+    modals,
+    setModals,
+
     /** edit user */
     selectedUser,
     setSelectedUser,
@@ -106,18 +114,12 @@ export const useUserPage = () => {
     setHighlightedUserId,
 
     /** activate user */
-    activatedUser,
-    setActivatedUser,
     handleActivateUser,
 
     /** delete user */
-    deletedUser,
-    setDeletedUser,
     handleDeleteUser,
 
     /** change password */
-    changedUser,
-    setChangedUser,
     handleChangePasswordUser,
 
     /** create user */

@@ -25,10 +25,12 @@ export const UserEditModal = ({ isOpen, user, onSave, onClose, isLoading }) => {
 
   const handleSubmit = async (e) => {
     setErrors({});
+    setGeneralError(null);
     e.preventDefault();
 
     try {
       await onSave(formData);
+      onClose();
     } catch (err) {
       const newErrors = {};
 

@@ -14,6 +14,7 @@ export const UserDeleteModal = ({
   const [errors, setErrors] = useState(null);
 
   const handleSubmit = async (e) => {
+    setErrors(null);
     e.preventDefault();
     try {
       await onSave({ id: user.id });

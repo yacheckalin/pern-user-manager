@@ -2,12 +2,7 @@ import { UserTable } from "@features/users";
 import { ErrorState } from "@shared/ErrorState";
 import { Spinner } from "@shared/Spinner";
 import { useUserPage } from "./useUserPage";
-
-import { UserEditModal } from "@features/users/components/UserEditModal";
-import { UserChangePasswordModal } from "@features/users/components/UserChangePasswordModal";
-import { UserCreateNewModal } from "@features/users/components/UserCreateNewModal";
-import { UserDeleteModal } from "@features/users/components/UserDeleteModal";
-import { UserActivateModal } from "@features/users/components/UserActivateStatusModal";
+import UserModalGroup from "./UserModalGroup";
 
 const UsersPage = () => {
   const {
@@ -15,19 +10,11 @@ const UsersPage = () => {
     isError,
     data,
     error,
-
+    modals,
+    setModals,
     highlightedId,
     selectedUser,
-    changedUser,
-    activatedUser,
-    deletedUser,
-    createdUser,
-
     setSelectedUser,
-    setActivatedUser,
-    setChangedUser,
-    setCreatedUser,
-    setDeletedUser,
 
     handleEditUser,
     handleActivateUser,
@@ -41,6 +28,11 @@ const UsersPage = () => {
     updateMutation,
     changePasswordMutation,
   } = useUserPage();
+
+  const onCallbackHandler = (info, modal) => {
+    setSelectedUser(info);
+    setModals({ [modal]: true });
+  };
 
   return (
     <div className="page-container">
@@ -58,55 +50,42 @@ const UsersPage = () => {
               details={error?.details}
             />
           )}
-          <div className="btn-primary " onClick={() => setCreatedUser(true)}>
+          <div
+            className="btn-primary "
+            onClick={() => setModals({ create: true })}
+          >
             Create New User
           </div>
           <UserTable
             users={data?.items}
             total={data?.total}
-            onDelete={(info) => setDeletedUser(info)}
-            onEdit={(info) => setSelectedUser(info)}
-            onActivate={(info) => setActivatedUser(info)}
+            onDelete={(info) => onCallbackHandler(info, "delete")}
+            onEdit={(info) => onCallbackHandler(info, "edit")}
+            onActivate={(info) => onCallbackHandler(info, "activate")}
             highlightedId={highlightedId}
-            onChangePassword={(info) => setChangedUser(info)}
+            onChangePassword={(info) =>
+              onCallbackHandler(info, "changePassword")
+            }
           />
 
-          <UserEditModal
-            isOpen={!!selectedUser}
+          <UserModalGroup
             user={selectedUser}
-            onClose={() => setSelectedUser(null)}
-            onSave={handleEditUser}
-            isLoading={updateMutation?.isPending}
-          />
-
-          <UserChangePasswordModal
-            isOpen={!!changedUser?.id}
-            user={changedUser}
-            onClose={() => setChangedUser(null)}
-            onSave={handleChangePasswordUser}
-            isLoading={changePasswordMutation?.isPending}
-          />
-
-          <UserCreateNewModal
-            isOpen={!!createdUser}
-            onSave={handleCreateUser}
-            onClose={() => setCreatedUser(null)}
-            isLoading={createUserMutation?.isPending}
-          />
-
-          <UserDeleteModal
-            isOpen={!!deletedUser}
-            user={deletedUser}
-            onClose={() => setDeletedUser(null)}
-            onSave={handleDeleteUser}
-            isLoading={deleleUserMutation?.isPending}
-          />
-          <UserActivateModal
-            isOpen={!!activatedUser}
-            user={activatedUser}
-            onClose={() => setActivatedUser(null)}
-            onSave={handleActivateUser}
-            isLoading={activateMutation?.isPending}
+            modals={modals}
+            onClose={(data) => setModals(data)}
+            actions={{
+              handleCreateUser,
+              handleActivateUser,
+              handleChangePasswordUser,
+              handleDeleteUser,
+              handleEditUser,
+            }}
+            mutations={{
+              updateMutation,
+              createUserMutation,
+              changePasswordMutation,
+              activateMutation,
+              deleleUserMutation,
+            }}
           />
         </>
       )}
