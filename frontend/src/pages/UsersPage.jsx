@@ -2,7 +2,6 @@ import { useState } from "react";
 import { UserTable, useUsers } from "@/features/users";
 import { ErrorState } from "@shared/ErrorState";
 import { Spinner } from "@shared/Spinner";
-import { ConfirmModal } from "@shared/ConfirmModal";
 import { UserEditModal } from "@features/users/components/UserEditModal";
 import { useDeleteUser } from "@features/users/hooks/useDeleteUser";
 import { useUpdateUser } from "@features/users/hooks/useUpdateUser";
@@ -12,18 +11,12 @@ import { UserChangePasswordModal } from "@features/users/components/UserChangePa
 import { useChangePasswordUser } from "@features/users/hooks/useChangePasswordUser";
 import { UserCreateNewModal } from "@features/users/components/UserCreateNewModal";
 import { useCreateUser } from "../features/users/hooks/useCreateUser";
+import { UserDeleteModal } from "../features/users/components/UserDeleteModal";
 
 const UsersPage = () => {
   const [filters] = useState({ page: 1, search: "", limit: 10, offset: 0 });
 
   const { data, isLoading, isError, error } = useUsers(filters);
-
-  const [userToDelete, setUserToDelete] = useState(null);
-  const deleteMutation = useDeleteUser();
-  const handleDelete = async () => {
-    await deleteMutation.mutateAsync(userToDelete);
-    setUserToDelete(null);
-  };
 
   const [selectedUser, setSelectedUser] = useState(null);
   const updateMutation = useUpdateUser();
@@ -101,6 +94,16 @@ const UsersPage = () => {
     }
   };
 
+  const [deletedUser, setDeletedUser] = useState(null);
+  const deleleUserMutation = useDeleteUser();
+  const handleDeleteUser = async (data) => {
+    try {
+      await deleleUserMutation.mutateAsync(data);
+    } catch (e) {
+      throw e;
+    }
+  };
+
   return (
     <div className="page-container">
       <h1>User Management</h1>
@@ -123,20 +126,13 @@ const UsersPage = () => {
           <UserTable
             users={data?.items}
             total={data?.total}
-            onDelete={(info) => setUserToDelete(info)}
+            onDelete={(info) => setDeletedUser(info)}
             onEdit={(info) => setSelectedUser(info)}
             onActivate={handleActivateUser}
             highlightedId={highlightedUserId}
             onChangePassword={(info) => setChangedUser(info)}
           />
-          <ConfirmModal
-            isOpen={Boolean(userToDelete)}
-            title="Delete User"
-            description={`You can't UNDO this action. All data for user ${userToDelete?.username} will be removed!.`}
-            onConfirm={handleDelete}
-            onCancel={() => setUserToDelete(null)}
-            isLoading={deleteMutation.isPending}
-          />
+
           <UserEditModal
             isOpen={!!selectedUser}
             user={selectedUser}
@@ -160,6 +156,13 @@ const UsersPage = () => {
               isLoading={createUserMutation.isPending}
             />
           )}
+          <UserDeleteModal
+            isOpen={!!deletedUser}
+            user={deletedUser}
+            onClose={() => setDeletedUser(null)}
+            onSave={handleDeleteUser}
+            isLoading={deleleUserMutation.isPending}
+          />
         </>
       )}
     </div>

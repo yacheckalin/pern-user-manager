@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import "./UserEditModal.css";
-import { ErrorState } from "@shared/ErrorState";
 import { KeyRound, Loader2, X } from "lucide-react";
 
 export const UserChangePasswordModal = ({
