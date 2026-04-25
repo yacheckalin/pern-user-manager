@@ -6,12 +6,15 @@ import { useChangePasswordUser } from "@features/users/hooks/useChangePasswordUs
 import { useCreateUser } from "@features/users/hooks/useCreateUser";
 import { useUsers } from "@/features/users";
 import { USER_ITEM_FADE_IN_TIMEOUT } from "@features/users/constants";
+import { useFlashHighlight } from "./useFlashHighlight";
 
 export const useUserPage = () => {
   const [filters] = useState({ page: 1, search: "", limit: 10, offset: 0 });
 
   const { data, isLoading, isError, error } = useUsers(filters);
-
+  const [highlightedId, triggerHighlight] = useFlashHighlight(
+    USER_ITEM_FADE_IN_TIMEOUT || 3000,
+  );
   const [selectedUser, setSelectedUser] = useState(null);
   const updateMutation = useUpdateUser();
 
@@ -23,14 +26,10 @@ export const useUserPage = () => {
         ...formData,
       });
 
-      setHighlightedUserId(selectedUser.id);
+      triggerHighlight(selectedUser.id);
       setSelectedUser(null);
     } catch (error) {
       throw error;
-    } finally {
-      setTimeout(() => {
-        setHighlightedUserId(null);
-      }, USER_ITEM_FADE_IN_TIMEOUT);
     }
   };
 
@@ -41,14 +40,10 @@ export const useUserPage = () => {
       await activateMutation.mutateAsync({
         id,
       });
-      setHighlightedUserId(id);
+      triggerHighlight(id);
       setSelectedUser(null);
     } catch (error) {
       throw error;
-    } finally {
-      setTimeout(() => {
-        setHighlightedUserId(null);
-      }, USER_ITEM_FADE_IN_TIMEOUT);
     }
   };
 
@@ -60,14 +55,10 @@ export const useUserPage = () => {
         id: changedUser.id,
         ...data,
       });
-      setHighlightedUserId(changedUser.id);
+      triggerHighlight(changedUser.id);
       setChangedUser(null);
     } catch (error) {
       throw error;
-    } finally {
-      setTimeout(() => {
-        setHighlightedUserId(null);
-      }, USER_ITEM_FADE_IN_TIMEOUT);
     }
   };
 
@@ -79,13 +70,9 @@ export const useUserPage = () => {
         ...data,
       });
       setChangedUser(null);
-      setHighlightedUserId(response.data.id);
+      triggerHighlight(response.data.id);
     } catch (e) {
       throw e;
-    } finally {
-      setTimeout(() => {
-        setHighlightedUserId(null);
-      }, USER_ITEM_FADE_IN_TIMEOUT);
     }
   };
 
@@ -137,5 +124,7 @@ export const useUserPage = () => {
     createdUser,
     setCreatedUser,
     handleCreateUser,
+    highlightedId,
+    triggerHighlight,
   };
 };

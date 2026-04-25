@@ -16,7 +16,7 @@ const UsersPage = () => {
     data,
     error,
 
-    highlightedUserId,
+    highlightedId,
     selectedUser,
     changedUser,
     activatedUser,
@@ -67,7 +67,7 @@ const UsersPage = () => {
             onDelete={(info) => setDeletedUser(info)}
             onEdit={(info) => setSelectedUser(info)}
             onActivate={(info) => setActivatedUser(info)}
-            highlightedId={highlightedUserId}
+            highlightedId={highlightedId}
             onChangePassword={(info) => setChangedUser(info)}
           />
 
