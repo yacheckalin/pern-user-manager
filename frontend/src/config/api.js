@@ -19,7 +19,11 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => {
     if (response.data?.success) {
-      return { ...response, data: response.data.data }
+      return {
+        ...response,
+        data: response.data.data,
+        message: response.data.message
+      }
     }
     return response
   },

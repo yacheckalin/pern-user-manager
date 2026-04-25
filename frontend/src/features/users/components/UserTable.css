@@ -97,6 +97,9 @@
   color: var(--color-text-primary);
 }
 
+.btn-danger {
+  background: var(--color-border-danger);
+}
 .btn-icon.btn-danger:hover {
   background: var(--color-button-danger);
   color: white;
@@ -127,7 +130,7 @@
 
 .btn-icon:disabled {
   opacity: 0.6;
-  cursor: grabbing;
+  cursor: no-drop;
   filter: grayscale(1);
 
   color: var(--color-text-tertiary); /* Your grey variable */
