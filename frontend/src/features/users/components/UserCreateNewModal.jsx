@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { X, UserPlus, Loader2 } from "lucide-react";
 
-export const UserCreateNewModal = ({ onSave, onClose }) => {
+export const UserCreateNewModal = ({ onSave, onClose, isOpen }) => {
+  if (!isOpen) return null;
+
   const [formData, setFormData] = useState({
     username: "",
     email: "",
