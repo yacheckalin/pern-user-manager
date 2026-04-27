@@ -32,6 +32,7 @@ export const UserTable = ({
         <thead>
           <tr>
             <th>ID</th>
+            <th>Avatar</th>
             <th>Username</th>
             <th>Email</th>
             <th>Age</th>
@@ -53,6 +54,18 @@ export const UserTable = ({
             `.trim()}
             >
               <td className="cell-id">#{user.id}</td>
+              <td className="cell-date">
+                <div className="avatar-container">
+                  <div className="user-avatar">
+                    {user.username[0].toUpperCase()}
+                  </div>
+                  {user.hasActiveSession && (
+                    <span className="online-indicator" title="Active session">
+                      <span className="online-pulse"></span>
+                    </span>
+                  )}
+                </div>
+              </td>
               <td className="cell-username">{user.username}</td>
               <td>{user.email}</td>
               <td>{user.age || "—"}</td>
@@ -77,6 +90,7 @@ export const UserTable = ({
               </td>
               <td className="cell-date">{formatDate(user.activatedAt)}</td>
               <td className="cell-date">{formatDate(user.lastLogin)}</td>
+
               <td className="text-right">
                 <div className="action-group">
                   {/* Change Password */}

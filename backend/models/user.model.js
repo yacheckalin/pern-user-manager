@@ -10,6 +10,7 @@ class User {
     this.updatedAt = data.updated_at;
     this.activatedAt = data.activated_at;
     this.lastLogin = data.last_login;
+    this.hasActiveSession = data.has_active_session;
   }
 
   isAdult() {
@@ -31,6 +32,7 @@ class User {
       updatedAt: this.updatedAt,
       activatedAt: this.activatedAt,
       lastLogin: this.lastLogin,
+      hasActiveSession: this.hasActiveSession,
     };
   }
 
