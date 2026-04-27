@@ -2,6 +2,7 @@ import db from "../config/database.js";
 import RefreshTokenRepository from "../repositories/token.repo.js";
 import {
   HTTP_BAD_REQUEST,
+  HTTP_NOT_FOUND,
   HTTP_UNAUTHORIZED,
   JWT_DEFAULTS,
   ONE_WEEK,
@@ -80,7 +81,7 @@ class RefreshTokenService {
     if (!user) {
       throw new ApiError({
         message: USER_ERRORS.NOT_FOUND,
-        code: USER_CODES.NOT_FOUND,
+        code: USER_CODES.USER_NOT_FOUND,
         status: HTTP_BAD_REQUEST,
       });
     }

@@ -51,7 +51,7 @@ class RefreshTokenRepository {
   }
 
   async logoutTokenByUserId(data, returning = "*") {
-    const query = `UPDATE ${this.table} SET revoked_at = NOW() WHERE user_id = $1 RETURNING ${returning}`;
+    const query = `UPDATE ${this.table} SET revoked_at = NOW() WHERE user_id = $1 AND revoked_at IS NULL RETURNING ${returning}`;
     const { rows } = await this.pool.query(query, [data.userId]);
 
     return RefreshToken.fromDatabaseArray(rows);
