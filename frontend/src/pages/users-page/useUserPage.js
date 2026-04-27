@@ -4,6 +4,7 @@ import { useUpdateUser } from "@features/users/hooks/useUpdateUser";
 import { useActivateUser } from "@features/users/hooks/useActivateUser";
 import { useChangePasswordUser } from "@features/users/hooks/useChangePasswordUser";
 import { useCreateUser } from "@features/users/hooks/useCreateUser";
+import { useLogoutUser } from "@features/users/hooks/useLogoutUser";
 import { useUsers } from "@/features/users";
 import { USER_ITEM_FADE_IN_TIMEOUT } from "@features/users/constants";
 import { useFlashHighlight } from "./useFlashHighlight";
@@ -21,6 +22,7 @@ export const useUserPage = () => {
     changePassword: null,
     activate: null,
     delete: null,
+    logout: null,
   });
   const [selectedUser, setSelectedUser] = useState(null);
   const updateMutation = useUpdateUser();
@@ -89,6 +91,16 @@ export const useUserPage = () => {
     }
   };
 
+  const logoutMutation = useLogoutUser();
+  const handleLogoutUser = async (data) => {
+    try {
+      await logoutMutation.mutateAsync(data);
+      setSelectedUser(null);
+    } catch (e) {
+      throw e;
+    }
+  };
+
   return {
     /** data */
     data: data ?? [],
@@ -120,6 +132,9 @@ export const useUserPage = () => {
 
     /** change password */
     handleChangePasswordUser,
+
+    /** logout user by id */
+    handleLogoutUser,
 
     /** create user */
     createdUser,

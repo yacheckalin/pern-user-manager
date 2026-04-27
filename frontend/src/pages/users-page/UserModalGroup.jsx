@@ -3,6 +3,7 @@ import { UserChangePasswordModal } from "@features/users/components/UserChangePa
 import { UserCreateNewModal } from "@features/users/components/UserCreateNewModal";
 import { UserDeleteModal } from "@features/users/components/UserDeleteModal";
 import { UserActivateModal } from "@features/users/components/UserActivateStatusModal";
+import { UserLogoutModal } from "../../features/users/components/UserLogoutModal";
 
 const UserModalGroup = ({
   onClose,
@@ -14,6 +15,7 @@ const UserModalGroup = ({
     handleCreateUser,
     handleDeleteUser,
     handleEditUser,
+    handleLogoutUser,
   },
   mutations: {
     updateMutation,
@@ -21,6 +23,7 @@ const UserModalGroup = ({
     activateMutation,
     deleleUserMutation,
     changePasswordMutation,
+    logoutMutation,
   },
 }) => {
   return (
@@ -61,6 +64,14 @@ const UserModalGroup = ({
         onClose={() => onClose({ activate: null })}
         onSave={handleActivateUser}
         isLoading={activateMutation?.isPending}
+      />
+
+      <UserLogoutModal
+        isOpen={!!modals?.logout}
+        user={user}
+        onClose={() => onClose({ logout: null })}
+        onSave={handleLogoutUser}
+        isLoading={logoutMutation?.isPending}
       />
     </>
   );

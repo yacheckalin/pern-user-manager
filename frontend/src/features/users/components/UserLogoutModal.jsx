@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "./UserDeleteModal.css";
-import { Loader2, X, Trash2 } from "lucide-react";
+import { Loader2, X, LogOut } from "lucide-react";
 import { formatDate } from "../utils/user.helpers";
 
-export const UserDeleteModal = ({
+export const UserLogoutModal = ({
   isOpen,
   user,
   onSave,
@@ -29,7 +29,7 @@ export const UserDeleteModal = ({
       <div className="modal-overlay" onClick={onClose}>
         <div className="modal-content" onClick={(e) => e.stopPropagation()}>
           <div className="modal-header">
-            <h2>Delete User {user.username}</h2>
+            <h2>Revoke all sessions for: {user.username}</h2>
             <button className="btn-close" onClick={onClose}>
               <X size={24} />
             </button>
@@ -41,9 +41,9 @@ export const UserDeleteModal = ({
               <div className="alert-banner">
                 <span className="alert-icon">⚠️</span>
                 <p>
-                  Are you sure you want to delete{" "}
-                  <strong>{user.username}</strong>? This action is permanent and
-                  cannot be undone.
+                  Are you sure you want to logout from all devices?
+                  <strong>{user.username}</strong>? <br /> This action is
+                  permanent and cannot be undone.
                 </p>
               </div>
 
@@ -108,9 +108,9 @@ export const UserDeleteModal = ({
                 {isLoading ? (
                   <Loader2 className="loader-icon" />
                 ) : (
-                  <Trash2 size={18} />
+                  <LogOut size={18} />
                 )}
-                Confirm Delete
+                Revoke All Sessions
               </button>
             </div>
           </form>

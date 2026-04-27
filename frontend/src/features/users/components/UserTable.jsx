@@ -20,6 +20,7 @@ export const UserTable = ({
   highlightedId,
   onActivate,
   onChangePassword,
+  onLogout,
 }) => {
   if (isLoading) return <Spinner size="lg" lable="Loading Users ..." />;
   if (!users.length)
@@ -137,8 +138,10 @@ export const UserTable = ({
                   <button
                     className="btn-icon btn-danger"
                     title="Revoke Session"
+                    disabled={!user.hasActiveSession}
+                    onClick={() => onLogout(user)}
                   >
-                    <LogOut size={18} />
+                    <LogOut size={18} disabled />
                   </button>
                   <button
                     className="btn-icon btn-danger"

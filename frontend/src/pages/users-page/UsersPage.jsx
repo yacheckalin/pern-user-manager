@@ -21,12 +21,14 @@ const UsersPage = () => {
     handleChangePasswordUser,
     handleCreateUser,
     handleDeleteUser,
+    handleLogoutUser,
 
     activateMutation,
     deleleUserMutation,
     createUserMutation,
     updateMutation,
     changePasswordMutation,
+    logoutMutation,
   } = useUserPage();
 
   const onCallbackHandler = (info, modal) => {
@@ -60,6 +62,7 @@ const UsersPage = () => {
             onDelete={(info) => onCallbackHandler(info, "delete")}
             onEdit={(info) => onCallbackHandler(info, "edit")}
             onActivate={(info) => onCallbackHandler(info, "activate")}
+            onLogout={(info) => onCallbackHandler(info, "logout")}
             highlightedId={highlightedId}
             onChangePassword={(info) =>
               onCallbackHandler(info, "changePassword")
@@ -76,6 +79,7 @@ const UsersPage = () => {
               handleChangePasswordUser,
               handleDeleteUser,
               handleEditUser,
+              handleLogoutUser,
             }}
             mutations={{
               updateMutation,
@@ -83,6 +87,7 @@ const UsersPage = () => {
               changePasswordMutation,
               activateMutation,
               deleleUserMutation,
+              logoutMutation,
             }}
           />
         </>

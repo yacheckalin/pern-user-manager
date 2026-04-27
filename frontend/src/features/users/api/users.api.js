@@ -14,7 +14,7 @@ export const getUsers = async ({
   return {
     data: response.data,
     total,
-    message: response.message
+    message: response.message,
   };
 };
 
@@ -31,7 +31,7 @@ export const updateUserById = async ({ id, ...payload }) => {
 
   return {
     data: response.data,
-    message: response.message
+    message: response.message,
   };
 };
 
@@ -39,27 +39,37 @@ export const activateUserById = async ({ id }) => {
   const response = await api.patch(`${API_PREFIX}/users/${id}/activate`);
   return {
     data: response.data,
-    message: response.message
-  }
-}
+    message: response.message,
+  };
+};
 
 export const changeUserPassword = async ({ id, ...payload }) => {
   const response = await api.patch(`${API_PREFIX}/users/${id}/password`, {
-    ...payload
+    ...payload,
   });
   return {
     data: response.data,
-    message: response.message
-  }
-}
+    message: response.message,
+  };
+};
 
 export const createNewUser = async ({ ...payload }) => {
   const response = await api.post(`${API_PREFIX}/users/register`, {
-    ...payload
-  })
+    ...payload,
+  });
 
   return {
     data: response.data,
-    message: response.message
-  }
-}
+    message: response.message,
+  };
+};
+
+export const logoutUserById = async ({ id, ...payload }) => {
+  const response = await api.post(`${API_PREFIX}/users/${id}/logout`, {
+    ...payload,
+  });
+  return {
+    data: response.data,
+    message: response.message,
+  };
+};
