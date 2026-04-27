@@ -1,18 +1,18 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateUserById } from "../api/users.api";
+import { logoutUserById } from "../api/users.api";
 import { toast } from "react-toastify";
 
-export const useUpdateUser = () => {
+export const useLogoutUser = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data) => updateUserById(data),
-    onSuccess: (data) => {
+    mutationFn: (data) => logoutUserById(data),
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
-      toast.success(data.message);
+      toast.success("User logged out successfully!");
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to updated");
+      toast.error(error.message || "Failed to logout");
     },
   });
 };

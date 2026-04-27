@@ -1,11 +1,9 @@
-import { defineConfig } from 'vite';
-import react, { reactCompilerPreset } from '@vitejs/plugin-react';
-import babel from '@rolldown/plugin-babel'
+import { defineConfig } from "vite";
+import react, { reactCompilerPreset } from "@vitejs/plugin-react";
+import babel from "@rolldown/plugin-babel";
 
 export default defineConfig({
-  plugins: [
-    react(),
-    babel({ presets: [reactCompilerPreset()] })],
+  plugins: [react(), babel({ presets: [reactCompilerPreset()] })],
   server: {
     host: true,
     port: 5173,
@@ -16,12 +14,13 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': '/src',
-      '@features': '/src/features',
-      '@constants': '/src/constants',
-      '@configs': '/src/config',
-      '@shared': '/src/shared'
-    }
-  }
+      "@": "/src",
+      "@features": "/src/features",
+      "@pages": "/src/pages",
+      "@constants": "/src/constants",
+      "@configs": "/src/config",
+      "@shared": "/src/shared",
+      "@layouts": "/src/layouts",
+    },
+  },
 });
-

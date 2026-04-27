@@ -2,6 +2,7 @@ import db from "../config/database.js";
 import RefreshTokenRepository from "../repositories/token.repo.js";
 import {
   HTTP_BAD_REQUEST,
+  HTTP_NOT_FOUND,
   HTTP_UNAUTHORIZED,
   JWT_DEFAULTS,
   ONE_WEEK,
@@ -55,7 +56,7 @@ class RefreshTokenService {
       throw new ApiError({
         message: TOKEN_ERRORS.TOKEN_NOT_FOUND,
         code: USER_CODES.TOKEN_NOT_FOUND,
-        status: HTTP_UNAUTHORIZED
+        status: HTTP_UNAUTHORIZED,
       });
     }
 
@@ -63,7 +64,7 @@ class RefreshTokenService {
       throw new ApiError({
         message: TOKEN_ERRORS.TOKEN_REVOKED,
         code: USER_CODES.TOKEN_REVOKED,
-        status: HTTP_UNAUTHORIZED
+        status: HTTP_UNAUTHORIZED,
       });
     }
 
@@ -71,7 +72,7 @@ class RefreshTokenService {
       throw new ApiError({
         message: TOKEN_ERRORS.TOKEN_EXPIRED,
         code: USER_CODES.TOKEN_EXPIRED,
-        status: HTTP_UNAUTHORIZED
+        status: HTTP_UNAUTHORIZED,
       });
     }
 
@@ -80,8 +81,8 @@ class RefreshTokenService {
     if (!user) {
       throw new ApiError({
         message: USER_ERRORS.NOT_FOUND,
-        code: USER_CODES.NOT_FOUND,
-        status: HTTP_BAD_REQUEST
+        code: USER_CODES.USER_NOT_FOUND,
+        status: HTTP_BAD_REQUEST,
       });
     }
     // create new token and revoke old one
@@ -100,6 +101,22 @@ class RefreshTokenService {
         user: { ...user },
       },
     };
+  }
+
+  async logoutUser(id) {
+    const user = await this.userRepository.findUserById(id);
+    if (!user) {
+      throw new ApiError({
+        message: USER_ERRORS.NOT_FOUND,
+        code: USER_CODES.USER_NOT_FOUND,
+        status: HTTP_NOT_FOUND,
+      });
+    }
+
+    const result = await this.refreshTokenRepository.logoutTokenByUserId({
+      userId: id,
+    });
+    return result;
   }
 
   generateTokenHash(token) {

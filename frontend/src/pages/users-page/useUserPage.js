@@ -4,10 +4,10 @@ import { useUpdateUser } from "@features/users/hooks/useUpdateUser";
 import { useActivateUser } from "@features/users/hooks/useActivateUser";
 import { useChangePasswordUser } from "@features/users/hooks/useChangePasswordUser";
 import { useCreateUser } from "@features/users/hooks/useCreateUser";
+import { useLogoutUser } from "@features/users/hooks/useLogoutUser";
 import { useUsers } from "@/features/users";
 import { USER_ITEM_FADE_IN_TIMEOUT } from "@features/users/constants";
 import { useFlashHighlight } from "./useFlashHighlight";
-import { toast } from 'react-toastify'
 
 export const useUserPage = () => {
   const [filters] = useState({ page: 1, search: "", limit: 10, offset: 0 });
@@ -22,6 +22,7 @@ export const useUserPage = () => {
     changePassword: null,
     activate: null,
     delete: null,
+    logout: null,
   });
   const [selectedUser, setSelectedUser] = useState(null);
   const updateMutation = useUpdateUser();
@@ -35,7 +36,6 @@ export const useUserPage = () => {
       });
       triggerHighlight(selectedUser.id);
       setSelectedUser(null);
-      toast.success(message);
     } catch (error) {
       throw error;
     }
@@ -49,7 +49,6 @@ export const useUserPage = () => {
       });
       triggerHighlight(id);
       setSelectedUser(null);
-      toast.success(message)
     } catch (error) {
       throw error;
     }
@@ -64,7 +63,6 @@ export const useUserPage = () => {
       });
       triggerHighlight(selectedUser?.id);
       setSelectedUser(null);
-      toast.success(message)
     } catch (error) {
       throw error;
     }
@@ -78,7 +76,6 @@ export const useUserPage = () => {
         ...data,
       });
       triggerHighlight(data.id);
-      toast.success(message)
     } catch (e) {
       throw e;
     }
@@ -89,7 +86,16 @@ export const useUserPage = () => {
     try {
       await deleleUserMutation.mutateAsync(data);
       setSelectedUser(null);
-      toast.error('User was deleted successfully!');
+    } catch (e) {
+      throw e;
+    }
+  };
+
+  const logoutMutation = useLogoutUser();
+  const handleLogoutUser = async (data) => {
+    try {
+      await logoutMutation.mutateAsync(data);
+      setSelectedUser(null);
     } catch (e) {
       throw e;
     }
@@ -126,6 +132,9 @@ export const useUserPage = () => {
 
     /** change password */
     handleChangePasswordUser,
+
+    /** logout user by id */
+    handleLogoutUser,
 
     /** create user */
     createdUser,

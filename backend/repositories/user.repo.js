@@ -12,7 +12,18 @@ class UserRepository {
    * @returns User[]
    */
   async findAll() {
-    const { rows } = await this.pool.query(`SELECT * FROM ${this.table}`);
+    const { rows } = await this.pool.query(`
+      SELECT
+        u.*,
+        EXISTS (
+            SELECT 1
+            FROM app.refresh_tokens rt
+            WHERE rt.user_id = u.id
+              AND rt.revoked_at IS NULL
+              AND rt.expires_at > NOW()
+        ) as has_active_session
+      FROM app.users u;
+`);
     return User.fromDatabaseArray(rows);
   }
 
