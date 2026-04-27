@@ -337,6 +337,8 @@ Base URL: `http://localhost:5000/users`
 - `GET /api/v1/metrics` - Get metrics
 - `GET /api/v1/docs` - Swagger UI documentation
 
+- `POST /api/v1/users/:id/logout` - Logout from all devices by user ID
+
 ## ✅ Testing
 
 ### Backend Tests
