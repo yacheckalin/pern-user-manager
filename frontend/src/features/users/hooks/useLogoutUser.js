@@ -7,9 +7,9 @@ export const useLogoutUser = () => {
 
   return useMutation({
     mutationFn: (data) => logoutUserById(data),
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
-      toast.success(data.message);
+      toast.success("User logged out successfully!");
     },
     onError: (error) => {
       toast.error(error.message || "Failed to logout");

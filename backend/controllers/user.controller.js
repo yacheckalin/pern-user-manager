@@ -94,11 +94,7 @@ class UserController {
   logoutUser = asyncHandler(async (req, res, next) => {
     const { id } = req.params;
     const user = await this.tokenService.logoutUser(id);
-    res.status(HTTP_OK).json({
-      success: true,
-      message: USER_MESSAGES.LOGOUT,
-      data: user,
-    });
+    res.status(HTTP_NO_CONTENT).send();
   });
 }
 
