@@ -57,5 +57,9 @@
     "validator": "^13.15.35",
     "winston": "^3.19.0",
     "yamljs": "^0.3.0"
+  },
+  "overrides": {
+    "inflight": "^2.0.0",
+    "glob": "^12.0.0"
   }
 }
