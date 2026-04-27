@@ -14,12 +14,13 @@ export const getUsers = async ({
   return {
     data: response.data,
     total,
+    message: response.message
   };
 };
 
 export const deleteUserById = async ({ id = null }) => {
   const response = await api.delete(`${API_PREFIX}/users/${id}`);
-  return { data: response.data };
+  return { data: response.data, message: response.message };
 };
 
 export const updateUserById = async ({ id, ...payload }) => {
@@ -27,15 +28,18 @@ export const updateUserById = async ({ id, ...payload }) => {
     ...payload,
     age: payload.age ? Number(payload.age) : undefined,
   });
+
   return {
     data: response.data,
+    message: response.message
   };
 };
 
 export const activateUserById = async ({ id }) => {
   const response = await api.patch(`${API_PREFIX}/users/${id}/activate`);
   return {
-    data: response.data
+    data: response.data,
+    message: response.message
   }
 }
 
@@ -44,7 +48,8 @@ export const changeUserPassword = async ({ id, ...payload }) => {
     ...payload
   });
   return {
-    data: response.data
+    data: response.data,
+    message: response.message
   }
 }
 
@@ -54,6 +59,7 @@ export const createNewUser = async ({ ...payload }) => {
   })
 
   return {
-    data: response.data
+    data: response.data,
+    message: response.message
   }
 }

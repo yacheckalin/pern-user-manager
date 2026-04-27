@@ -456,6 +456,7 @@ I use **Docker Profiles** to manage auxiliary services.
 
 - `monitoring`: Starts the metrics storage (**VictoriaMetrics**).
 - `grafana`: Starts the visualization dashboard (**Grafana**) and container monitoring (**cAdvisor**).
+- `local`: Starts the pgMyadmin (**PgMyadmin**).
 
 ### Commands:
 

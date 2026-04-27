@@ -7,6 +7,7 @@ import { useCreateUser } from "@features/users/hooks/useCreateUser";
 import { useUsers } from "@/features/users";
 import { USER_ITEM_FADE_IN_TIMEOUT } from "@features/users/constants";
 import { useFlashHighlight } from "./useFlashHighlight";
+import { toast } from 'react-toastify'
 
 export const useUserPage = () => {
   const [filters] = useState({ page: 1, search: "", limit: 10, offset: 0 });
@@ -28,13 +29,13 @@ export const useUserPage = () => {
   const [highlightedUserId, setHighlightedUserId] = useState(null);
   const handleEditUser = async (formData) => {
     try {
-      await updateMutation.mutateAsync({
+      const { message } = await updateMutation.mutateAsync({
         id: selectedUser.id,
         ...formData,
       });
-
       triggerHighlight(selectedUser.id);
       setSelectedUser(null);
+      toast.success(message);
     } catch (error) {
       throw error;
     }
@@ -43,11 +44,12 @@ export const useUserPage = () => {
   const activateMutation = useActivateUser();
   const handleActivateUser = async ({ id }) => {
     try {
-      await activateMutation.mutateAsync({
+      const { message } = await activateMutation.mutateAsync({
         id,
       });
       triggerHighlight(id);
       setSelectedUser(null);
+      toast.success(message)
     } catch (error) {
       throw error;
     }
@@ -56,12 +58,13 @@ export const useUserPage = () => {
   const changePasswordMutation = useChangePasswordUser();
   const handleChangePasswordUser = async (data) => {
     try {
-      await changePasswordMutation.mutateAsync({
+      const { message } = await changePasswordMutation.mutateAsync({
         id: selectedUser?.id,
         ...data,
       });
       triggerHighlight(selectedUser?.id);
       setSelectedUser(null);
+      toast.success(message)
     } catch (error) {
       throw error;
     }
@@ -71,10 +74,11 @@ export const useUserPage = () => {
   const createUserMutation = useCreateUser();
   const handleCreateUser = async (data) => {
     try {
-      const response = await createUserMutation.mutateAsync({
+      const { message } = await createUserMutation.mutateAsync({
         ...data,
       });
-      triggerHighlight(response.data.id);
+      triggerHighlight(data.id);
+      toast.success(message)
     } catch (e) {
       throw e;
     }
@@ -85,6 +89,7 @@ export const useUserPage = () => {
     try {
       await deleleUserMutation.mutateAsync(data);
       setSelectedUser(null);
+      toast.error('User was deleted successfully!');
     } catch (e) {
       throw e;
     }

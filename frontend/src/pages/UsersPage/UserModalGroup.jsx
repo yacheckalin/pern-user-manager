@@ -22,7 +22,6 @@ const UserModalGroup = ({
     deleleUserMutation,
     changePasswordMutation,
   },
-  state,
 }) => {
   return (
     <>
