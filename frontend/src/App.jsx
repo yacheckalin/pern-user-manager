@@ -1,5 +1,5 @@
 import "./App.css";
-import UsersPage from "@pages/UsersPage";
+import UsersPage from "@pages/users-page";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AdminLayout from "@layouts/admin";
