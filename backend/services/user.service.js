@@ -12,7 +12,10 @@ import {
   USER_VALIDATION,
 } from "../constants/index.js";
 
-import { sanitizeUserData, sanitizeUpdateUserPassword } from "../utils/user.helpers.js";
+import {
+  sanitizeUserData,
+  sanitizeUpdateUserPassword,
+} from "../utils/user.helpers.js";
 
 import ApiError from "../errors/api.error.js";
 
@@ -32,8 +35,8 @@ class UserService {
       throw new ApiError({
         message: USER_ERRORS.NOT_FOUND,
         code: USER_CODES.USER_NOT_FOUND,
-        status: HTTP_NOT_FOUND
-      })
+        status: HTTP_NOT_FOUND,
+      });
     }
     return user;
   }
@@ -48,7 +51,7 @@ class UserService {
       throw new ApiError({
         message: USER_ERRORS.USERNAME_TAKEN,
         code: USER_CODES.USERNAME_TAKEN,
-        status: HTTP_CONFLICT
+        status: HTTP_CONFLICT,
       });
     }
 
@@ -57,7 +60,7 @@ class UserService {
       throw new ApiError({
         message: USER_ERRORS.EMAIL_TAKEN,
         code: USER_CODES.EMAIL_TAKEN,
-        status: HTTP_CONFLICT
+        status: HTTP_CONFLICT,
       });
     }
 
@@ -85,7 +88,7 @@ class UserService {
       throw new ApiError({
         message: USER_ERRORS.USERNAME_TAKEN,
         code: USER_CODES.USERNAME_TAKEN,
-        status: HTTP_CONFLICT
+        status: HTTP_CONFLICT,
       });
     }
 
@@ -94,17 +97,20 @@ class UserService {
       throw new ApiError({
         message: USER_ERRORS.EMAIL_TAKEN,
         code: USER_CODES.EMAIL_TAKEN,
-        status: HTTP_CONFLICT
+        status: HTTP_CONFLICT,
       });
     }
 
     // check if password and confirm_password the same
-    if (String(data.password).toUpperCase() !== String(data.confirm_password).toUpperCase()) {
+    if (
+      String(data.password).toUpperCase() !==
+      String(data.confirm_password).toUpperCase()
+    ) {
       throw new ApiError({
         message: USER_ERRORS.INVALID_CONFIRM_PASSWORD,
         code: USER_CODES.INVALID_CONFIRM_PASSWORD,
-        status: HTTP_BAD_REQUEST
-      })
+        status: HTTP_BAD_REQUEST,
+      });
     }
 
     // Hash password
@@ -131,7 +137,7 @@ class UserService {
       throw new ApiError({
         message: USER_ERRORS.NOT_FOUND,
         status: HTTP_NOT_FOUND,
-        code: USER_CODES.USER_NOT_FOUND
+        code: USER_CODES.USER_NOT_FOUND,
       });
     }
 
@@ -143,7 +149,7 @@ class UserService {
       throw new ApiError({
         message: USER_ERRORS.USERNAME_TAKEN,
         code: USER_CODES.USERNAME_TAKEN,
-        status: HTTP_CONFLICT
+        status: HTTP_CONFLICT,
       });
     }
 
@@ -154,7 +160,7 @@ class UserService {
         throw new ApiError({
           message: USER_ERRORS.EMAIL_TAKEN,
           code: USER_CODES.EMAIL_TAKEN,
-          status: HTTP_CONFLICT
+          status: HTTP_CONFLICT,
         });
       }
     }
@@ -170,7 +176,7 @@ class UserService {
       throw new ApiError({
         message: USER_ERRORS.NOT_FOUND,
         status: HTTP_NOT_FOUND,
-        code: USER_CODES.USER_NOT_FOUND
+        code: USER_CODES.USER_NOT_FOUND,
       });
     }
 
@@ -183,7 +189,7 @@ class UserService {
       throw new ApiError({
         message: USER_ERRORS.OLD_PASSWORD_INVALID,
         status: HTTP_BAD_REQUEST,
-        code: USER_CODES.OLD_PASSWORD_INVALID
+        code: USER_CODES.OLD_PASSWORD_INVALID,
       });
     }
 
@@ -197,7 +203,7 @@ class UserService {
       throw new ApiError({
         message: USER_ERRORS.NEW_PASSWORD_THE_SAME,
         code: USER_CODES.NEW_PASSWORD_THE_SAME,
-        status: HTTP_BAD_REQUEST
+        status: HTTP_BAD_REQUEST,
       });
     }
 
@@ -216,7 +222,7 @@ class UserService {
       throw new ApiError({
         message: USER_ERRORS.NOT_FOUND,
         code: USER_CODES.USER_NOT_FOUND,
-        status: HTTP_NOT_FOUND
+        status: HTTP_NOT_FOUND,
       });
     }
 
@@ -231,7 +237,7 @@ class UserService {
       throw new ApiError({
         message: USER_ERRORS.NOT_FOUND,
         code: USER_CODES.USER_NOT_FOUND,
-        status: HTTP_NOT_FOUND
+        status: HTTP_NOT_FOUND,
       });
     }
 
@@ -240,7 +246,7 @@ class UserService {
       throw new ApiError({
         message: USER_ERRORS.ALREADY_ACTIVATED,
         code: USER_CODES.ALREADY_ACTIVATED,
-        status: HTTP_CONFLICT
+        status: HTTP_CONFLICT,
       });
     }
     const result = await this.userRepository.activateUserById(id);
@@ -255,14 +261,14 @@ class UserService {
       throw new ApiError({
         message: USER_ERRORS.INVALID_USERNAME,
         status: HTTP_BAD_REQUEST,
-        code: USER_CODES.INVALID_USERNAME
+        code: USER_CODES.INVALID_USERNAME,
       });
     }
     if (!data.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
       throw new ApiError({
         message: USER_ERRORS.INVALID_EMAIL,
         status: HTTP_BAD_REQUEST,
-        code: USER_CODES.INVALID_EMAIL
+        code: USER_CODES.INVALID_EMAIL,
       });
     }
     if (
@@ -272,7 +278,7 @@ class UserService {
       throw new ApiError({
         message: USER_ERRORS.INVALID_PASSWORD,
         status: HTTP_BAD_REQUEST,
-        code: USER_CODES.INVALID_PASSWORD
+        code: USER_CODES.INVALID_PASSWORD,
       });
     }
     if (
@@ -282,7 +288,7 @@ class UserService {
       throw new ApiError({
         message: USER_ERRORS.INVALID_AGE,
         status: HTTP_BAD_REQUEST,
-        code: USER_CODES.INVALID_AGE
+        code: USER_CODES.INVALID_AGE,
       });
     }
   }
@@ -296,7 +302,7 @@ class UserService {
         throw new ApiError({
           message: USER_ERRORS.INVALID_USERNAME,
           code: USER_CODES.INVALID_USERNAME,
-          status: HTTP_BAD_REQUEST
+          status: HTTP_BAD_REQUEST,
         });
       }
     }
@@ -306,7 +312,7 @@ class UserService {
         throw new ApiError({
           message: USER_ERRORS.INVALID_EMAIL,
           status: HTTP_BAD_REQUEST,
-          code: USER_CODES.INVALID_EMAIL
+          code: USER_CODES.INVALID_EMAIL,
         });
       }
     }
@@ -318,7 +324,7 @@ class UserService {
       throw new ApiError({
         message: USER_ERRORS.INVALID_AGE,
         code: USER_CODES.INVALID_AGE,
-        status: HTTP_BAD_REQUEST
+        status: HTTP_BAD_REQUEST,
       });
     }
   }
@@ -331,7 +337,7 @@ class UserService {
       throw new ApiError({
         message: USER_ERRORS.INVALID_NEW_PASSWORD,
         status: HTTP_BAD_REQUEST,
-        code: USER_CODES.INVALID_NEW_PASSWORD
+        code: USER_CODES.INVALID_NEW_PASSWORD,
       });
     }
     if (
@@ -341,7 +347,7 @@ class UserService {
       throw new ApiError({
         message: USER_ERRORS.INVALID_OLD_PASSWORD,
         code: USER_CODES.INVALID_OLD_PASSWORD,
-        status: HTTP_BAD_REQUEST
+        status: HTTP_BAD_REQUEST,
       });
     }
 
@@ -349,7 +355,7 @@ class UserService {
       throw new ApiError({
         message: USER_ERRORS.INVALID_CONFIRM_PASSWORD,
         code: USER_CODES.INVALID_CONFIRM_PASSWORD,
-        status: HTTP_BAD_REQUEST
+        status: HTTP_BAD_REQUEST,
       });
     }
   }

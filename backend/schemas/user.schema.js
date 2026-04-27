@@ -34,7 +34,7 @@ const userSchemas = {
       .min(USER_VALIDATION.PASSWORD_MIN_LENGTH)
       .required()
       .messages({
-        "string.min": "Password mus be at least 6 characters long"
+        "string.min": "Password mus be at least 6 characters long",
       }),
     new_password: Joi.string()
       .min(USER_VALIDATION.PASSWORD_MIN_LENGTH)
@@ -42,9 +42,12 @@ const userSchemas = {
       .messages({
         "string.min": "Password must be at least 6 characters long",
       }),
-    confirm_password: Joi.any().equal(Joi.ref("new_password")).required().messages({
-      "any.only": "Password do not match",
-    }),
+    confirm_password: Joi.any()
+      .equal(Joi.ref("new_password"))
+      .required()
+      .messages({
+        "any.only": "Password do not match",
+      }),
   }).with("new_password", "confirm_password"),
 
   deleteUser: Joi.object({
@@ -55,15 +58,27 @@ const userSchemas = {
     id: Joi.number().integer().required(),
   }),
   registerUser: Joi.object({
-    username: Joi.string().alphanum().min(USER_VALIDATION.USERNAME_MIN_LENGTH).max(USER_VALIDATION.USERNAME_MAX_LENGTH).required(),
+    username: Joi.string()
+      .alphanum()
+      .min(USER_VALIDATION.USERNAME_MIN_LENGTH)
+      .max(USER_VALIDATION.USERNAME_MAX_LENGTH)
+      .required(),
     email: Joi.string().email().required(),
-    password: Joi.string().min(USER_VALIDATION.PASSWORD_MIN_LENGTH).max(USER_VALIDATION.PASSWORD_MAX_LENGTH).required(),
-    confirm_password: Joi.string().
-      min(USER_VALIDATION.PASSWORD_MIN_LENGTH).
-      max(USER_VALIDATION.PASSWORD_MAX_LENGTH).
-      required().equal(Joi.ref("password")).messages({ "any.only": USER_ERRORS.INVALID_CONFIRM_PASSWORD }),
+    password: Joi.string()
+      .min(USER_VALIDATION.PASSWORD_MIN_LENGTH)
+      .max(USER_VALIDATION.PASSWORD_MAX_LENGTH)
+      .required(),
+    confirm_password: Joi.string()
+      .min(USER_VALIDATION.PASSWORD_MIN_LENGTH)
+      .max(USER_VALIDATION.PASSWORD_MAX_LENGTH)
+      .required()
+      .equal(Joi.ref("password"))
+      .messages({ "any.only": USER_ERRORS.INVALID_CONFIRM_PASSWORD }),
     age: Joi.number().integer(),
-  }).with("password", "confirm_password")
+  }).with("password", "confirm_password"),
+  logoutUser: Joi.object({
+    id: Joi.number().integer().required(),
+  }),
 };
 
 export { userSchemas };

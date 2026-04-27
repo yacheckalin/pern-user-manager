@@ -8,8 +8,11 @@ const router = express.Router();
 const userController = new UserController();
 
 router.get("/", userController.getAllUsers.bind(userController));
-router.get("/:id", validate(userSchemas.id), userController.getUser.bind(userController))
-
+router.get(
+  "/:id",
+  validate(userSchemas.id),
+  userController.getUser.bind(userController),
+);
 
 router.post(
   "/",
@@ -17,7 +20,11 @@ router.post(
   userController.createUser.bind(userController),
 );
 
-router.post("/register", validate(userSchemas.registerUser), userController.registerUser.bind(userController))
+router.post(
+  "/register",
+  validate(userSchemas.registerUser),
+  userController.registerUser.bind(userController),
+);
 
 router.put(
   "/:id",
@@ -41,6 +48,12 @@ router.patch(
   "/:id/activate",
   validate(userSchemas.activateUser),
   userController.activateUser.bind(userController),
+);
+
+router.post(
+  "/:id/logout",
+  validate(userSchemas.logoutUser),
+  userController.logoutUser.bind(userController),
 );
 
 export default router;
