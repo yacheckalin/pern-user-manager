@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import "./UserEditModal.css";
 import { KeyRound, Loader2, X } from "lucide-react";
 
@@ -16,6 +16,7 @@ export const UserChangePasswordModal = ({
   });
   const [errors, setErrors] = useState({});
   const [generalError, setGeneralError] = useState(null);
+
   useEffect(() => {
     if (user) {
       setFormData({
@@ -34,7 +35,7 @@ export const UserChangePasswordModal = ({
     setGeneralError(null);
     e.preventDefault();
     try {
-      const result = await onSave({ id: user.id, ...formData });
+      await onSave({ id: user.id, ...formData });
       onClose();
     } catch (err) {
       const newErrors = {};

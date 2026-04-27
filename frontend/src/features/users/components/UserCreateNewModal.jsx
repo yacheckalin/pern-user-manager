@@ -2,8 +2,6 @@ import { useState } from "react";
 import { X, UserPlus, Loader2 } from "lucide-react";
 
 export const UserCreateNewModal = ({ onSave, onClose, isOpen }) => {
-  if (!isOpen) return null;
-
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -16,6 +14,7 @@ export const UserCreateNewModal = ({ onSave, onClose, isOpen }) => {
   const [generalError, setGeneralError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  if (!isOpen) return null;
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));

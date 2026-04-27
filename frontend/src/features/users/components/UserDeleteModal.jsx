@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "./UserDeleteModal.css";
 import { Loader2, X, Trash2 } from "lucide-react";
 import { formatDate } from "../utils/user.helpers";

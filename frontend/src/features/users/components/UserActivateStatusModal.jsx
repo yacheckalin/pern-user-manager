@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "./UserDeleteModal.css";
 import { Loader2, X, UserCheck } from "lucide-react";
 import { formatDate } from "../utils/user.helpers";
@@ -10,8 +10,8 @@ export const UserActivateModal = ({
   onClose,
   isLoading,
 }) => {
-  if (!isOpen) return null;
   const [errors, setErrors] = useState(null);
+  if (!isOpen) return null;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
