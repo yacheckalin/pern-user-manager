@@ -7,7 +7,6 @@ import { useCreateUser } from "@features/users/hooks/useCreateUser";
 import { useUsers } from "@/features/users";
 import { USER_ITEM_FADE_IN_TIMEOUT } from "@features/users/constants";
 import { useFlashHighlight } from "./useFlashHighlight";
-import { toast } from 'react-toastify'
 
 export const useUserPage = () => {
   const [filters] = useState({ page: 1, search: "", limit: 10, offset: 0 });
@@ -35,7 +34,6 @@ export const useUserPage = () => {
       });
       triggerHighlight(selectedUser.id);
       setSelectedUser(null);
-      toast.success(message);
     } catch (error) {
       throw error;
     }
@@ -49,7 +47,6 @@ export const useUserPage = () => {
       });
       triggerHighlight(id);
       setSelectedUser(null);
-      toast.success(message)
     } catch (error) {
       throw error;
     }
@@ -64,7 +61,6 @@ export const useUserPage = () => {
       });
       triggerHighlight(selectedUser?.id);
       setSelectedUser(null);
-      toast.success(message)
     } catch (error) {
       throw error;
     }
@@ -78,7 +74,6 @@ export const useUserPage = () => {
         ...data,
       });
       triggerHighlight(data.id);
-      toast.success(message)
     } catch (e) {
       throw e;
     }
@@ -89,7 +84,6 @@ export const useUserPage = () => {
     try {
       await deleleUserMutation.mutateAsync(data);
       setSelectedUser(null);
-      toast.error('User was deleted successfully!');
     } catch (e) {
       throw e;
     }

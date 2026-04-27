@@ -35,7 +35,6 @@
   color: var(--color-text-primary);
 }
 
-/* Активное состояние ссылки */
 .nav-list a.active {
   background-color: var(--color-background-primary);
   color: var(--color-text-primary);

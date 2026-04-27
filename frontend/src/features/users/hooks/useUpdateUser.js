@@ -11,5 +11,8 @@ export const useUpdateUser = () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       toast.success(data.message);
     },
+    onError: (error) => {
+      toast.error(error.message || "Failed to updated");
+    },
   });
 };
