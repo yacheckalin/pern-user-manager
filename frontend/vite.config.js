@@ -16,6 +16,7 @@ export default defineConfig({
     alias: {
       "@": "/src",
       "@features": "/src/features",
+      "@pages": "/src/pages",
       "@constants": "/src/constants",
       "@configs": "/src/config",
       "@shared": "/src/shared",

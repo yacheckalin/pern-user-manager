@@ -1,8 +1,9 @@
 import "./App.css";
-import UsersPage from "./pages/UsersPage";
+import UsersPage from "@pages/UsersPage";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AdminLayout from "@layouts/admin";
+import NotFound from "@layouts/components/not-found";
 
 import {
   createBrowserRouter,
@@ -29,8 +30,10 @@ function App() {
           element: <div>Settings</div>,
           handle: { title: "Settings" },
         },
+        { path: "*", element: <NotFound /> },
       ],
     },
+    { path: "*", element: <NotFound /> },
   ]);
 
   return (
