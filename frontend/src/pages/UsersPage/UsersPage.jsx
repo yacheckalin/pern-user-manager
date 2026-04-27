@@ -36,8 +36,6 @@ const UsersPage = () => {
 
   return (
     <div className="page-container">
-      <h1>User Management</h1>
-
       {isLoading ? (
         <Spinner lable="Loading Users ..." />
       ) : (
