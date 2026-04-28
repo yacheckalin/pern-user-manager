@@ -29,76 +29,52 @@ export const useUserPage = () => {
 
   const [highlightedUserId, setHighlightedUserId] = useState(null);
   const handleEditUser = async (formData) => {
-    try {
-      const { message } = await updateMutation.mutateAsync({
-        id: selectedUser.id,
-        ...formData,
-      });
-      triggerHighlight(selectedUser.id);
-      setSelectedUser(null);
-    } catch (error) {
-      throw error;
-    }
+    await updateMutation.mutateAsync({
+      id: selectedUser.id,
+      ...formData,
+    });
+    triggerHighlight(selectedUser.id);
+    setSelectedUser(null);
   };
 
   const activateMutation = useActivateUser();
   const handleActivateUser = async ({ id }) => {
-    try {
-      const { message } = await activateMutation.mutateAsync({
-        id,
-      });
-      triggerHighlight(id);
-      setSelectedUser(null);
-    } catch (error) {
-      throw error;
-    }
+    await activateMutation.mutateAsync({
+      id,
+    });
+    triggerHighlight(id);
+    setSelectedUser(null);
   };
 
   const changePasswordMutation = useChangePasswordUser();
   const handleChangePasswordUser = async (data) => {
-    try {
-      const { message } = await changePasswordMutation.mutateAsync({
-        id: selectedUser?.id,
-        ...data,
-      });
-      triggerHighlight(selectedUser?.id);
-      setSelectedUser(null);
-    } catch (error) {
-      throw error;
-    }
+    await changePasswordMutation.mutateAsync({
+      id: selectedUser?.id,
+      ...data,
+    });
+    triggerHighlight(selectedUser?.id);
+    setSelectedUser(null);
   };
 
   const [createdUser, setCreatedUser] = useState(null);
   const createUserMutation = useCreateUser();
   const handleCreateUser = async (data) => {
-    try {
-      const { message } = await createUserMutation.mutateAsync({
-        ...data,
-      });
-      triggerHighlight(data.id);
-    } catch (e) {
-      throw e;
-    }
+    await createUserMutation.mutateAsync({
+      ...data,
+    });
+    triggerHighlight(data.id);
   };
 
   const deleleUserMutation = useDeleteUser();
   const handleDeleteUser = async (data) => {
-    try {
-      await deleleUserMutation.mutateAsync(data);
-      setSelectedUser(null);
-    } catch (e) {
-      throw e;
-    }
+    await deleleUserMutation.mutateAsync(data);
+    setSelectedUser(null);
   };
 
   const logoutMutation = useLogoutUser();
   const handleLogoutUser = async (data) => {
-    try {
-      await logoutMutation.mutateAsync(data);
-      setSelectedUser(null);
-    } catch (e) {
-      throw e;
-    }
+    await logoutMutation.mutateAsync(data);
+    setSelectedUser(null);
   };
 
   return {
