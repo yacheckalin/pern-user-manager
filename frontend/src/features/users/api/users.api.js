@@ -17,14 +17,3 @@ export const getUsers = async ({
     message: response.message,
   };
 };
-
-export const createNewUser = async ({ ...payload }) => {
-  const response = await api.post(`${API_PREFIX}/users/register`, {
-    ...payload,
-  });
-
-  return {
-    data: response.data,
-    message: response.message,
-  };
-};

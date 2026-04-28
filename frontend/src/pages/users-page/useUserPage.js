@@ -3,9 +3,9 @@ import { useDeleteUser } from "@features/user-delete";
 import { useActivateUser } from "@features/user-activate";
 import { useLogoutUser } from "@features/user-logout";
 import { useUpdateUser } from "@features/user-edit";
+import { useChangePasswordUser } from "@features/user-change-password";
+import { useCreateUser } from "@features/user-create";
 
-import { useChangePasswordUser } from "@features/users/hooks/useChangePasswordUser";
-import { useCreateUser } from "@features/users/hooks/useCreateUser";
 import { useUsers } from "@/features/users";
 import { USER_ITEM_FADE_IN_TIMEOUT } from "@features/users/constants";
 import { useFlashHighlight } from "./useFlashHighlight";

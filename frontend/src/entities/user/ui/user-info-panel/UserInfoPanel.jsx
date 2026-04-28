@@ -3,6 +3,7 @@ import { Filter, Search, UserPlus } from "lucide-react";
 import Spinner from "@shared/ui/spinner";
 import UserFilter from "@features/user-filter/ui";
 import { useState } from "react";
+import CreateUserButton from "@features/user-create";
 
 const UserInfoPanel = ({
   total,
@@ -94,10 +95,11 @@ const UserInfoPanel = ({
           />
         </div>
 
-        <button className=" btn-primary" onClick={() => onCreate()}>
-          <UserPlus size={18} />
-          Add User
-        </button>
+        <CreateUserButton
+          icon={<UserPlus size={18} />}
+          title="Add User"
+          onCallback={() => onCreate()}
+        />
       </div>
     </div>
   );
