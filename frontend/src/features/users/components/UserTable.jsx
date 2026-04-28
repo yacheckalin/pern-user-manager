@@ -1,5 +1,10 @@
 import "./UserTable.css";
-import { formatDate, activeUsers } from "../utils/user.helpers"; // Обычный CSS или CSS Modules
+import {
+  formatDate,
+  activeUsers,
+  onlineUsers,
+  notActive,
+} from "../utils/user.helpers"; // Обычный CSS или CSS Modules
 import { Spinner } from "@shared/Spinner";
 import {
   Trash2,
@@ -32,8 +37,10 @@ export const UserTable = ({
     <div className="table-wrapper">
       <UserInfoPanel
         total={total}
-        online={activeUsers(users)}
+        online={onlineUsers(users)}
         onCreate={onCreate}
+        active={activeUsers(users)}
+        notActive={notActive(users)}
       />
       <table className="custom-table">
         <thead>

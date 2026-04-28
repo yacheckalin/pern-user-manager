@@ -1,7 +1,15 @@
 import "./UserInfoPanel.css";
 import { Filter, Search, UserPlus } from "lucide-react";
+import { Spinner } from "@shared/Spinner";
 
-const UserInfoPanel = ({ total, online, onCreate }) => {
+const UserInfoPanel = ({
+  total,
+  online,
+  onCreate,
+  active,
+  notActive,
+  isLoading,
+}) => {
   return (
     <div className="panel-container">
       <div className="panel-info">
@@ -11,9 +19,18 @@ const UserInfoPanel = ({ total, online, onCreate }) => {
         <div className="mini-stats">
           <span className="dot dot-success"></span> {online} Online
         </div>
+        <div className="mini-stats active">
+          <span className="dot dot-active"></span>
+          {active} Active
+        </div>
+        <div className="mini-stats not-active">
+          <span className="dot dot-not-active"></span>
+          {notActive} Not Active Yet
+        </div>
       </div>
 
       <div className="panel-actions">
+        <div className="spinner-overlay">{isLoading && <Spinner />}</div>
         <div className="search-wrapper">
           <Search className="search-icon" size={18} />
           <input type="text" placeholder="Search by name or email..." />
