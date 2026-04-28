@@ -12,6 +12,7 @@ import UserAvatar from "../user-avatar";
 import DeleteUserButton from "@features/user-delete";
 import UserActivateButton from "@features/user-activate";
 import LogoutUserButton from "@features/user-logout/";
+import EditUserButton from "../../../../features/user-edit";
 
 const UserRow = ({
   highlightedId,
@@ -70,13 +71,11 @@ const UserRow = ({
         <button className="btn-icon text-success" title="Refresh Token">
           <RefreshCw size={18} />
         </button>
-        <button
-          className="btn-icon"
-          onClick={() => onEdit({ ...user, id: user.id })}
+        <EditUserButton
           title="Edit User"
-        >
-          <Pencil size={18} />
-        </button>
+          onCallback={() => onEdit({ ...user, id: user.id })}
+          icon={<Pencil size={18} />}
+        />
         <LogoutUserButton
           onCallback={() => onLogout(user)}
           icon={<LogOut size={18} disabled />}

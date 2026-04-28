@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useDeleteUser } from "@features/user-delete";
 import { useActivateUser } from "@features/user-activate";
 import { useLogoutUser } from "@features/user-logout";
+import { useUpdateUser } from "@features/user-edit";
 
-import { useUpdateUser } from "@features/users/hooks/useUpdateUser";
 import { useChangePasswordUser } from "@features/users/hooks/useChangePasswordUser";
 import { useCreateUser } from "@features/users/hooks/useCreateUser";
 import { useUsers } from "@/features/users";
