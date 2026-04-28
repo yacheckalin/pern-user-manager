@@ -41,10 +41,7 @@ const UserInfoPanel = ({
           Filters
         </button>
 
-        <button
-          className="btn-panel btn-primary-action"
-          onClick={() => onCreate()}
-        >
+        <button className=" btn-primary" onClick={() => onCreate()}>
           <UserPlus size={18} />
           Add User
         </button>
