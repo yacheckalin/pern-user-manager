@@ -1,5 +1,5 @@
 import { useQueryClient, useMutation } from "@tanstack/react-query";
-import { activateUserById } from "../../users/api/users.api";
+import { activateUserById } from "@features/user-activate";
 import { toast } from "react-toastify";
 
 export const useActivateUser = () => {

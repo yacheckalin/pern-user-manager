@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useDeleteUser } from "@features/user-delete";
-import { useUpdateUser } from "@features/users/hooks/useUpdateUser";
 import { useActivateUser } from "@features/user-activate";
+import { useLogoutUser } from "@features/user-logout";
+
+import { useUpdateUser } from "@features/users/hooks/useUpdateUser";
 import { useChangePasswordUser } from "@features/users/hooks/useChangePasswordUser";
 import { useCreateUser } from "@features/users/hooks/useCreateUser";
-import { useLogoutUser } from "@features/users/hooks/useLogoutUser";
 import { useUsers } from "@/features/users";
 import { USER_ITEM_FADE_IN_TIMEOUT } from "@features/users/constants";
 import { useFlashHighlight } from "./useFlashHighlight";

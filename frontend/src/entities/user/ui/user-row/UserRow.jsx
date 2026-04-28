@@ -11,6 +11,7 @@ import {
 import UserAvatar from "../user-avatar";
 import DeleteUserButton from "@features/user-delete";
 import UserActivateButton from "@features/user-activate";
+import LogoutUserButton from "@features/user-logout/";
 
 const UserRow = ({
   highlightedId,
@@ -76,14 +77,11 @@ const UserRow = ({
         >
           <Pencil size={18} />
         </button>
-        <button
-          className="btn-icon btn-danger"
-          title="Revoke Session"
-          disabled={!user.hasActiveSession}
-          onClick={() => onLogout(user)}
-        >
-          <LogOut size={18} disabled />
-        </button>
+        <LogoutUserButton
+          onCallback={() => onLogout(user)}
+          icon={<LogOut size={18} disabled />}
+          {...user}
+        />
         <DeleteUserButton
           {...user}
           onCallback={() => onDelete(user)}

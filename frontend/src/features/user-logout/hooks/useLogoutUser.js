@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { logoutUserById } from "../api/users.api";
+import { logoutUserById } from "@features/user-logout";
 import { toast } from "react-toastify";
 
 export const useLogoutUser = () => {
