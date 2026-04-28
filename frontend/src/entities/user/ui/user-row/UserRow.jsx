@@ -12,7 +12,8 @@ import UserAvatar from "../user-avatar";
 import DeleteUserButton from "@features/user-delete";
 import UserActivateButton from "@features/user-activate";
 import LogoutUserButton from "@features/user-logout/";
-import EditUserButton from "../../../../features/user-edit";
+import EditUserButton from "@features/user-edit";
+import UserChangePasswordButton from "@features/user-change-password";
 
 const UserRow = ({
   highlightedId,
@@ -53,13 +54,11 @@ const UserRow = ({
 
     <td className="text-right">
       <div className="action-group">
-        <button
-          className="btn-icon text-success"
+        <UserChangePasswordButton
+          icon={<KeyRound size={18} />}
+          onCallback={() => onChangePassword({ id: user.id })}
           title="Change Password"
-          onClick={() => onChangePassword({ id: user.id })}
-        >
-          <KeyRound size={18} />
-        </button>
+        />
         <UserActivateButton
           {...user}
           onCallback={() => onActivate(user)}

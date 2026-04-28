@@ -1,5 +1,5 @@
 import { useQueryClient, useMutation } from "@tanstack/react-query";
-import { changeUserPassword } from "../api/users.api";
+import { changeUserPassword } from "@features/user-change-password";
 import { toast } from "react-toastify";
 
 export const useChangePasswordUser = () => {

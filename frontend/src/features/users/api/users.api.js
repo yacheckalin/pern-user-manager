@@ -18,17 +18,6 @@ export const getUsers = async ({
   };
 };
 
-
-export const changeUserPassword = async ({ id, ...payload }) => {
-  const response = await api.patch(`${API_PREFIX}/users/${id}/password`, {
-    ...payload,
-  });
-  return {
-    data: response.data,
-    message: response.message,
-  };
-};
-
 export const createNewUser = async ({ ...payload }) => {
   const response = await api.post(`${API_PREFIX}/users/register`, {
     ...payload,
