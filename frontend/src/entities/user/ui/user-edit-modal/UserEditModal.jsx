@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import "./UserEditModal.css";
 import { Loader2, Pencil, X } from "lucide-react";
 
-export const UserEditModal = ({ isOpen, user, onSave, onClose, isLoading }) => {
+const UserEditModal = ({ isOpen, user, onSave, onClose, isLoading }) => {
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -137,3 +137,5 @@ export const UserEditModal = ({ isOpen, user, onSave, onClose, isLoading }) => {
     </div>
   );
 };
+
+export default UserEditModal;

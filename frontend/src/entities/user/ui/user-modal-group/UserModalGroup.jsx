@@ -1,9 +1,9 @@
-import { UserEditModal } from "@features/users/components/UserEditModal";
-import { UserChangePasswordModal } from "@features/users/components/UserChangePasswordModal";
-import { UserCreateNewModal } from "@features/users/components/UserCreateNewModal";
-import { UserDeleteModal } from "@features/users/components/UserDeleteModal";
-import { UserActivateModal } from "@features/users/components/UserActivateStatusModal";
-import { UserLogoutModal } from "@features/users/components/UserLogoutModal";
+import UserEditModal from "@entities/user/ui/user-edit-modal";
+import UserCreateModal from "@entities/user/ui/user-create-modal";
+import UserDeleteModal from "@entities/user/ui/user-delete-modal";
+import UserActivateModal from "@entities/user/ui/user-activate-modal";
+import UserChangePasswordModal from "@entities/user/ui/user-change-password-modal";
+import UserLogoutModal from "@entities/user/ui/user-logout-modal";
 
 const UserModalGroup = ({
   onClose,
@@ -44,7 +44,7 @@ const UserModalGroup = ({
         isLoading={changePasswordMutation?.isPending}
       />
 
-      <UserCreateNewModal
+      <UserCreateModal
         isOpen={!!modals?.create}
         onSave={handleCreateUser}
         onClose={() => onClose({ create: null })}

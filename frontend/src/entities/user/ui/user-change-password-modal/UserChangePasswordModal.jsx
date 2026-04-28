@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
-import "./UserEditModal.css";
 import { KeyRound, Loader2, X } from "lucide-react";
 
-export const UserChangePasswordModal = ({
+const UserChangePasswordModal = ({
   isOpen,
   user,
   onSave,
@@ -156,3 +155,5 @@ export const UserChangePasswordModal = ({
     </div>
   );
 };
+
+export default UserChangePasswordModal;

@@ -1,15 +1,8 @@
 import { useState } from "react";
-import "./UserDeleteModal.css";
 import { Loader2, X, LogOut } from "lucide-react";
-import { formatDate } from "../utils/user.helpers";
+import { formatDate } from "@features/users/utils/user.helpers";
 
-export const UserLogoutModal = ({
-  isOpen,
-  user,
-  onSave,
-  onClose,
-  isLoading,
-}) => {
+const UserLogoutModal = ({ isOpen, user, onSave, onClose, isLoading }) => {
   const [errors, setErrors] = useState(null);
   if (!isOpen) return null;
 
@@ -119,3 +112,5 @@ export const UserLogoutModal = ({
     )
   );
 };
+
+export default UserLogoutModal;

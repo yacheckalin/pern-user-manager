@@ -1,15 +1,9 @@
 import { useState } from "react";
 import "./UserDeleteModal.css";
 import { Loader2, X, Trash2 } from "lucide-react";
-import { formatDate } from "../utils/user.helpers";
+import { formatDate } from "@features/users/utils/user.helpers";
 
-export const UserDeleteModal = ({
-  isOpen,
-  user,
-  onSave,
-  onClose,
-  isLoading,
-}) => {
+const UserDeleteModal = ({ isOpen, user, onSave, onClose, isLoading }) => {
   const [errors, setErrors] = useState(null);
   if (!isOpen) return null;
 
@@ -119,3 +113,5 @@ export const UserDeleteModal = ({
     )
   );
 };
+
+export default UserDeleteModal;
