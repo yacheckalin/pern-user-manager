@@ -2,10 +2,10 @@
 import ErrorState from "@shared/ui/error-state";
 import Spinner from "@shared/ui/spinner";
 import CreateToolbar from "@shared/ui/create-toolbar";
-import { useUserPage } from "@pages/users-page/useUserPage";
 import { UserPlus } from "lucide-react";
 import UserTable from "@entities/user/ui/user-table";
 import UserModalGroup from "@entities/user/ui/user-modal-group";
+import { useUserManagement } from "@features/users";
 
 const UserManagementPanel = () => {
   const {
@@ -32,7 +32,7 @@ const UserManagementPanel = () => {
     updateMutation,
     changePasswordMutation,
     logoutMutation,
-  } = useUserPage();
+  } = useUserManagement();
 
   const onCallbackHandler = (info, modal) => {
     setSelectedUser(info);
