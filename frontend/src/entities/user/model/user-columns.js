@@ -9,5 +9,5 @@ export const USER_COLUMNS = [
   { key: "updatedAt", label: "Updated", sortable: true },
   { key: "activatedAt", label: "Activated", sortable: true },
   { key: "Login", label: "Last Login", sortable: true },
-  { key: "actions", label: "", sortable: false },
+  { key: "actions", label: "Actions", sortable: false },
 ];

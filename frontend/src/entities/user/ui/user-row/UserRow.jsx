@@ -8,6 +8,7 @@ import {
   Pencil,
   Trash2,
 } from "lucide-react";
+import UserAvatar from "../user-avatar";
 
 const UserRow = ({
   highlightedId,
@@ -27,14 +28,7 @@ const UserRow = ({
   >
     <td className="cell-id">#{user.id}</td>
     <td className="cell-date">
-      <div className="avatar-container">
-        <div className="user-avatar">{user.username[0].toUpperCase()}</div>
-        {user.hasActiveSession && (
-          <span className="online-indicator" title="Active session">
-            <span className="online-pulse"></span>
-          </span>
-        )}
-      </div>
+      <UserAvatar {...user} />
     </td>
     <td className="cell-username">{user.username}</td>
     <td>{user.email}</td>
@@ -72,11 +66,9 @@ const UserRow = ({
           {user.isActive ? <UserMinus size={18} /> : <UserCheck size={18} />}
         </button>
 
-        {/* Refresh Token */}
         <button className="btn-icon text-success" title="Refresh Token">
           <RefreshCw size={18} />
         </button>
-
         <button
           className="btn-icon"
           onClick={() => onEdit({ ...user, id: user.id })}
@@ -84,7 +76,6 @@ const UserRow = ({
         >
           <Pencil size={18} />
         </button>
-        {/* Revoke / Logout */}
         <button
           className="btn-icon btn-danger"
           title="Revoke Session"
