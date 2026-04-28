@@ -2,13 +2,14 @@ import { useState } from "react";
 import { X, UserPlus, Loader2 } from "lucide-react";
 
 export const UserCreateNewModal = ({ onSave, onClose, isOpen }) => {
-  const [formData, setFormData] = useState({
+  const initFormData = {
     username: "",
     email: "",
     password: "",
     confirm_password: "",
     age: "",
-  });
+  };
+  const [formData, setFormData] = useState(initFormData);
 
   const [errors, setErrors] = useState({});
   const [generalError, setGeneralError] = useState(null);
@@ -34,6 +35,7 @@ export const UserCreateNewModal = ({ onSave, onClose, isOpen }) => {
     try {
       await onSave(formData);
       onClose();
+      setFormData(initFormData);
     } catch (err) {
       const newErrors = {};
 

@@ -15,7 +15,10 @@ const NotFound = () => {
           changed, or is temporarily unavailable.
         </p>
         <div className="not-found-actions">
-          <button className="btn-primary" onClick={() => navigate("/users")}>
+          <button
+            className="btn-primary-dark"
+            onClick={() => navigate("/users")}
+          >
             Back to Dashboard
           </button>
           <button className="btn-outline" onClick={() => navigate(-1)}>

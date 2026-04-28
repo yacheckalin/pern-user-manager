@@ -1,5 +1,5 @@
 import "./UserTable.css";
-import { formatDate } from "../utils/user.helpers"; // Обычный CSS или CSS Modules
+import { formatDate, activeUsers } from "../utils/user.helpers"; // Обычный CSS или CSS Modules
 import { Spinner } from "@shared/Spinner";
 import {
   Trash2,
@@ -10,6 +10,7 @@ import {
   LogOut,
   Pencil,
 } from "lucide-react";
+import UserInfoPanel from "./UserInfoPanel";
 
 export const UserTable = ({
   users = [],
@@ -21,6 +22,7 @@ export const UserTable = ({
   onActivate,
   onChangePassword,
   onLogout,
+  onCreate,
 }) => {
   if (isLoading) return <Spinner size="lg" lable="Loading Users ..." />;
   if (!users.length)
@@ -28,7 +30,11 @@ export const UserTable = ({
 
   return (
     <div className="table-wrapper">
-      <div>TOTAL: {total}</div>
+      <UserInfoPanel
+        total={total}
+        online={activeUsers(users)}
+        onCreate={onCreate}
+      />
       <table className="custom-table">
         <thead>
           <tr>

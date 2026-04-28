@@ -8,3 +8,5 @@ export const formatDate = (dateString) => {
     minute: '2-digit'
   });
 };
+
+export const activeUsers = (data) => data.filter((item) => item.hasActiveSession).length

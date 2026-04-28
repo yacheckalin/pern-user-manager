@@ -3,6 +3,7 @@ import { ErrorState } from "@shared/ErrorState";
 import { Spinner } from "@shared/Spinner";
 import { useUserPage } from "./useUserPage";
 import UserModalGroup from "./UserModalGroup";
+import { UserPlus } from "lucide-react";
 
 const UsersPage = () => {
   const {
@@ -50,15 +51,17 @@ const UsersPage = () => {
               details={error?.details}
             />
           )}
-          <div
+          {/* <div
             className="btn-primary "
             onClick={() => setModals({ create: true })}
           >
+            <UserPlus size={18} />
             Create New User
-          </div>
+          </div> */}
           <UserTable
             users={data?.items}
             total={data?.total}
+            onCreate={(info) => onCallbackHandler(info, "create")}
             onDelete={(info) => onCallbackHandler(info, "delete")}
             onEdit={(info) => onCallbackHandler(info, "edit")}
             onActivate={(info) => onCallbackHandler(info, "activate")}
