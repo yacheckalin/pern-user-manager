@@ -1,4 +1,3 @@
-export { UserTable } from './components/UserTable';
-export { useUsers } from './hooks/useUsers';
-
-export * from './api/users.api'
+export * from "./hooks/useUsers";
+export * from "./hooks/useUserManagement";
+export * from "./api/users.api";

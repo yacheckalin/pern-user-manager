@@ -21,9 +21,14 @@ function App() {
       element: <AdminLayout />,
       children: [
         {
+          path: "/dashboard",
+          element: <div>Dashboard</div>,
+          handle: { title: "Dashboard" },
+        },
+        {
           path: "users",
           element: <UsersPage />,
-          handle: { title: "Management Users" },
+          handle: { title: "User Managements" },
         },
         {
           path: "settings",

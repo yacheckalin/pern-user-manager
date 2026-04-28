@@ -1,0 +1,180 @@
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+
+  .modal-content {
+    background: var(--color-background-primary);
+    border: 1px solid var(--color-border-secondary);
+    border-radius: var(--border-radius-lg);
+    width: 90%;
+    max-width: 450px;
+    padding: 24px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+    color: var(--color-text-primary);
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+
+      h2 {
+        font-size: 1.25rem;
+        margin: 0;
+        color: var(--color-text-primary);
+      }
+
+      .btn-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: var(--color-text-tertiary);
+        cursor: pointer;
+        line-height: 1;
+        padding: 4px;
+        border-radius: 4px;
+        transition: background 0.2s;
+
+        &:hover {
+          background: var(--color-background-secondary);
+          color: var(--color-text-primary);
+        }
+      }
+    }
+
+    .edit-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+
+        label {
+          font-size: 0.875rem;
+          font-weight: 500;
+          color: var(--color-text-secondary);
+        }
+
+        input {
+          padding: 10px 12px;
+          background: var(--color-background-secondary);
+          border: 1px solid var(--color-border-secondary);
+          border-radius: var(--border-radius-md);
+          color: var(--color-text-primary);
+          font-size: 1rem;
+          transition: all 0.2s ease;
+
+          &:focus {
+            outline: none;
+            border-color: var(--color-button-primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+          }
+
+          &.input-error {
+            border-color: var(--color-text-danger);
+            background-color: rgba(220, 38, 38, 0.05);
+          }
+        }
+
+        .error-message {
+          color: var(--color-text-danger);
+          font-size: 0.75rem;
+          margin-top: 4px;
+          font-weight: 500;
+          animation: shake 0.2s ease-in-out;
+        }
+      }
+
+      .general-error {
+        background: var(--color-text-danger);
+        color: white;
+        padding: 10px;
+        border-radius: var(--border-radius-md);
+        margin-bottom: 16px;
+        font-size: 0.875rem;
+        text-align: center;
+      }
+
+      .modal-footer {
+        margin-top: 24px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+
+        .btn-primary {
+          background: var(--color-button-primary);
+          color: #ffffff;
+          border: none;
+          padding: 10px 20px;
+          border-radius: var(--border-radius-md);
+          cursor: pointer;
+          font-weight: 600;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          transition:
+            background 0.2s,
+            transform 0.1s;
+
+          &:hover:not(:disabled) {
+            background: var(--color-button-hover);
+          }
+
+          &:active:not(:disabled) {
+            transform: scale(0.98);
+          }
+
+          &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+          }
+        }
+
+        .btn-secondary {
+          background: transparent;
+          color: var(--color-text-secondary);
+          border: 1px solid var(--color-border-secondary);
+          padding: 10px 20px;
+          border-radius: var(--border-radius-md);
+          cursor: pointer;
+          transition: all 0.2s;
+          font-weight: 600;
+          opacity: 0.8;
+
+          &:hover {
+            background: var(--color-background-secondary);
+            color: var(--color-text-primary);
+          }
+        }
+      }
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
