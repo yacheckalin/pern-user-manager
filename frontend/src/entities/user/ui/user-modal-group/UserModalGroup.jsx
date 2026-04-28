@@ -3,7 +3,7 @@ import { UserChangePasswordModal } from "@features/users/components/UserChangePa
 import { UserCreateNewModal } from "@features/users/components/UserCreateNewModal";
 import { UserDeleteModal } from "@features/users/components/UserDeleteModal";
 import { UserActivateModal } from "@features/users/components/UserActivateStatusModal";
-import { UserLogoutModal } from "../../features/users/components/UserLogoutModal";
+import { UserLogoutModal } from "@features/users/components/UserLogoutModal";
 
 const UserModalGroup = ({
   onClose,
