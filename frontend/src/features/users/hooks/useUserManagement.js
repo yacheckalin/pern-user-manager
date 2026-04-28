@@ -8,7 +8,7 @@ import { useCreateUser } from "@features/user-create";
 
 import { useUsers } from "@/features/users";
 import { USER_ITEM_FADE_IN_TIMEOUT } from "@features/users/constants";
-import { useFlashHighlight } from "../../../pages/users-page/useFlashHighlight";
+import { useFlashHighlight } from "./useFlashHighlight";
 
 export const useUserManagement = () => {
   const [filters] = useState({ page: 1, search: "", limit: 10, offset: 0 });
