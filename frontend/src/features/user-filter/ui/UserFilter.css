@@ -1,0 +1,94 @@
+.filter-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0; 
+  z-index: 100;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  min-width: 280px;
+  margin-top: 10px;
+
+  & .filter-group {
+    margin-bottom: 16px;
+    border-bottom: 1px solid #f3f4f6;
+    padding-bottom: 8px;
+
+    &:last-of-type {
+      border-bottom: none;
+    }
+
+    & label {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #4b5563;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    & select,
+    & input[type="date"],
+    & input[type="range"] {
+      width: 100%;
+      padding: 6px;
+      border-radius: 6px;
+      border: 1px solid #d1d5db;
+      font-size: 0.875rem;
+    }
+
+    & .radio-group {
+      display: flex;
+      gap: 12px;
+
+      & label {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        text-transform: none;
+        font-weight: 400;
+        cursor: pointer;
+      }
+    }
+  }
+
+  & .filter-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 20px;
+
+    & button {
+      flex: 1;
+      padding: 8px;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &.btn-reset {
+        background: #f9fafb;
+        border: 1px solid #d1d5db;
+        color: #374151;
+
+        &:hover {
+          background: #f3f4f6;
+        }
+      }
+
+      &.btn-apply {
+        background: #3b82f6;
+        border: 1px solid #2563eb;
+        color: white;
+
+        &:hover {
+          background: #2563eb;
+        }
+      }
+    }
+  }
+}

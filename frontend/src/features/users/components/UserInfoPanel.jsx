@@ -1,6 +1,8 @@
 import "./UserInfoPanel.css";
 import { Filter, Search, UserPlus } from "lucide-react";
 import { Spinner } from "@shared/Spinner";
+import UserFilter from "@features/user-filter";
+import { useState } from "react";
 
 const UserInfoPanel = ({
   total,
@@ -10,6 +12,41 @@ const UserInfoPanel = ({
   notActive,
   isLoading,
 }) => {
+  const [showFilters, setShowFilters] = useState(false);
+
+  const [filters, setFilters] = useState({
+    role: "",
+    age: 18,
+    isActive: "",
+    hasActiveSession: "",
+    createdAt: "",
+  });
+
+  const handleFilterChange = (name, value) => {
+    setFilters((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const resetFilters = () => {
+    const cleared = {
+      role: "",
+      age: 18,
+      isActive: "",
+      hasActiveSession: "",
+      createdAt: "",
+    };
+    setFilters(cleared);
+    // onApplyFilters(cleared);
+  };
+
+  const applyFilters = () => {
+    // onApplyFilters(filters); /
+    setShowFilters(false);
+  };
+
+  const activeCount = Object.values(filters).filter(
+    (v) => v !== "" && v !== 18,
+  ).length;
+
   return (
     <div className="panel-container">
       <div className="panel-info">
@@ -36,10 +73,26 @@ const UserInfoPanel = ({
           <input type="text" placeholder="Search by name or email..." />
         </div>
 
-        <button className="btn-panel">
-          <Filter size={18} />
-          Filters
-        </button>
+        <div className="filter-wrapper" style={{ position: "relative" }}>
+          <button
+            className={`btn-panel ${activeCount > 0 ? "active" : ""}`}
+            onClick={() => setShowFilters(!showFilters)}
+          >
+            <Filter size={18} />
+            Filters
+            {activeCount > 0 && (
+              <span className="filter-badge">{activeCount}</span>
+            )}
+          </button>
+
+          <UserFilter
+            showFilters={showFilters}
+            filters={filters}
+            handleFilterChange={handleFilterChange}
+            applyFilters={applyFilters}
+            resetFilters={resetFilters}
+          />
+        </div>
 
         <button className=" btn-primary" onClick={() => onCreate()}>
           <UserPlus size={18} />

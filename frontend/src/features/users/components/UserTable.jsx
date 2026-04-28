@@ -39,8 +39,8 @@ export const UserTable = ({
         total={total}
         online={onlineUsers(users)}
         onCreate={onCreate}
-        active={activeUsers(users)}
         notActive={notActive(users)}
+        active={activeUsers(users)}
       />
       <table className="custom-table">
         <thead>
