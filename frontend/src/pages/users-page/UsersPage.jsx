@@ -1,6 +1,7 @@
 import { UserTable } from "@features/users";
-import { ErrorState } from "@shared/ErrorState";
-import { Spinner } from "@shared/Spinner";
+import ErrorState from "@shared/ui/error-state";
+import Spinner from "@shared/ui/spinner";
+import CreateToolbar from "@shared/ui/create-toolbar";
 import { useUserPage } from "./useUserPage";
 import UserModalGroup from "./UserModalGroup";
 import { UserPlus } from "lucide-react";
@@ -51,13 +52,13 @@ const UsersPage = () => {
               details={error?.details}
             />
           )}
-          {/* <div
-            className="btn-primary "
-            onClick={() => setModals({ create: true })}
-          >
-            <UserPlus size={18} />
-            Create New User
-          </div> */}
+          {!data?.items.length && (
+            <CreateToolbar
+              description={"Create New User"}
+              onOpen={() => setModals({ create: true })}
+              icon={<UserPlus size={18} />}
+            />
+          )}
           <UserTable
             users={data?.items}
             total={data?.total}

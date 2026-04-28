@@ -4,8 +4,8 @@ import {
   activeUsers,
   onlineUsers,
   notActive,
-} from "../utils/user.helpers"; // Обычный CSS или CSS Modules
-import { Spinner } from "@shared/Spinner";
+} from "../utils/user.helpers";
+import Spinner from "@shared/ui/spinner";
 import {
   Trash2,
   KeyRound,

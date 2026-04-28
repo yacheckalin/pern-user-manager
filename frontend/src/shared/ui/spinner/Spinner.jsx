@@ -6,7 +6,7 @@ const SIZES = {
   lg: "lg",
 };
 
-export const Spinner = ({ size = "md", label, fullPage = false }) => {
+const Spinner = ({ size = "md", label, fullPage = false }) => {
   const sizeClass = SIZES[size];
 
   const SpinnerElement = (
@@ -50,3 +50,5 @@ export const Spinner = ({ size = "md", label, fullPage = false }) => {
     </div>
   );
 };
+
+export default Spinner;

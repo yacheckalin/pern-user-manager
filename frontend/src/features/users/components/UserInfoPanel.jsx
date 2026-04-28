@@ -1,7 +1,7 @@
 import "./UserInfoPanel.css";
 import { Filter, Search, UserPlus } from "lucide-react";
-import { Spinner } from "@shared/Spinner";
-import UserFilter from "@features/user-filter";
+import Spinner from "@shared/ui/spinner";
+import UserFilter from "@features/user-filter/ui";
 import { useState } from "react";
 
 const UserInfoPanel = ({

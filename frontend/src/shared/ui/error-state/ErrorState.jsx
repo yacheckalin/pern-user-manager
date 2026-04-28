@@ -1,14 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { FALLBACK_ERROR, ERROR_MESSAGES } from "@constants";
 
-export const ErrorState = ({
-  message,
-  code,
-  queryKey,
-  onRetry,
-  status,
-  details,
-}) => {
+const ErrorState = ({ message, code, queryKey, onRetry, status, details }) => {
   const queryClient = useQueryClient();
 
   const { title, description } =
@@ -134,3 +127,5 @@ export const ErrorState = ({
     </div>
   );
 };
+
+export default ErrorState;
