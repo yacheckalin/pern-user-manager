@@ -9,7 +9,8 @@ import {
   Trash2,
 } from "lucide-react";
 import UserAvatar from "../user-avatar";
-import DeleteUserButton from "../../../../features/user-delete/ui";
+import DeleteUserButton from "@features/user-delete";
+import UserActivateButton from "@features/user-activate";
 
 const UserRow = ({
   highlightedId,
@@ -57,16 +58,14 @@ const UserRow = ({
         >
           <KeyRound size={18} />
         </button>
-
-        <button
-          className={`btn-icon ${user.isActive ? "text-danger" : "text-success"}`}
-          title={user.isActive ? "Already Activated" : "Activate User"}
-          onClick={() => onActivate(user)}
-          disabled={!!user.isActive}
-        >
-          {user.isActive ? <UserMinus size={18} /> : <UserCheck size={18} />}
-        </button>
-
+        <UserActivateButton
+          {...user}
+          onCallback={() => onActivate(user)}
+          icons={{
+            on: <UserMinus size={18} />,
+            off: <UserCheck size={18} />,
+          }}
+        />
         <button className="btn-icon text-success" title="Refresh Token">
           <RefreshCw size={18} />
         </button>
@@ -85,7 +84,11 @@ const UserRow = ({
         >
           <LogOut size={18} disabled />
         </button>
-        <DeleteUserButton onCallback={() => onDelete(user)} />
+        <DeleteUserButton
+          {...user}
+          onCallback={() => onDelete(user)}
+          icon={<Trash2 size={18} />}
+        />
       </div>
     </td>
   </tr>

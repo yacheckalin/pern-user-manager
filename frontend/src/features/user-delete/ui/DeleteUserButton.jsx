@@ -1,8 +1,6 @@
-import { Trash2 } from "lucide-react";
-
-const DeleteUserButton = ({ onCallback }) => (
+const DeleteUserButton = ({ onCallback, icon }) => (
   <button className="btn-icon btn-danger" onClick={onCallback} title="Delete">
-    <Trash2 size={18} />
+    {icon}
   </button>
 );
 export default DeleteUserButton;
