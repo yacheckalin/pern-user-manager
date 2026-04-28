@@ -9,6 +9,7 @@ import {
   Trash2,
 } from "lucide-react";
 import UserAvatar from "../user-avatar";
+import DeleteUserButton from "../../../../features/user-delete/ui";
 
 const UserRow = ({
   highlightedId,
@@ -84,13 +85,7 @@ const UserRow = ({
         >
           <LogOut size={18} disabled />
         </button>
-        <button
-          className="btn-icon btn-danger"
-          onClick={() => onDelete(user)}
-          title="Delete"
-        >
-          <Trash2 size={18} />
-        </button>
+        <DeleteUserButton onCallback={() => onDelete(user)} />
       </div>
     </td>
   </tr>

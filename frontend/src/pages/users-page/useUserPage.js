@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useDeleteUser } from "@features/users/hooks/useDeleteUser";
+import { useDeleteUser } from "@features/user-delete/hooks/useDeleteUser";
 import { useUpdateUser } from "@features/users/hooks/useUpdateUser";
 import { useActivateUser } from "@features/users/hooks/useActivateUser";
 import { useChangePasswordUser } from "@features/users/hooks/useChangePasswordUser";

@@ -18,11 +18,6 @@ export const getUsers = async ({
   };
 };
 
-export const deleteUserById = async ({ id = null }) => {
-  const response = await api.delete(`${API_PREFIX}/users/${id}`);
-  return { data: response.data, message: response.message };
-};
-
 export const updateUserById = async ({ id, ...payload }) => {
   const response = await api.put(`${API_PREFIX}/users/${id}`, {
     ...payload,
