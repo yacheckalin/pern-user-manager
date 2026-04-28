@@ -1,1 +1,1 @@
-export { default } from "./UserTableRef";
+export { default } from "./UserTable";

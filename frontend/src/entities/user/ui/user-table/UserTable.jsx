@@ -1,14 +1,15 @@
 import Table from "@shared/ui/table";
 import { USER_COLUMNS } from "@entities/user/model/user-columns";
 import UserRow from "../user-row";
-import UserInfoPanel from "@features/users/components/UserInfoPanel";
+import UserInfoPanel from "@entities/user/ui/user-info-panel";
 import {
   onlineUsers,
   notActive,
   activeUsers,
 } from "@features/users/utils/user.helpers";
+import "./UserTable.css";
 
-const UserTableRef = ({
+const UserTable = ({
   data,
   highlightedId,
   onCreate,
@@ -48,4 +49,4 @@ const UserTableRef = ({
   );
 };
 
-export default UserTableRef;
+export default UserTable;

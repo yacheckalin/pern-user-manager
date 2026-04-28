@@ -4,7 +4,7 @@ import Spinner from "@shared/ui/spinner";
 import CreateToolbar from "@shared/ui/create-toolbar";
 import { useUserPage } from "@pages/users-page/useUserPage";
 import { UserPlus } from "lucide-react";
-import UserTableRef from "@entities/user/ui/user-table/UserTableRef";
+import UserTable from "@entities/user/ui/user-table";
 import UserModalGroup from "@entities/user/ui/user-modal-group";
 
 const UserManagementPanel = () => {
@@ -60,7 +60,7 @@ const UserManagementPanel = () => {
             />
           )}
           {data?.items.length > 0 && (
-            <UserTableRef
+            <UserTable
               data={data?.items}
               highlightedId={highlightedId}
               onCreate={(info) => onCallbackHandler(info, "create")}
