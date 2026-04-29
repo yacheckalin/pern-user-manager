@@ -1,5 +1,5 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { logoutUserById, logoutSessionByTokenId } from "@features/user-logout";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { logoutUserById, logoutSessionByTokenId, getAllTokensByUserId } from "@features/user-logout";
 import { toast } from "react-toastify";
 
 export const useLogoutUser = () => {
@@ -31,3 +31,17 @@ export const useRevokeSession = () => {
     },
   });
 };
+
+export const useTokens = (filters) => {
+  return useQuery({
+    queryKey: ["tokens", filters],
+    queryFn: () =>
+      getAllTokensByUserId(filters).then((r) => ({ items: r.data, total: r.total })),
+    keepPreviousData: true,
+    onError: (error) => {
+      toast.error(error.message || 'Failed to load tokens')
+    }
+  });
+}
+
+

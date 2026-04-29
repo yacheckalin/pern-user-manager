@@ -21,3 +21,14 @@ export const logoutSessionByTokenId = async ({ id, ...payload }) => {
     message: response.message,
   };
 };
+
+export const getAllTokensByUserId = async ({ id, ...payload }) => {
+  const response = await api.get(`${API_PREFIX}/users/${id}/tokens`, {
+    ...payload
+  });
+  return {
+    data: response.data,
+    message: response.message
+  }
+}
+

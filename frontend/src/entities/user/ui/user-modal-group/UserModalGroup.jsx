@@ -66,13 +66,15 @@ const UserModalGroup = ({
         isLoading={activateMutation?.isPending}
       />
 
-      <UserLogoutModal
-        isOpen={!!modals?.logout}
-        user={user}
-        onClose={() => onClose({ logout: null })}
-        onSave={handleLogoutUser}
-        isLoading={logoutMutation?.isPending}
-      />
+      {user && (
+        <UserLogoutModal
+          isOpen={!!modals?.logout}
+          user={user}
+          onClose={() => onClose({ logout: null })}
+          onSave={handleLogoutUser}
+          isLoading={logoutMutation?.isPending}
+        />
+      )}
     </>
   );
 };
