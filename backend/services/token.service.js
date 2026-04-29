@@ -24,6 +24,22 @@ class RefreshTokenService {
     this.userRepository = new UserRepository(db);
   }
 
+  async getAllByUserId(userId) {
+    const user = await this.userRepository.findUserById(userId);
+
+    if (!user) {
+      throw new ApiError({
+        message: USER_ERRORS.NOT_FOUND,
+        code: USER_CODES.USER_NOT_FOUND,
+        status: HTTP_BAD_REQUEST,
+      });
+    }
+
+    const tokens = await this.refreshTokenRepository.findTokensByUserId(userId);
+
+    return tokens;
+  }
+
   async createToken(data) {
     // The data has already been validated in AuthService
     const accessToken = this.generateAccessToken(data);

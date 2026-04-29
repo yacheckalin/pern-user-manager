@@ -323,6 +323,7 @@ Base URL: `http://localhost:5000/users`
 
 - `GET /api/v1/users` - Get all users
 - `GET /api/v1/users/:id` - Get user by ID
+- `GET /api/v1/users/:id/tokens` - Get all valid tokens by user id
 - `POST /api/v1/users` - Create new user
 - `PUT /api/v1/users/:id` - Update user by ID
 - `PATCH /api/v1/users/:id/password` - Change user password by ID

@@ -13,6 +13,11 @@ router.get(
   validate(userSchemas.id),
   userController.getUser.bind(userController),
 );
+router.get(
+  "/:id/tokens",
+  validate(userSchemas.id),
+  userController.getAllTokensByUser.bind(userController),
+);
 
 router.post(
   "/",

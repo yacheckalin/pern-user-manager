@@ -81,3 +81,6 @@ POST http://localhost:5000/api/v1/auth/refresh
 
 ### Get metrics
 GET http://localhost:5000/api/v1/metrics
+
+### Get all valid tokens for user
+GET http://localhost:5000/api/v1/users/7/tokens

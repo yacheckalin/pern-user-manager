@@ -7,7 +7,7 @@ class RefreshTokenRepository {
   }
 
   async findTokensByUserId(id) {
-    const query = `SELECT * FROM ${this.table} WHERE user_id = $1`;
+    const query = `SELECT * FROM ${this.table} WHERE user_id = $1 AND revoked_at IS NULL AND expires_at > NOW()`;
     const { rows } = await this.pool.query(query, [id]);
     return RefreshToken.fromDatabaseArray(rows);
   }
