@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTokens } from "@features/user-logout";
 import { Loader2, LogOut, Monitor } from "lucide-react";
 import Button from "@shared/ui/button/Button";
@@ -7,7 +7,12 @@ const UserSessionList = ({ userId, onSessionRevoke, onError, onLoad }) => {
   const [revokingId, setRevokingId] = useState(null);
   const [removingIds, setRemovingIds] = useState(new Set());
 
-  const { data: tokens, isError, isLoading } = useTokens({ id: userId });
+  const { data: tokens, isError, isLoading, error } = useTokens({ id: userId });
+
+  useEffect(() => {
+    if (isError) onError(error?.message);
+  }, [isError, error?.message, onLoad, onError]);
+
   onLoad(tokens?.items?.length);
 
   const handleRevokeSession = async (tokenId) => {
@@ -22,7 +27,7 @@ const UserSessionList = ({ userId, onSessionRevoke, onError, onLoad }) => {
           next.delete(tokenId);
           return next;
         });
-      }, 1000);
+      }, 1500);
     } catch (err) {
       onError(err.message);
     } finally {

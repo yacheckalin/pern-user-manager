@@ -23,14 +23,22 @@ const UserEditModal = ({ isOpen, user, onSave, onClose, isLoading }) => {
 
   if (!isOpen) return null;
 
+  const hasChanged = ({ username, email, age }) =>
+    username !== formData.username ||
+    email !== formData.email ||
+    age !== formData.age;
+
   const handleSubmit = async (e) => {
     setErrors({});
     setGeneralError(null);
     e.preventDefault();
 
     try {
-      await onSave(formData);
-      onClose();
+      // save only when something was changed
+      if (hasChanged(user)) {
+        await onSave(formData);
+        onClose();
+      }
     } catch (err) {
       const newErrors = {};
 

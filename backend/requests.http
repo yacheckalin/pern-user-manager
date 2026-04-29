@@ -49,8 +49,8 @@ POST http://localhost:5000/api/v1/users/register
 Content-Type: application/json
 
 {
-  "username":"sos211",
-  "email": "sos211@sos.com",
+  "username":"sos2112",
+  "email": "sos2112@sos.com",
   "password": "password",
   "confirm_password": "password"
 }
@@ -61,7 +61,7 @@ POST http://localhost:5000/api/v1/auth/login
 Content-Type: application/json
 
 {
-  "username": "sos211@sos.com",
+  "username": "sos2112@sos.com",
   "password": "password"
 }
 
