@@ -328,6 +328,7 @@ Base URL: `http://localhost:5000/users`
 - `PUT /api/v1/users/:id` - Update user by ID
 - `PATCH /api/v1/users/:id/password` - Change user password by ID
 - `DELETE /api/v1/users/:id` - Delete user by ID
+- `DELETE /api/v1/tokens/:id` - Delete token by TokenID
 - `PATCH /api/v1/users/:id/activate` - Activate user by ID
 - `POST /api/v1/users/register` - Register a new user
 
