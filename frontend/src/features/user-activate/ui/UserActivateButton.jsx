@@ -1,12 +1,12 @@
 import Button from "@shared/ui/button";
 
-const UserActivateButton = ({ onCallback, icons, ...user }) => (
+const UserActivateButton = ({ onCallback, icons, isActive }) => (
   <Button
-    className={`btn-icon ${user.isActive ? "text-danger" : "text-success"}`}
-    title={user.isActive ? "Already Activated" : "Activate User"}
+    className={`btn-icon ${isActive ? "text-danger" : "text-success"}`}
+    title={isActive ? "Already Activated" : "Activate User"}
     callback={onCallback}
-    disabled={!!user.isActive}
-    icon={user.isActive ? icons.on : icons.off}
+    disabled={!!isActive}
+    icon={isActive ? icons.on : icons.off}
   />
 );
 

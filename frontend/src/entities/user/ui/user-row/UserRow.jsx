@@ -61,7 +61,7 @@ const UserRow = ({
           onCallback={() => onChangePassword({ id: user.id })}
         />
         <UserActivateButton
-          {...user}
+          isActive={user.isActive}
           onCallback={() => onActivate(user)}
           icons={{
             on: <UserMinus size={18} />,
@@ -73,6 +73,7 @@ const UserRow = ({
           icon={<Pencil size={18} />}
         />
         <LogoutUserButton
+          hasActiveSession={user.hasActiveSession}
           onCallback={() => onLogout(user)}
           icon={<LogOut size={18} disabled />}
         />

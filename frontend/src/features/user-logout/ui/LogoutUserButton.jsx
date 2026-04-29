@@ -1,13 +1,12 @@
 import Button from "@shared/ui/button";
 
-const LogoutUserButton = ({ onCallback, icon, ...user }) => (
+const LogoutUserButton = ({ onCallback, icon, hasActiveSession }) => (
   <Button
     callback={onCallback}
     className="btn-icon btn-danger"
     title="Revoke Session"
-    disabled={!user.hasActiveSession}
+    disabled={!hasActiveSession}
     icon={icon}
-    {...user}
   />
 );
 

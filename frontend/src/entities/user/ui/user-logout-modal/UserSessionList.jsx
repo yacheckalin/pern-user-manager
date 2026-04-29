@@ -12,15 +12,20 @@ const UserSessionList = ({ userId, onSessionRevoke, onError, onLoad }) => {
 
   useEffect(() => {
     if (isError) onError(error?.message);
-  }, [isError, error?.message, onLoad, onError]);
+  }, [isError]);
 
-  onLoad(tokens?.items?.length);
+  useEffect(() => {
+    if (tokens?.items !== undefined) {
+      onLoad(tokens.items.length);
+    }
+  }, [tokens?.items?.length]);
 
   const handleRevokeSession = async (tokenId) => {
     if (revokingId) return;
     setRevokingId(tokenId);
     try {
       await onSessionRevoke({ userId, tokenId });
+      await delay(USER_SPINNER_DELAY);
       setRemovingIds((prev) => new Set(prev).add(tokenId));
       setTimeout(() => {
         setRemovingIds((prev) => {
@@ -29,7 +34,6 @@ const UserSessionList = ({ userId, onSessionRevoke, onError, onLoad }) => {
           return next;
         });
       }, 1500);
-      await delay(USER_SPINNER_DELAY);
     } catch (err) {
       onError(err.message);
     } finally {

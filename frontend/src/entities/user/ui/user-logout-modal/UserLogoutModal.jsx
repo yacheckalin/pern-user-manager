@@ -110,6 +110,7 @@ const UserLogoutModal = ({
                 onError={setErrors}
                 onSessionRevoke={onSessionRevoke}
                 onLoad={setTotalSessions}
+                onClose={onClose}
               />
             </div>
             <div className="modal-footer">
@@ -120,7 +121,7 @@ const UserLogoutModal = ({
               <button
                 type="submit"
                 className="btn-primary"
-                disabled={isLoading || isSubmitting}
+                disabled={isLoading || isSubmitting || !totalSessions}
               >
                 {isLoading || isSubmitting ? (
                   <Loader2 className="loader-icon spin" />
