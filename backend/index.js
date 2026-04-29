@@ -4,10 +4,15 @@ import cors from "cors";
 import userRoutes from "./routes/user-routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import metricsRoutes from "./routes/metrics.routes.js";
+import tokenRoutes from "./routes/tokens.routes.js";
 import errorHandler from "./middleware/error-handler.js";
 import db from "./config/database.js";
 import cookieParser from "cookie-parser";
-import { API_PREFIX, API_VERSION, HTTP_INTERNAL_SERVER_ERROR } from "./constants/index.js";
+import {
+  API_PREFIX,
+  API_VERSION,
+  HTTP_INTERNAL_SERVER_ERROR,
+} from "./constants/index.js";
 import logger from "./logger.js";
 import morganMiddleware from "./middleware/morgan.js";
 import metrics from "./middleware/metrics.js";
@@ -21,19 +26,24 @@ const swaggerDocument = YAML.load("./openapi.yml");
 
 const app = express();
 
-const whitelist = ['http://localhost:5173'];
+const whitelist = ["http://localhost:5173"];
 const corsOptions = {
   origin: function (origin, callback) {
     if (!origin || whitelist.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
-      callback(new ApiError({ message: 'Not allowed by CORS', status: HTTP_INTERNAL_SERVER_ERROR }));
+      callback(
+        new ApiError({
+          message: "Not allowed by CORS",
+          status: HTTP_INTERNAL_SERVER_ERROR,
+        }),
+      );
     }
   },
-  exposedHeaders: ['x-total-count'],
+  exposedHeaders: ["x-total-count"],
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 };
 
 app.use(cors(corsOptions));
@@ -48,6 +58,7 @@ app.use(metrics());
 app.use(`${API_URL}/users`, userRoutes);
 app.use(`${API_URL}/auth`, authRoutes);
 app.use(`${API_URL}/docs`, swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use(`${API_URL}/tokens`, tokenRoutes);
 
 app.use(errorHandler);
 
