@@ -1,12 +1,14 @@
+import Button from "@shared/ui/button";
+
 const LogoutUserButton = ({ onCallback, icon, ...user }) => (
-  <button
+  <Button
+    callback={onCallback}
     className="btn-icon btn-danger"
     title="Revoke Session"
     disabled={!user.hasActiveSession}
-    onClick={onCallback}
-  >
-    {icon}
-  </button>
+    icon={icon}
+    {...user}
+  />
 );
 
 export default LogoutUserButton;

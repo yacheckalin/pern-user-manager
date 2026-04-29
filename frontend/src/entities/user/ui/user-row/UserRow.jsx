@@ -67,9 +67,6 @@ const UserRow = ({
             off: <UserCheck size={18} />,
           }}
         />
-        <button className="btn-icon text-success" title="Refresh Token">
-          <RefreshCw size={18} />
-        </button>
         <EditUserButton
           title="Edit User"
           onCallback={() => onEdit({ ...user, id: user.id })}
