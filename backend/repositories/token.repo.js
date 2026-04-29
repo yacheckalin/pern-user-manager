@@ -26,8 +26,8 @@ class RefreshTokenRepository {
     return RefreshToken.fromDatabaseArray(rows);
   }
 
-  async findTokenByHash(token, returning = "*") {
-    const query = `SELECT * FROM ${this.table} WHERE token_hash = $1 RETURNING ${returning}`;
+  async findTokenByHash(token) {
+    const query = `SELECT * FROM ${this.table} WHERE token_hash = $1`;
     const { rows } = await this.pool.query(query, [token]);
     return RefreshToken.fromDatabase(rows[0]);
   }
