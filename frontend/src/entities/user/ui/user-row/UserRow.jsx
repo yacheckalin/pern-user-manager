@@ -32,7 +32,10 @@ const UserRow = ({
   >
     <td className="cell-id">#{user.id}</td>
     <td className="cell-date">
-      <UserAvatar {...user} />
+      <UserAvatar
+        username={user?.username}
+        hasActiveSession={user?.hasActiveSession}
+      />
     </td>
     <td className="cell-username">{user.username}</td>
     <td>{user.email}</td>
@@ -72,10 +75,8 @@ const UserRow = ({
         <LogoutUserButton
           onCallback={() => onLogout(user)}
           icon={<LogOut size={18} disabled />}
-          {...user}
         />
         <DeleteUserButton
-          {...user}
           onCallback={() => onDelete(user)}
           icon={<Trash2 size={18} />}
         />

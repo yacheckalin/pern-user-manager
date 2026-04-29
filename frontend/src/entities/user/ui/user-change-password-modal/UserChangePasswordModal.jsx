@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { KeyRound, Loader2, X } from "lucide-react";
+import { delay, USER_SPINNER_DELAY } from "@features/users";
 
 const UserChangePasswordModal = ({
   isOpen,
@@ -15,6 +16,7 @@ const UserChangePasswordModal = ({
   });
   const [errors, setErrors] = useState({});
   const [generalError, setGeneralError] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -30,11 +32,16 @@ const UserChangePasswordModal = ({
   if (!isOpen) return null;
 
   const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
     setErrors({});
     setGeneralError(null);
-    e.preventDefault();
     try {
       await onSave({ id: user.id, ...formData });
+      await delay(USER_SPINNER_DELAY);
       onClose();
     } catch (err) {
       const newErrors = {};
@@ -63,6 +70,8 @@ const UserChangePasswordModal = ({
       }
 
       setErrors(newErrors);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -141,9 +150,13 @@ const UserChangePasswordModal = ({
               Cancel
             </button>
 
-            <button type="submit" className="btn-primary" disabled={isLoading}>
-              {isLoading ? (
-                <Loader2 className="loader-icon" />
+            <button
+              type="submit"
+              className="btn-primary"
+              disabled={isLoading || isSubmitting}
+            >
+              {isLoading || isSubmitting ? (
+                <Loader2 className="loader-icon spin" />
               ) : (
                 <KeyRound size={18} />
               )}

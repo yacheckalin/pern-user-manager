@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { X, UserPlus, Loader2 } from "lucide-react";
+import { delay, USER_SPINNER_DELAY } from "@features/users";
 
 const UserCreateModal = ({ onSave, onClose, isOpen }) => {
   const initFormData = {
@@ -14,6 +15,7 @@ const UserCreateModal = ({ onSave, onClose, isOpen }) => {
   const [errors, setErrors] = useState({});
   const [generalError, setGeneralError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isOpen) return null;
   const handleChange = (e) => {
@@ -24,16 +26,22 @@ const UserCreateModal = ({ onSave, onClose, isOpen }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     setIsLoading(true);
     setGeneralError(null);
 
     if (formData.password !== formData.confirm_password) {
       setErrors({ confirm_password: "Passwords do not match" });
       setIsLoading(false);
+      setIsSubmitting(false);
     }
 
     try {
       await onSave(formData);
+      await delay(USER_SPINNER_DELAY);
+
       onClose();
       setFormData(initFormData);
     } catch (err) {
@@ -75,6 +83,7 @@ const UserCreateModal = ({ onSave, onClose, isOpen }) => {
       setErrors(newErrors);
     } finally {
       setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -177,7 +186,7 @@ const UserCreateModal = ({ onSave, onClose, isOpen }) => {
             </button>
             <button type="submit" className="btn-primary" disabled={isLoading}>
               {isLoading ? (
-                <Loader2 className="loader-icon" />
+                <Loader2 className="loader-icon spin" />
               ) : (
                 <UserPlus size={18} />
               )}

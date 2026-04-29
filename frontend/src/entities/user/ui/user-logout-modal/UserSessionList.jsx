@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useTokens } from "@features/user-logout";
 import { Loader2, LogOut, Monitor } from "lucide-react";
 import Button from "@shared/ui/button/Button";
+import { delay, USER_SPINNER_DELAY } from "@features/users";
 
 const UserSessionList = ({ userId, onSessionRevoke, onError, onLoad }) => {
   const [revokingId, setRevokingId] = useState(null);
@@ -28,6 +29,7 @@ const UserSessionList = ({ userId, onSessionRevoke, onError, onLoad }) => {
           return next;
         });
       }, 1500);
+      await delay(USER_SPINNER_DELAY);
     } catch (err) {
       onError(err.message);
     } finally {

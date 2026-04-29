@@ -3,6 +3,7 @@ import { Loader2, X, LogOut } from "lucide-react";
 import { formatDate } from "@features/users/utils/user.helpers";
 import "./UserLogoutModal.css";
 import UserSessionList from "./UserSessionList";
+import { delay, USER_SPINNER_DELAY } from "../../../../features/users";
 
 const UserLogoutModal = ({
   isOpen,
@@ -14,17 +15,24 @@ const UserLogoutModal = ({
 }) => {
   const [errors, setErrors] = useState(null);
   const [totalSessions, setTotalSessions] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isOpen) return null;
 
   const handleSubmit = async (e) => {
-    setErrors(null);
     e.preventDefault();
+
+    if (setIsSubmitting) return;
+    setIsSubmitting(true);
+    setErrors(null);
     try {
       await onSave({ id: user.id });
+      await delay(USER_SPINNER_DELAY);
       onClose();
     } catch (err) {
       setErrors(err.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -112,10 +120,10 @@ const UserLogoutModal = ({
               <button
                 type="submit"
                 className="btn-primary"
-                disabled={isLoading}
+                disabled={isLoading || isSubmitting}
               >
-                {isLoading ? (
-                  <Loader2 className="loader-icon" />
+                {isLoading || isSubmitting ? (
+                  <Loader2 className="loader-icon spin" />
                 ) : (
                   <LogOut size={18} />
                 )}
