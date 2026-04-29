@@ -11,8 +11,8 @@ export const logoutUserById = async ({ id, ...payload }) => {
   };
 };
 
-export const logoutSessionByTokenId = async ({ id, ...payload }) => {
-  const response = await api.delete(`${API_PREFIX}/tokens/${id}`, {
+export const logoutSessionByTokenId = async ({ tokenId, ...payload }) => {
+  const response = await api.delete(`${API_PREFIX}/tokens/${tokenId}`, {
     ...payload,
   });
 

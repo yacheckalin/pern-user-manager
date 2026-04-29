@@ -19,6 +19,25 @@
     border: 1px solid var(--color-border-secondary);
     border-radius: 10px;
     transition: all 0.2s ease;
+    overflow: hidden;
+    max-height: 200px;
+    opacity: 1;
+    transform: translateX(0);
+    transition:
+      opacity 1s ease,
+      transform 1s ease,
+      max-height 1s ease,
+      padding 1s ease;
+
+    &.removing {
+      opacity: 0;
+      transform: translateX(40px);
+      max-height: 0;
+      margin-top: 0;
+      margin-bottom: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
 
     & .device-info {
       display: flex;
@@ -98,4 +117,26 @@
       }
     }
   }
+}
+
+.loader-icon.spin {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.sessions-loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 0;
+  color: var(--color-muted, #888);
+  font-size: 14px;
 }

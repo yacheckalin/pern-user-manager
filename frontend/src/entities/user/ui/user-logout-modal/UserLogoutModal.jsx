@@ -1,13 +1,20 @@
 import { useState } from "react";
-import { Loader2, X, LogOut, Monitor, Smartphone } from "lucide-react";
+import { Loader2, X, LogOut } from "lucide-react";
 import { formatDate } from "@features/users/utils/user.helpers";
 import "./UserLogoutModal.css";
-import { useTokens } from "@features/user-logout";
-import Spinner from "@shared/ui/spinner";
+import UserSessionList from "./UserSessionList";
 
-const UserLogoutModal = ({ isOpen, user, onSave, onClose }) => {
+const UserLogoutModal = ({
+  isOpen,
+  user,
+  onSave,
+  onClose,
+  onSessionRevoke,
+  isLoading,
+}) => {
   const [errors, setErrors] = useState(null);
-  const { data, isError, error, isLoading } = useTokens({ id: user?.id });
+  const [totalSessions, setTotalSessions] = useState(null);
+
   if (!isOpen) return null;
 
   const handleSubmit = async (e) => {
@@ -90,38 +97,12 @@ const UserLogoutModal = ({ isOpen, user, onSave, onClose }) => {
                   </div>
                 )}
               </div> */}
-              <div className="action-section logout-devices">
-                <h3 className="section-title">Active Sessions</h3>
-
-                <div className="action-row">
-                  <div className="device-info">
-                    <div className="device-icon">
-                      <Monitor size={20} />{" "}
-                    </div>
-                    <div className="device-details">
-                      {/* <div className="ua-string">Chrome on Windows 11</div> */}
-                      <div className="meta-info">
-                        <span>192.168.1.45</span>
-                        <span className="dot-separator">•</span>
-                        <span>2 hours ago</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="device-stats">
-                    <span className="stats-badge">14 logins this month</span>
-                  </div>
-
-                  <div className="device-actions">
-                    <button className="btn-logout-device" title="Revoke access">
-                      <LogOut size={16} />
-                      <span>Logout</span>
-                    </button>
-                  </div>
-                </div>
-
-                <div className="action-row">...</div>
-              </div>
+              <UserSessionList
+                userId={user.id}
+                onError={setErrors}
+                onSessionRevoke={onSessionRevoke}
+                onLoad={setTotalSessions}
+              />
             </div>
             <div className="modal-footer">
               <button type="button" className="btn-secondary" onClick={onClose}>
@@ -138,7 +119,7 @@ const UserLogoutModal = ({ isOpen, user, onSave, onClose }) => {
                 ) : (
                   <LogOut size={18} />
                 )}
-                Revoke All Sessions
+                Revoke All [{totalSessions}] Sessions
               </button>
             </div>
           </form>
