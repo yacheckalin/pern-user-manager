@@ -100,7 +100,7 @@ const UserLogoutModal = ({ isOpen, user, onSave, onClose, isLoading }) => {
                       <div className="meta-info">
                         <span>192.168.1.45</span>
                         <span className="dot-separator">•</span>
-                        <span>Last login: 2 hours ago</span>
+                        <span>2 hours ago</span>
                       </div>
                     </div>
                   </div>
