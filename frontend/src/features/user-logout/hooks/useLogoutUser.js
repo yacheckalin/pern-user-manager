@@ -23,7 +23,7 @@ export const useRevokeSession = () => {
   return useMutation({
     mutationFn: (data) => logoutSessionByTokenId(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["tokens"] });
+      queryClient.invalidateQueries({ queryKeys: ["tokens", "users"] });
       toast.success("User Loggout successfully from device ...");
     },
     onError: (error) => {

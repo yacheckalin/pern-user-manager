@@ -16,6 +16,7 @@ const UserModalGroup = ({
     handleDeleteUser,
     handleEditUser,
     handleLogoutUser,
+    handleLogoutSession,
   },
   mutations: {
     updateMutation,
@@ -24,6 +25,7 @@ const UserModalGroup = ({
     deleleUserMutation,
     changePasswordMutation,
     logoutMutation,
+    logoutSessionMutation,
   },
 }) => {
   return (
@@ -66,15 +68,16 @@ const UserModalGroup = ({
         isLoading={activateMutation?.isPending}
       />
 
-      {user && (
-        <UserLogoutModal
-          isOpen={!!modals?.logout}
-          user={user}
-          onClose={() => onClose({ logout: null })}
-          onSave={handleLogoutUser}
-          isLoading={logoutMutation?.isPending}
-        />
-      )}
+      <UserLogoutModal
+        isOpen={!!modals?.logout}
+        user={user}
+        onClose={() => onClose({ logout: null })}
+        onSave={handleLogoutUser}
+        onSessionRevoke={handleLogoutSession}
+        isLoading={
+          logoutMutation?.isPending || logoutSessionMutation?.isPending
+        }
+      />
     </>
   );
 };

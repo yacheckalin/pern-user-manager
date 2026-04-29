@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDeleteUser } from "@features/user-delete";
 import { useActivateUser } from "@features/user-activate";
-import { useLogoutUser } from "@features/user-logout";
+import { useLogoutUser, useRevokeSession } from "@features/user-logout";
 import { useUpdateUser } from "@features/user-edit";
 import { useChangePasswordUser } from "@features/user-change-password";
 import { useCreateUser } from "@features/user-create";
@@ -78,6 +78,11 @@ export const useUserManagement = () => {
     setSelectedUser(null);
   };
 
+  const logoutSessionMutation = useRevokeSession()
+  const handleLogoutSession = async (data) => {
+    await logoutSessionMutation.mutateAsync(data);
+  }
+
   return {
     /** data */
     data: data ?? [],
@@ -112,6 +117,9 @@ export const useUserManagement = () => {
 
     /** logout user by id */
     handleLogoutUser,
+
+    handleLogoutSession,
+    logoutSessionMutation,
 
     /** create user */
     createdUser,
