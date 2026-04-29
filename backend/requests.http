@@ -84,3 +84,6 @@ GET http://localhost:5000/api/v1/metrics
 
 ### Get all valid tokens for user
 GET http://localhost:5000/api/v1/users/7/tokens
+
+### Revoke token by id
+DELETE http://localhost:5000/api/v1/tokens/42b4a934-bfef-4f06-b6dd-04045b56afaa

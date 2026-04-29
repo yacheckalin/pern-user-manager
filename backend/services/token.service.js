@@ -40,6 +40,19 @@ class RefreshTokenService {
     return tokens;
   }
 
+  async deleteToken(id) {
+    const token = await this.refreshTokenRepository.findTokenById(id);
+    if (!token) {
+      throw new ApiError({
+        message: TOKEN_ERRORS.TOKEN_NOT_FOUND,
+        code: USER_CODES.TOKEN_NOT_FOUND,
+        status: HTTP_BAD_REQUEST,
+      });
+    }
+    const result = await this.refreshTokenRepository.revokeTokenById(id);
+    return result;
+  }
+
   async createToken(data) {
     // The data has already been validated in AuthService
     const accessToken = this.generateAccessToken(data);

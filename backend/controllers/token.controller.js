@@ -8,6 +8,8 @@ class TokenController {
   }
 
   deleteToken = asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
+    await this.tokenService.deleteToken(id);
     res.status(HTTP_NO_CONTENT).send();
   });
 }
