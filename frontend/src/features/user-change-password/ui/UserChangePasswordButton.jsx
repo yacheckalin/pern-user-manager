@@ -1,7 +1,11 @@
-const UserChangePasswordButton = ({ onCallback, title, icon }) => (
-  <button className="btn-icon text-success" title={title} onClick={onCallback}>
-    {icon}
-  </button>
+import Button from "@shared/ui/button";
+const UserChangePasswordButton = ({ onCallback, icon }) => (
+  <Button
+    className={`btn-icon text-success`}
+    title={`Change User Password`}
+    callback={onCallback}
+    icon={icon}
+  />
 );
 
 export default UserChangePasswordButton;

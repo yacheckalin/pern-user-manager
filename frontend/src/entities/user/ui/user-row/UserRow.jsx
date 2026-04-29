@@ -3,7 +3,6 @@ import {
   UserMinus,
   UserCheck,
   KeyRound,
-  RefreshCw,
   LogOut,
   Pencil,
   Trash2,
@@ -57,7 +56,6 @@ const UserRow = ({
         <UserChangePasswordButton
           icon={<KeyRound size={18} />}
           onCallback={() => onChangePassword({ id: user.id })}
-          title="Change Password"
         />
         <UserActivateButton
           {...user}
@@ -68,7 +66,6 @@ const UserRow = ({
           }}
         />
         <EditUserButton
-          title="Edit User"
           onCallback={() => onEdit({ ...user, id: user.id })}
           icon={<Pencil size={18} />}
         />
