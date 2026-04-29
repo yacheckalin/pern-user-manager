@@ -1,18 +1,27 @@
 import { useState } from "react";
 import { Loader2, X, UserCheck } from "lucide-react";
 import { formatDate } from "@features/users/utils/user.helpers";
+import { delay, USER_SPINNER_DELAY } from "@features/users";
 
 const UserActivateModal = ({ isOpen, user, onSave, onClose, isLoading }) => {
   const [errors, setErrors] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   if (!isOpen) return null;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
     try {
       await onSave({ id: user.id });
+      await delay(USER_SPINNER_DELAY);
       onClose();
     } catch (err) {
       setErrors(err.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -95,10 +104,10 @@ const UserActivateModal = ({ isOpen, user, onSave, onClose, isLoading }) => {
               <button
                 type="submit"
                 className="btn-primary"
-                disabled={isLoading}
+                disabled={isLoading || isSubmitting}
               >
-                {isLoading ? (
-                  <Loader2 className="loader-icon" />
+                {isLoading || isSubmitting ? (
+                  <Loader2 className="loader-icon spin" />
                 ) : (
                   <UserCheck size={18} />
                 )}

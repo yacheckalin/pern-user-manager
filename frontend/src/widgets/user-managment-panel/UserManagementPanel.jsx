@@ -25,6 +25,7 @@ const UserManagementPanel = () => {
     handleCreateUser,
     handleDeleteUser,
     handleLogoutUser,
+    handleLogoutSession,
 
     activateMutation,
     deleleUserMutation,
@@ -32,6 +33,7 @@ const UserManagementPanel = () => {
     updateMutation,
     changePasswordMutation,
     logoutMutation,
+    logoutSessionMutation,
   } = useUserManagement();
 
   const onCallbackHandler = (info, modal) => {
@@ -59,7 +61,7 @@ const UserManagementPanel = () => {
               icon={<UserPlus size={18} />}
             />
           )}
-          {data?.items.length > 0 && (
+          {data?.items?.length > 0 && (
             <UserTable
               data={data?.items}
               highlightedId={highlightedId}
@@ -85,6 +87,7 @@ const UserManagementPanel = () => {
               handleDeleteUser,
               handleEditUser,
               handleLogoutUser,
+              handleLogoutSession,
             }}
             mutations={{
               updateMutation,
@@ -93,6 +96,7 @@ const UserManagementPanel = () => {
               activateMutation,
               deleleUserMutation,
               logoutMutation,
+              logoutSessionMutation,
             }}
           />
         </>

@@ -1,19 +1,38 @@
 import { useState } from "react";
 import { Loader2, X, LogOut } from "lucide-react";
 import { formatDate } from "@features/users/utils/user.helpers";
+import "./UserLogoutModal.css";
+import UserSessionList from "./UserSessionList";
+import { delay, USER_SPINNER_DELAY } from "../../../../features/users";
 
-const UserLogoutModal = ({ isOpen, user, onSave, onClose, isLoading }) => {
+const UserLogoutModal = ({
+  isOpen,
+  user,
+  onSave,
+  onClose,
+  onSessionRevoke,
+  isLoading,
+}) => {
   const [errors, setErrors] = useState(null);
+  const [totalSessions, setTotalSessions] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   if (!isOpen) return null;
 
   const handleSubmit = async (e) => {
-    setErrors(null);
     e.preventDefault();
+
+    if (setIsSubmitting) return;
+    setIsSubmitting(true);
+    setErrors(null);
     try {
       await onSave({ id: user.id });
+      await delay(USER_SPINNER_DELAY);
       onClose();
     } catch (err) {
       setErrors(err.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -34,9 +53,8 @@ const UserLogoutModal = ({ isOpen, user, onSave, onClose, isLoading }) => {
               <div className="alert-banner">
                 <span className="alert-icon">⚠️</span>
                 <p>
-                  Are you sure you want to logout from all devices?
-                  <strong>{user.username}</strong>? <br /> This action is
-                  permanent and cannot be undone.
+                  Please be carefull, this action cannot be undone for <br />
+                  <strong>[ {user.username} ]</strong>
                 </p>
               </div>
 
@@ -63,7 +81,7 @@ const UserLogoutModal = ({ isOpen, user, onSave, onClose, isLoading }) => {
                 </div>
               </div>
 
-              <div className="metadata-section">
+              {/* <div className="metadata-section">
                 <div className="meta-row">
                   <span>Created:</span>{" "}
                   <strong>{formatDate(user.createdAt)}</strong>
@@ -86,7 +104,13 @@ const UserLogoutModal = ({ isOpen, user, onSave, onClose, isLoading }) => {
                     <strong>{formatDate(user.activatedAt)}</strong>
                   </div>
                 )}
-              </div>
+              </div> */}
+              <UserSessionList
+                userId={user.id}
+                onError={setErrors}
+                onSessionRevoke={onSessionRevoke}
+                onLoad={setTotalSessions}
+              />
             </div>
             <div className="modal-footer">
               <button type="button" className="btn-secondary" onClick={onClose}>
@@ -96,14 +120,14 @@ const UserLogoutModal = ({ isOpen, user, onSave, onClose, isLoading }) => {
               <button
                 type="submit"
                 className="btn-primary"
-                disabled={isLoading}
+                disabled={isLoading || isSubmitting}
               >
-                {isLoading ? (
-                  <Loader2 className="loader-icon" />
+                {isLoading || isSubmitting ? (
+                  <Loader2 className="loader-icon spin" />
                 ) : (
                   <LogOut size={18} />
                 )}
-                Revoke All Sessions
+                Revoke All [{totalSessions}] Sessions
               </button>
             </div>
           </form>

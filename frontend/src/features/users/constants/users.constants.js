@@ -1,1 +1,2 @@
 export const USER_ITEM_FADE_IN_TIMEOUT = 3000;
+export const USER_SPINNER_DELAY = 450;

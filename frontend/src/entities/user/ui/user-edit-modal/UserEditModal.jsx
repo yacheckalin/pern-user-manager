@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import "./UserEditModal.css";
 import { Loader2, Pencil, X } from "lucide-react";
+import { delay, USER_SPINNER_DELAY } from "@features/users";
 
 const UserEditModal = ({ isOpen, user, onSave, onClose, isLoading }) => {
   const [formData, setFormData] = useState({
@@ -8,7 +9,10 @@ const UserEditModal = ({ isOpen, user, onSave, onClose, isLoading }) => {
     email: "",
     age: "",
   });
+
   const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const [generalError, setGeneralError] = useState(null);
   useEffect(() => {
     if (user) {
@@ -23,14 +27,26 @@ const UserEditModal = ({ isOpen, user, onSave, onClose, isLoading }) => {
 
   if (!isOpen) return null;
 
+  const hasChanged = ({ username, email, age }) =>
+    username !== formData.username ||
+    email !== formData.email ||
+    (age !== formData.age && formData.age !== "");
+
   const handleSubmit = async (e) => {
-    setErrors({});
-    setGeneralError(null);
     e.preventDefault();
 
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+    setErrors({});
+    setGeneralError(null);
     try {
-      await onSave(formData);
-      onClose();
+      // save only when something was changed
+      if (hasChanged(user)) {
+        await onSave(formData);
+        await delay(USER_SPINNER_DELAY);
+        onClose();
+      }
     } catch (err) {
       const newErrors = {};
 
@@ -53,6 +69,8 @@ const UserEditModal = ({ isOpen, user, onSave, onClose, isLoading }) => {
       }
 
       setErrors(newErrors);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -123,9 +141,13 @@ const UserEditModal = ({ isOpen, user, onSave, onClose, isLoading }) => {
               Cancel
             </button>
 
-            <button type="submit" className="btn-primary" disabled={isLoading}>
-              {isLoading ? (
-                <Loader2 className="loader-icon" />
+            <button
+              type="submit"
+              className="btn-primary"
+              disabled={isLoading || isSubmitting}
+            >
+              {isLoading || isSubmitting ? (
+                <Loader2 className="loader-icon spin" />
               ) : (
                 <Pencil size={18} />
               )}

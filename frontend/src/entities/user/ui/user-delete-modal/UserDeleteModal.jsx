@@ -1,20 +1,28 @@
 import { useState } from "react";
 import "./UserDeleteModal.css";
 import { Loader2, X, Trash2 } from "lucide-react";
-import { formatDate } from "@features/users/utils/user.helpers";
+import { formatDate, delay, USER_SPINNER_DELAY } from "@features/users";
 
 const UserDeleteModal = ({ isOpen, user, onSave, onClose, isLoading }) => {
   const [errors, setErrors] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   if (!isOpen) return null;
 
   const handleSubmit = async (e) => {
-    setErrors(null);
     e.preventDefault();
+
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+    setErrors(null);
     try {
       await onSave({ id: user.id });
+      await delay(USER_SPINNER_DELAY);
       onClose();
     } catch (err) {
       setErrors(err.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -97,10 +105,10 @@ const UserDeleteModal = ({ isOpen, user, onSave, onClose, isLoading }) => {
               <button
                 type="submit"
                 className="btn-primary"
-                disabled={isLoading}
+                disabled={isLoading || isSubmitting}
               >
-                {isLoading ? (
-                  <Loader2 className="loader-icon" />
+                {isLoading || isSubmitting ? (
+                  <Loader2 className="loader-icon spin" />
                 ) : (
                   <Trash2 size={18} />
                 )}

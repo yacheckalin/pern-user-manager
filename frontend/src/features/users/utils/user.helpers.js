@@ -12,3 +12,5 @@ export const formatDate = (dateString) => {
 export const onlineUsers = (data) => data.filter((item) => item.hasActiveSession).length
 export const activeUsers = (data) => data.filter((item) => item.isActive).length
 export const notActive = (data) => data.filter((item) => !item.isActive).length
+
+export const delay = (delay) => new Promise((resolve) => setTimeout(resolve, delay))

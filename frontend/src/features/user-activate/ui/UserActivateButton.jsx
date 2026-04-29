@@ -1,12 +1,13 @@
+import Button from "@shared/ui/button";
+
 const UserActivateButton = ({ onCallback, icons, ...user }) => (
-  <button
+  <Button
     className={`btn-icon ${user.isActive ? "text-danger" : "text-success"}`}
     title={user.isActive ? "Already Activated" : "Activate User"}
-    onClick={onCallback}
+    callback={onCallback}
     disabled={!!user.isActive}
-  >
-    {user.isActive ? icons.on : icons.off}
-  </button>
+    icon={user.isActive ? icons.on : icons.off}
+  />
 );
 
 export default UserActivateButton;

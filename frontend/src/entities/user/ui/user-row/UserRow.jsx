@@ -3,7 +3,6 @@ import {
   UserMinus,
   UserCheck,
   KeyRound,
-  RefreshCw,
   LogOut,
   Pencil,
   Trash2,
@@ -33,7 +32,10 @@ const UserRow = ({
   >
     <td className="cell-id">#{user.id}</td>
     <td className="cell-date">
-      <UserAvatar {...user} />
+      <UserAvatar
+        username={user?.username}
+        hasActiveSession={user?.hasActiveSession}
+      />
     </td>
     <td className="cell-username">{user.username}</td>
     <td>{user.email}</td>
@@ -57,7 +59,6 @@ const UserRow = ({
         <UserChangePasswordButton
           icon={<KeyRound size={18} />}
           onCallback={() => onChangePassword({ id: user.id })}
-          title="Change Password"
         />
         <UserActivateButton
           {...user}
@@ -67,21 +68,15 @@ const UserRow = ({
             off: <UserCheck size={18} />,
           }}
         />
-        <button className="btn-icon text-success" title="Refresh Token">
-          <RefreshCw size={18} />
-        </button>
         <EditUserButton
-          title="Edit User"
           onCallback={() => onEdit({ ...user, id: user.id })}
           icon={<Pencil size={18} />}
         />
         <LogoutUserButton
           onCallback={() => onLogout(user)}
           icon={<LogOut size={18} disabled />}
-          {...user}
         />
         <DeleteUserButton
-          {...user}
           onCallback={() => onDelete(user)}
           icon={<Trash2 size={18} />}
         />

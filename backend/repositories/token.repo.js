@@ -6,8 +6,22 @@ class RefreshTokenRepository {
     this.table = "app.refresh_tokens";
   }
 
+  async findTokenById(id) {
+    const query = `SELECT * FROM ${this.table} WHERE id = $1`;
+
+    const { rows } = await this.pool.query(query, [id]);
+    return RefreshToken.fromDatabase(rows[0]);
+  }
+
+  async revokeTokenById(id, returning = "*") {
+    const query = `UPDATE ${this.table} SET revoked_at = NOW() WHERE id = $1 RETURNING ${returning}`;
+    const { rows } = await this.pool.query(query, [id]);
+    return RefreshToken.fromDatabase(rows[0]);
+  }
+
   async findTokensByUserId(id) {
-    const query = `SELECT * FROM ${this.table} WHERE user_id = $1`;
+    const query = `SELECT * FROM ${this.table}
+    WHERE user_id = $1 AND revoked_at IS NULL AND expires_at > NOW()`;
     const { rows } = await this.pool.query(query, [id]);
     return RefreshToken.fromDatabaseArray(rows);
   }
