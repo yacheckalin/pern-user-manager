@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Loader2, X, LogOut } from "lucide-react";
+import { Loader2, X, LogOut, Monitor, Smartphone } from "lucide-react";
 import { formatDate } from "@features/users/utils/user.helpers";
+import "./UserLogoutModal.css";
 
 const UserLogoutModal = ({ isOpen, user, onSave, onClose, isLoading }) => {
   const [errors, setErrors] = useState(null);
@@ -34,9 +35,8 @@ const UserLogoutModal = ({ isOpen, user, onSave, onClose, isLoading }) => {
               <div className="alert-banner">
                 <span className="alert-icon">⚠️</span>
                 <p>
-                  Are you sure you want to logout from all devices?
-                  <strong>{user.username}</strong>? <br /> This action is
-                  permanent and cannot be undone.
+                  Please be carefull, this action cannot be undone for <br />
+                  <strong>[ {user.username} ]</strong>
                 </p>
               </div>
 
@@ -63,7 +63,7 @@ const UserLogoutModal = ({ isOpen, user, onSave, onClose, isLoading }) => {
                 </div>
               </div>
 
-              <div className="metadata-section">
+              {/* <div className="metadata-section">
                 <div className="meta-row">
                   <span>Created:</span>{" "}
                   <strong>{formatDate(user.createdAt)}</strong>
@@ -86,6 +86,38 @@ const UserLogoutModal = ({ isOpen, user, onSave, onClose, isLoading }) => {
                     <strong>{formatDate(user.activatedAt)}</strong>
                   </div>
                 )}
+              </div> */}
+              <div className="action-section logout-devices">
+                <h3 className="section-title">Active Sessions</h3>
+
+                <div className="action-row">
+                  <div className="device-info">
+                    <div className="device-icon">
+                      <Monitor size={20} />{" "}
+                    </div>
+                    <div className="device-details">
+                      {/* <div className="ua-string">Chrome on Windows 11</div> */}
+                      <div className="meta-info">
+                        <span>192.168.1.45</span>
+                        <span className="dot-separator">•</span>
+                        <span>Last login: 2 hours ago</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="device-stats">
+                    <span className="stats-badge">14 logins this month</span>
+                  </div>
+
+                  <div className="device-actions">
+                    <button className="btn-logout-device" title="Revoke access">
+                      <LogOut size={16} />
+                      <span>Logout</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="action-row">...</div>
               </div>
             </div>
             <div className="modal-footer">
