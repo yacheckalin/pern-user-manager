@@ -16,6 +16,7 @@ const userSchemas = {
       .min(USER_VALIDATION.AGE_MIN)
       .max(USER_VALIDATION.AGE_MAX),
     is_active: Joi.boolean(),
+
   }),
   id: Joi.object({
     id: Joi.number().integer().positive().required(),
@@ -79,6 +80,12 @@ const userSchemas = {
   logoutUser: Joi.object({
     id: Joi.number().integer().required(),
   }),
+  getUsers: Joi.object({
+    s: Joi.string().allow('', null).max(50),
+    isActive: Joi.boolean(),
+    page: Joi.number().integer().min(1).default(1),
+    limit: Joi.number().integer().min(1).max(100).default(10),
+  })
 };
 
 export { userSchemas };

@@ -7,6 +7,7 @@ import {
   HTTP_NO_CONTENT,
 } from "../constants/index.js";
 import asyncHandler from "../middleware/async-handler.js";
+import logger from "../logger.js";
 
 class UserController {
   constructor() {
@@ -15,10 +16,11 @@ class UserController {
   }
 
   getAllUsers = asyncHandler(async (req, res, next) => {
-    const results = await this.userService.getAllUsers();
-    res.status(HTTP_OK).set("x-total-count", results.length).json({
+    const { s: search } = req.query;
+    const { items, total } = await this.userService.getAllUsers({ search });
+    res.status(HTTP_OK).set("x-total-count", total).json({
       success: true,
-      data: results,
+      data: items,
     });
   });
 
