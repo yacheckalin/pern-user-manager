@@ -8,6 +8,8 @@ import { useDebounce } from "use-debounce";
 import SearchPanel from "@shared/ui/search-panel";
 
 const UserInfoPanel = ({
+  filters,
+  setFilters,
   total,
   online,
   onCreate,
@@ -18,25 +20,27 @@ const UserInfoPanel = ({
 }) => {
   const [showFilters, setShowFilters] = useState(false);
 
-  const [filters, setFilters] = useState({
-    role: "",
-    age: 18,
-    isActive: "",
-    hasActiveSession: "",
-    createdAt: "",
-  });
+  // const [filters, setFilters] = useState({
+  //   role: "",
+  //   age: 18,
+  //   isActive: "",
+  //   hasActiveSession: "",
+  //   createdAt: "",
+  // });
 
   const handleFilterChange = (name, value) => {
     setFilters((prev) => ({ ...prev, [name]: value }));
   };
 
+  // reset only filters (not search  etc...)
   const resetFilters = () => {
     const cleared = {
-      role: "",
-      age: 18,
-      isActive: "",
-      hasActiveSession: "",
-      createdAt: "",
+      ...filters,
+      // role: "",
+      // age: 18,
+      // isActive: "",
+      // hasActiveSession: "",
+      // createdAt: "",
     };
     setFilters(cleared);
     // onApplyFilters(cleared);
@@ -51,7 +55,7 @@ const UserInfoPanel = ({
     (v) => v !== "" && v !== 18,
   ).length;
 
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(filters.search);
   const [query] = useDebounce(search, 600);
 
   useEffect(() => {
