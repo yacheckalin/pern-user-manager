@@ -52,6 +52,7 @@ const UserInfoPanel = ({
     );
     setLocalFilters(cleared);
     setFilters(filteredFilters);
+    setShowFilters(false);
   };
 
   const applyFilters = () => {
