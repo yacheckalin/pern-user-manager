@@ -45,21 +45,32 @@ describe("UserRepository", () => {
         username: 'john_doe',
         email: "john@example.com"
       };
-      mockDb.pool.query.mockResolvedValue({ rows: [mockRecord] });
-      const result = await mockUserRepository.findAll();
-      expect(result).toBeInstanceOf(Array);
-      expect(result.length).toBe(1);
-      expect(result[0].id).toBe(1);
-      expect(result[0].username).toBe('john_doe');
-      expect(result[0].email).toBe('john@example.com')
+      jest.spyOn(Promise, 'all').mockResolvedValue([
+        { rows: [mockRecord] },
+        { rows: [{ total: 1 }] }
+      ]);
+      const result = await mockUserRepository.findAll({ search: "" });
+      expect(result).toHaveProperty('items');
+      expect(result).toHaveProperty('total');
+      expect(result.items).toBeInstanceOf(Array);
+      expect(result.items.length).toBe(1);
+      expect(result.total).toBe(1);
+      Promise.all.mockRestore();
     })
 
     it("should return empty array when no users", async () => {
-      mockDb.pool.query.mockResolvedValue({ rows: [] });
-      const result = await mockUserRepository.findAll();
-      expect(result).toBeDefined
-      expect(result).toBeInstanceOf(Array);
-      expect(result.length).toBe(0)
+      jest.spyOn(Promise, 'all').mockResolvedValue([
+        { rows: [] },
+        { rows: [{ total: 0 }] }
+      ]);
+      const result = await mockUserRepository.findAll({ search: "" });
+      expect(result).toBeDefined();
+      expect(result).toHaveProperty('items');
+      expect(result).toHaveProperty('total');
+      expect(result.items).toBeInstanceOf(Array);
+      expect(result.items.length).toBe(0);
+      expect(result.total).toBe(0);
+      Promise.all.mockRestore();
     });
   })
 

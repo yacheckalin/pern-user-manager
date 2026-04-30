@@ -1,39 +1,46 @@
 import "./UserInfoPanel.css";
-import { Filter, Search, UserPlus } from "lucide-react";
+import { Filter, UserPlus, Search } from "lucide-react";
 import Spinner from "@shared/ui/spinner";
 import UserFilter from "@features/user-filter/ui";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CreateUserButton from "@features/user-create";
+import { useDebounce } from "use-debounce";
+import SearchPanel from "@shared/ui/search-panel";
 
 const UserInfoPanel = ({
+  filters,
+  setFilters,
   total,
   online,
   onCreate,
+  onSearch,
   active,
   notActive,
   isLoading,
 }) => {
   const [showFilters, setShowFilters] = useState(false);
 
-  const [filters, setFilters] = useState({
-    role: "",
-    age: 18,
-    isActive: "",
-    hasActiveSession: "",
-    createdAt: "",
-  });
+  // const [filters, setFilters] = useState({
+  //   role: "",
+  //   age: 18,
+  //   isActive: "",
+  //   hasActiveSession: "",
+  //   createdAt: "",
+  // });
 
   const handleFilterChange = (name, value) => {
     setFilters((prev) => ({ ...prev, [name]: value }));
   };
 
+  // reset only filters (not search  etc...)
   const resetFilters = () => {
     const cleared = {
-      role: "",
-      age: 18,
-      isActive: "",
-      hasActiveSession: "",
-      createdAt: "",
+      ...filters,
+      // role: "",
+      // age: 18,
+      // isActive: "",
+      // hasActiveSession: "",
+      // createdAt: "",
     };
     setFilters(cleared);
     // onApplyFilters(cleared);
@@ -47,6 +54,13 @@ const UserInfoPanel = ({
   const activeCount = Object.values(filters).filter(
     (v) => v !== "" && v !== 18,
   ).length;
+
+  const [search, setSearch] = useState(filters.search);
+  const [query] = useDebounce(search, 600);
+
+  useEffect(() => {
+    onSearch(query);
+  }, [query, onSearch]);
 
   return (
     <div className="panel-container">
@@ -69,10 +83,13 @@ const UserInfoPanel = ({
 
       <div className="panel-actions">
         <div className="spinner-overlay">{isLoading && <Spinner />}</div>
-        <div className="search-wrapper">
-          <Search className="search-icon" size={18} />
-          <input type="text" placeholder="Search by name or email..." />
-        </div>
+        <SearchPanel
+          placeholder="Search ..."
+          type="text"
+          value={search}
+          icon={<Search className="search-icon" size={18} />}
+          onChange={(e) => setSearch(e.target.value)}
+        />
 
         <div className="filter-wrapper" style={{ position: "relative" }}>
           <button

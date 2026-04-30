@@ -125,8 +125,8 @@ describe("UserRepository - Integration Tests", () => {
 
   describe("findAll", () => {
     it("should return empty array", async () => {
-      const users = await userRepository.findAll();
-      expect(users.length).toBe(0);
+      const users = await userRepository.findAll({ search: '' });
+      expect(users.items.length).toBe(0);
     });
 
     it("should return all users", async () => {
@@ -150,10 +150,11 @@ describe("UserRepository - Integration Tests", () => {
         await userRepository.createUser(userData);
       }
 
-      const users = await userRepository.findAll();
-      expect(users.length).toBe(2);
-      expect(users[0].username).toBe("integration_test");
-      expect(users[1].username).toBe("integration_test2");
+      const users = await userRepository.findAll({ search: 'test' });
+      expect(users.items.length).toBe(2);
+      expect(users.total).toBe("2");
+      expect(users.items[0].username).toBe("integration_test");
+      expect(users.items[1].username).toBe("integration_test2");
     });
   });
 

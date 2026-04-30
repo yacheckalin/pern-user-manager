@@ -1,4 +1,5 @@
 import User from "../models/user.model.js";
+import logger from "../logger.js";
 
 class UserRepository {
   constructor(pool) {
@@ -11,8 +12,23 @@ class UserRepository {
    *
    * @returns User[]
    */
-  async findAll() {
-    const { rows } = await this.pool.query(`
+  async findAll({ search }) {
+    const conditions = [];
+    const params = [];
+    let idx = 1;
+    // search conditions
+    if (search) {
+      conditions.push(` username  ILIKE $${idx} OR email ILIKE $${idx}`);
+      params.push(`%${search}%`);
+      idx++;
+    };
+
+    //TODO add sorting conditions here
+    //TODO: add filtering conditions here
+    //TODO: add pagination conditions here
+
+    const where = conditions.length ? ` WHERE ${conditions.join(' AND ')}` : '';
+    const dataQuery = `
       SELECT
         u.*,
         EXISTS (
@@ -22,9 +38,22 @@ class UserRepository {
               AND rt.revoked_at IS NULL
               AND rt.expires_at > NOW()
         ) as has_active_session
-      FROM app.users u;
-`);
-    return User.fromDatabaseArray(rows);
+      FROM app.users u ${where}`;
+
+    const countQuery = `SELECT COUNT(DISTINCT u.id) AS total
+      FROM app.users u ${where}
+    `;
+
+    const [dataResult, countResult] = await Promise.all([
+      this.pool.query(dataQuery, [...params]),
+      this.pool.query(countQuery, params)
+    ])
+
+
+    return {
+      items: User.fromDatabaseArray(dataResult.rows),
+      total: countResult.rows[0].total
+    }
   }
 
   /**

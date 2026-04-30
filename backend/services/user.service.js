@@ -24,8 +24,8 @@ class UserService {
     this.userRepository = new UserRepository(db);
   }
 
-  async getAllUsers() {
-    const result = await this.userRepository.findAll();
+  async getAllUsers(filters) {
+    const result = await this.userRepository.findAll(filters);
     return result;
   }
 

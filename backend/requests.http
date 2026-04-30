@@ -2,6 +2,9 @@
 GET http://localhost:5000/api/v1/users
 Authorization: Bearer {{accessToken}}
 
+### Search users
+GET http://localhost:5000/api/v1/users?s=sos
+
 
 ### Create new user
 POST http://localhost:5000/api/v1/users
@@ -49,8 +52,8 @@ POST http://localhost:5000/api/v1/users/register
 Content-Type: application/json
 
 {
-  "username":"sos2112",
-  "email": "sos2112@sos.com",
+  "username":"sos1122",
+  "email": "sos1122@sos.com",
   "password": "password",
   "confirm_password": "password"
 }
@@ -61,7 +64,7 @@ POST http://localhost:5000/api/v1/auth/login
 Content-Type: application/json
 
 {
-  "username": "sos2112@sos.com",
+  "username": "sos@sos.com",
   "password": "password"
 }
 
