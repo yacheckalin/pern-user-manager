@@ -27,8 +27,18 @@ jest.unstable_mockModule("../../../services/user.service.js", () => ({
     registerUser: jest.fn(),
   })),
 }));
+
+jest.unstable_mockModule("../../../services/token.service.js", () => ({
+  default: jest.fn().mockImplementation(() => ({
+    getAllByUserId: jest.fn(),
+    deleteToken: jest.fn(),
+  })),
+}));
+
 const { default: UserService } =
   await import("../../../services/user.service.js");
+const { default: TokenService } =
+  await import("../../../services/token.service.js");
 const { default: UserController } =
   await import("../../../controllers/user.controller.js");
 describe("UserController - Unit Tests", () => {
@@ -48,14 +58,20 @@ describe("UserController - Unit Tests", () => {
       registerUser: jest.fn(),
     };
 
+    const mockTokenService = {
+      getAllByUserId: jest.fn(),
+      deleteToken: jest.fn(),
+    };
+
     UserService.mockImplementation(() => mockUserService);
+    TokenService.mockImplementation(() => mockTokenService);
     userController = new UserController();
 
     // Mock request and response
     req = {
       params: {},
       body: {},
-      query: {},
+      query: { search: '' },
       protocol: 'http',
       get: jest.fn().mockReturnValue('localhost'),
       originalUrl: '/api/users',
@@ -105,7 +121,7 @@ describe("UserController - Unit Tests", () => {
           lastLogin: null,
         },
       ];
-      mockUserService.getAllUsers.mockResolvedValue(mockUsers);
+      mockUserService.getAllUsers.mockResolvedValue({ items: mockUsers, total: 3 });
 
       await userController.getAllUsers(req, res, next);
 
@@ -128,6 +144,78 @@ describe("UserController - Unit Tests", () => {
       expect(res.status).not.toHaveBeenCalled();
       expect(res.json).not.toHaveBeenCalled();
     })
+  });
+
+  describe("getAllTokensByUser", () => {
+    it("should return all tokens for a user", async () => {
+      const mockTokens = [
+        {
+          id: 1,
+          userId: "1",
+          tokenHash: "hash1",
+          ipAddress: "192.168.1.1",
+          userAgent: "Mozilla/5.0",
+          expiresAt: "2026-05-07T09:21:30.000Z",
+          createdAt: "2026-04-30T09:21:30.000Z",
+          revokedAt: null,
+        },
+        {
+          id: 2,
+          userId: "1",
+          tokenHash: "hash2",
+          ipAddress: "192.168.1.2",
+          userAgent: "Safari/5.0",
+          expiresAt: "2026-05-08T09:21:30.000Z",
+          createdAt: "2026-04-30T09:21:30.000Z",
+          revokedAt: null,
+        },
+      ];
+
+      userController.tokenService.getAllByUserId = jest.fn().mockResolvedValue(mockTokens);
+      req.params.id = "1";
+
+      await userController.getAllTokensByUser(req, res, next);
+
+      expect(res.status).toHaveBeenCalledWith(HTTP_OK);
+      expect(res.json).toHaveBeenCalledWith({
+        success: true,
+        data: mockTokens,
+      });
+    });
+
+    it("should return empty array when no tokens found", async () => {
+      userController.tokenService.getAllByUserId = jest.fn().mockResolvedValue([]);
+      req.params.id = "1";
+
+      await userController.getAllTokensByUser(req, res, next);
+
+      expect(res.status).toHaveBeenCalledWith(HTTP_OK);
+      expect(res.json).toHaveBeenCalledWith({
+        success: true,
+        data: [],
+      });
+    });
+
+    it("should handle errors when getting tokens", async () => {
+      userController.tokenService.getAllByUserId = jest.fn().mockRejectedValue(
+        new ApiError({
+          message: USER_ERRORS.NOT_FOUND,
+          status: HTTP_NOT_FOUND,
+        })
+      );
+      req.params.id = "999";
+
+      await userController.getAllTokensByUser(req, res, next);
+
+      expect(next).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: USER_ERRORS.NOT_FOUND,
+          status: HTTP_NOT_FOUND,
+        })
+      );
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
+    });
   });
 
   describe("createUser", () => {
