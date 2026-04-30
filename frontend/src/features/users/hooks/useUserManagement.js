@@ -11,7 +11,16 @@ import { USER_ITEM_FADE_IN_TIMEOUT } from "@features/users/constants";
 import { useFlashHighlight } from "./useFlashHighlight";
 
 export const useUserManagement = () => {
-  const [filters, setFilters] = useState({ page: 1, search: "", limit: 10, offset: 0 });
+  const [filters, setFilters] = useState({
+    page: 1,
+    search: "",
+    limit: 10,
+    offset: 0,
+    activated: false,
+    age: "",
+    logged: "",
+    createdAt: ""
+  });
 
   const memoizedFilters = useMemo(() => filters, [filters]);
   const { data, isLoading, isError, error } = useUsers(memoizedFilters);
