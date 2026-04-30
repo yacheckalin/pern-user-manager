@@ -2,13 +2,15 @@ import "./UserInfoPanel.css";
 import { Filter, Search, UserPlus } from "lucide-react";
 import Spinner from "@shared/ui/spinner";
 import UserFilter from "@features/user-filter/ui";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CreateUserButton from "@features/user-create";
+import { useDebounce } from "use-debounce";
 
 const UserInfoPanel = ({
   total,
   online,
   onCreate,
+  onSearch,
   active,
   notActive,
   isLoading,
@@ -48,6 +50,13 @@ const UserInfoPanel = ({
     (v) => v !== "" && v !== 18,
   ).length;
 
+  const [search, setSearch] = useState("");
+  const [query] = useDebounce(search, 600);
+
+  useEffect(() => {
+    onSearch(query);
+  }, [query, onSearch]);
+
   return (
     <div className="panel-container">
       <div className="panel-info">
@@ -71,7 +80,12 @@ const UserInfoPanel = ({
         <div className="spinner-overlay">{isLoading && <Spinner />}</div>
         <div className="search-wrapper">
           <Search className="search-icon" size={18} />
-          <input type="text" placeholder="Search by name or email..." />
+          <input
+            type="text"
+            placeholder="Search by name or email..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
         </div>
 
         <div className="filter-wrapper" style={{ position: "relative" }}>

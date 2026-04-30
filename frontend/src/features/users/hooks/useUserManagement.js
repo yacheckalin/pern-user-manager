@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useDeleteUser } from "@features/user-delete";
 import { useActivateUser } from "@features/user-activate";
 import { useLogoutUser, useRevokeSession } from "@features/user-logout";
@@ -11,9 +11,11 @@ import { USER_ITEM_FADE_IN_TIMEOUT } from "@features/users/constants";
 import { useFlashHighlight } from "./useFlashHighlight";
 
 export const useUserManagement = () => {
-  const [filters] = useState({ page: 1, search: "", limit: 10, offset: 0 });
+  const [filters, setFilters] = useState({ page: 1, search: "", limit: 10, offset: 0 });
 
-  const { data, isLoading, isError, error } = useUsers(filters);
+  const memoizedFilters = useMemo(() => filters, [filters]);
+  const { data, isLoading, isError, error } = useUsers(memoizedFilters);
+
   const [highlightedId, triggerHighlight] = useFlashHighlight(
     USER_ITEM_FADE_IN_TIMEOUT || 3000,
   );
@@ -92,6 +94,7 @@ export const useUserManagement = () => {
 
     /**filters */
     filters,
+    setFilters,
 
     /** modals state */
     modals,

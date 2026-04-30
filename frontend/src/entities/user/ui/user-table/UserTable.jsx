@@ -13,6 +13,7 @@ const UserTable = ({
   onDelete,
   onActivate,
   onLogout,
+  onSearch,
   onChangePassword,
 }) => {
   return (
@@ -23,6 +24,7 @@ const UserTable = ({
         onCreate={onCreate}
         notActive={data?.length && notActive(data)}
         active={data?.length && activeUsers(data)}
+        onSearch={onSearch}
       />
       <Table
         columns={USER_COLUMNS}

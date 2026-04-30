@@ -14,6 +14,7 @@ const UserManagementPanel = () => {
     data,
     error,
     modals,
+    setFilters,
     setModals,
     highlightedId,
     selectedUser,
@@ -36,6 +37,9 @@ const UserManagementPanel = () => {
     logoutSessionMutation,
   } = useUserManagement();
 
+  const handleSearch = (data) => {
+    setFilters((prev) => ({ ...prev, search: data }));
+  };
   const onCallbackHandler = (info, modal) => {
     setSelectedUser(info);
     setModals({ [modal]: true });
@@ -73,6 +77,7 @@ const UserManagementPanel = () => {
               onChangePassword={(info) =>
                 onCallbackHandler(info, "changePassword")
               }
+              onSearch={handleSearch}
             />
           )}
 
