@@ -12,41 +12,58 @@ class UserRepository {
    *
    * @returns User[]
    */
-  async findAll({ search }) {
+  async findAll({ search, activated, age, logged }) {
     const conditions = [];
     const params = [];
     let idx = 1;
     // search conditions
     if (search) {
-      conditions.push(` username  ILIKE $${idx} OR email ILIKE $${idx}`);
+      conditions.push(` u.username  ILIKE $${idx} OR u.email ILIKE $${idx}`);
       params.push(`%${search}%`);
       idx++;
     };
 
+    if (activated) {
+      conditions.push(` u.is_active = $${idx}`);
+      params.push(activated);
+      idx++;
+    }
+
+    if (age) {
+      conditions.push(` u.age = $${idx}`);
+      params.push(age);
+      idx++;
+    }
+
     //TODO add sorting conditions here
-    //TODO: add filtering conditions here
     //TODO: add pagination conditions here
 
-    const where = conditions.length ? ` WHERE ${conditions.join(' AND ')}` : '';
-    const dataQuery = `
-      SELECT
-        u.*,
-        EXISTS (
-            SELECT 1
-            FROM app.refresh_tokens rt
-            WHERE rt.user_id = u.id
-              AND rt.revoked_at IS NULL
-              AND rt.expires_at > NOW()
-        ) as has_active_session
-      FROM app.users u ${where}`;
+    const whereClause = logged ? ` WHERE has_active_session = ${logged.toString()}` : ''
 
-    const countQuery = `SELECT COUNT(DISTINCT u.id) AS total
-      FROM app.users u ${where}
-    `;
+    const where = conditions.length ? ` WHERE ${conditions.join(' AND ')}` : '';
+
+    const dataQuery = `WITH users_with_sessions AS (
+            SELECT
+              u.*,
+              EXISTS (
+                SELECT 1
+                FROM app.refresh_tokens rt
+                WHERE rt.user_id = u.id
+                  AND rt.revoked_at IS NULL
+                  AND rt.expires_at > NOW()
+              ) as has_active_session
+            FROM ${this.table} u ${where}
+          )
+          SELECT *
+          FROM users_with_sessions 
+          ${whereClause}`;
+    const countQuery = `
+    SELECT COUNT(DISTINCT u.id) as total
+    FROM ${this.table} u ${where}`;
 
     const [dataResult, countResult] = await Promise.all([
-      this.pool.query(dataQuery, [...params]),
-      this.pool.query(countQuery, params)
+      this.pool.query(dataQuery, [...params]), // with pagination
+      this.pool.query(countQuery, params) // without pagination
     ])
 
 

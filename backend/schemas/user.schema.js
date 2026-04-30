@@ -82,9 +82,12 @@ const userSchemas = {
   }),
   getUsers: Joi.object({
     s: Joi.string().allow('', null).max(50),
-    isActive: Joi.boolean(),
-    page: Joi.number().integer().min(1).default(1),
-    limit: Joi.number().integer().min(1).max(100).default(10),
+    activated: Joi.boolean(),
+    // page: Joi.number().integer().min(1).default(1),
+    // limit: Joi.number().integer().min(1).max(100).default(10),
+    age: Joi.number().integer().min(13).max(150).default(13),
+    logged: Joi.boolean().default(false),
+    createdAt: Joi.date()
   })
 };
 
