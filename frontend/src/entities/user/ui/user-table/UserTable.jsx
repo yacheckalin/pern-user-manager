@@ -2,11 +2,7 @@ import Table from "@shared/ui/table";
 import { USER_COLUMNS } from "@entities/user/model/user-columns";
 import UserRow from "../user-row";
 import UserInfoPanel from "@entities/user/ui/user-info-panel";
-import {
-  onlineUsers,
-  notActive,
-  activeUsers,
-} from "@features/users/utils/user.helpers";
+import { onlineUsers, notActive, activeUsers } from "@features/users";
 import "./UserTable.css";
 
 const UserTable = ({
