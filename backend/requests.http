@@ -3,7 +3,7 @@ GET http://localhost:5000/api/v1/users
 Authorization: Bearer {{accessToken}}
 
 ### Search users
-GET http://localhost:5000/api/v1/users?s=sos&logged=false
+GET http://localhost:5000/api/v1/users?s=sos&logged=false&age=14&createdAt=2026-04-30
 
 
 ### Create new user

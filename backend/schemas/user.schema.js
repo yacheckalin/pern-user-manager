@@ -87,7 +87,7 @@ const userSchemas = {
     // limit: Joi.number().integer().min(1).max(100).default(10),
     age: Joi.number().integer().min(13).max(150).default(13),
     logged: Joi.boolean().default(false),
-    createdAt: Joi.date()
+    createdAt: Joi.date().iso().optional()
   })
 };
 

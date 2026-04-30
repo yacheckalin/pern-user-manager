@@ -12,26 +12,39 @@ class UserRepository {
    *
    * @returns User[]
    */
-  async findAll({ search, activated, age, logged }) {
+  async findAll({ search, activated, age, logged, createdAt }) {
     const conditions = [];
     const params = [];
     let idx = 1;
     // search conditions
     if (search) {
-      conditions.push(` u.username  ILIKE $${idx} OR u.email ILIKE $${idx}`);
+      conditions.push(` (u.username  ILIKE $${idx} OR u.email ILIKE $${idx}) `);
       params.push(`%${search}%`);
       idx++;
     };
 
     if (activated) {
-      conditions.push(` u.is_active = $${idx}`);
+      conditions.push(` u.is_active = $${idx} `);
       params.push(activated);
       idx++;
     }
 
     if (age) {
-      conditions.push(` u.age = $${idx}`);
+      conditions.push(` u.age = $${idx} `);
       params.push(age);
+      idx++;
+    }
+
+    if (createdAt) {
+      const nextDay = new Date(createdAt);
+      nextDay.setDate(nextDay.getDate() + 1);
+
+      conditions.push(` u.created_at >= $${idx} `);
+      params.push(new Date(createdAt));
+      idx++;
+
+      conditions.push(` u.created_at <= $${idx} `)
+      params.push(nextDay);
       idx++;
     }
 
@@ -67,6 +80,8 @@ class UserRepository {
     ])
 
 
+    logger.warn(where)
+    logger.warn(params)
     return {
       items: User.fromDatabaseArray(dataResult.rows),
       total: countResult.rows[0].total
