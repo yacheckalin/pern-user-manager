@@ -36,11 +36,14 @@ class UserRepository {
     }
 
     if (createdAt) {
-      const nextDay = new Date(createdAt);
-      nextDay.setDate(nextDay.getDate() + 1);
+      const startDate = new Date(createdAt);
+      startDate.setHours(0, 0, 0, 0);
 
+      const nextDay = new Date(startDate);
+
+      nextDay.setDate(nextDay.getDate() + 1);
       conditions.push(` u.created_at >= $${idx} `);
-      params.push(new Date(createdAt));
+      params.push(startDate);
       idx++;
 
       conditions.push(` u.created_at <= $${idx} `)
