@@ -16,8 +16,8 @@ class UserController {
   }
 
   getAllUsers = asyncHandler(async (req, res, next) => {
-    const { s: search } = req.query;
-    const { items, total } = await this.userService.getAllUsers({ search });
+    const { s: search, ...query } = req.query;
+    const { items, total } = await this.userService.getAllUsers({ search, ...query });
     res.status(HTTP_OK).set("x-total-count", total).json({
       success: true,
       data: items,

@@ -1,14 +1,14 @@
 import { Outlet } from "react-router-dom";
-// import Sidebar from "@layouts/components/sidebar";
+import Sidebar from "@layouts/components/sidebar";
 import Header from "@layouts/components/headers";
 import "./AdminLayout.css";
 
 const AdminLayout = () => {
   return (
     <div className="admin-container">
-      {/* <aside className="admin-sidebar">
+      <aside className="admin-sidebar">
         <Sidebar />
-      </aside> */}
+      </aside>
       <div className="admin-main">
         <header className="admin-header">
           <Header />

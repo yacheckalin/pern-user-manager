@@ -3,7 +3,7 @@ GET http://localhost:5000/api/v1/users
 Authorization: Bearer {{accessToken}}
 
 ### Search users
-GET http://localhost:5000/api/v1/users?s=sos
+GET http://localhost:5000/api/v1/users?createdAt=2026-04-29
 
 
 ### Create new user
@@ -11,8 +11,8 @@ POST http://localhost:5000/api/v1/users
 Content-Type: application/json
 
 {
-  "username": "test3",
-  "email": "test3@tt.tt",
+  "username": "test32",
+  "email": "test32@tt.tt",
   "password": "some_secret_password",
   "age": 18,
   "is_active": false
