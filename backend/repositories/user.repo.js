@@ -21,7 +21,7 @@ class UserRepository {
       conditions.push(` (u.username  ILIKE $${idx} OR u.email ILIKE $${idx}) `);
       params.push(`%${search}%`);
       idx++;
-    };
+    }
 
     if (activated) {
       conditions.push(` u.is_active = $${idx} `);
@@ -30,7 +30,7 @@ class UserRepository {
     }
 
     if (age) {
-      conditions.push(` u.age = $${idx} `);
+      conditions.push(` u.age >= $${idx} `);
       params.push(age);
       idx++;
     }
@@ -46,17 +46,19 @@ class UserRepository {
       params.push(startDate);
       idx++;
 
-      conditions.push(` u.created_at <= $${idx} `)
+      conditions.push(` u.created_at <= $${idx} `);
       params.push(nextDay);
       idx++;
     }
 
-    //TODO add sorting conditions here
+    //TODO: add sorting conditions here
     //TODO: add pagination conditions here
 
-    const whereClause = logged ? ` WHERE has_active_session = ${logged.toString()}` : ''
+    const whereClause = logged
+      ? ` WHERE has_active_session = ${logged.toString()}`
+      : "";
 
-    const where = conditions.length ? ` WHERE ${conditions.join(' AND ')}` : '';
+    const where = conditions.length ? ` WHERE ${conditions.join(" AND ")}` : "";
 
     const dataQuery = `WITH users_with_sessions AS (
             SELECT
@@ -71,7 +73,7 @@ class UserRepository {
             FROM ${this.table} u ${where}
           )
           SELECT *
-          FROM users_with_sessions 
+          FROM users_with_sessions
           ${whereClause}`;
     const countQuery = `
     SELECT COUNT(DISTINCT u.id) as total
@@ -79,16 +81,15 @@ class UserRepository {
 
     const [dataResult, countResult] = await Promise.all([
       this.pool.query(dataQuery, [...params]), // with pagination
-      this.pool.query(countQuery, params) // without pagination
-    ])
+      this.pool.query(countQuery, params), // without pagination
+    ]);
 
-
-    logger.warn(where)
-    logger.warn(params)
+    logger.warn(where);
+    logger.warn(params);
     return {
       items: User.fromDatabaseArray(dataResult.rows),
-      total: countResult.rows[0].total
-    }
+      total: countResult.rows[0].total,
+    };
   }
 
   /**

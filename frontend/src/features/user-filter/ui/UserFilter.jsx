@@ -13,19 +13,6 @@ const UserFilter = ({
       {showFilters && (
         <div className="filter-dropdown">
           <div className="filter-group">
-            <label>Role</label>
-            <select
-              value={filters.role}
-              onChange={(e) => handleFilterChange("role", e.target.value)}
-            >
-              <option value="">All Roles</option>
-              <option value="admin">Admin</option>
-              <option value="user">User</option>
-              <option value="moderator">Moderator</option>
-            </select>
-          </div>
-
-          <div className="filter-group">
             <label>Min Age: {filters.age || 18}+</label>
             <input
               type="range"
@@ -39,8 +26,8 @@ const UserFilter = ({
           <div className="filter-group">
             <label>Account Status</label>
             <select
-              value={filters.isActive}
-              onChange={(e) => handleFilterChange("isActive", e.target.value)}
+              value={filters.activated}
+              onChange={(e) => handleFilterChange("activated", e.target.value)}
             >
               <option value="">All Statuses</option>
               <option value="true">Active Only</option>
@@ -55,10 +42,8 @@ const UserFilter = ({
                 <input
                   type="radio"
                   name="session"
-                  checked={filters.hasActiveSession === "true"}
-                  onChange={() =>
-                    handleFilterChange("hasActiveSession", "true")
-                  }
+                  checked={filters.logged === "true"}
+                  onChange={() => handleFilterChange("logged", "true")}
                 />
                 Logged In
               </label>
@@ -66,12 +51,19 @@ const UserFilter = ({
                 <input
                   type="radio"
                   name="session"
-                  checked={filters.hasActiveSession === "false"}
-                  onChange={() =>
-                    handleFilterChange("hasActiveSession", "false")
-                  }
+                  checked={filters.logged === "false"}
+                  onChange={() => handleFilterChange("logged", "false")}
                 />
                 Logged Out
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="session"
+                  checked={filters.logged === null}
+                  onChange={() => handleFilterChange("logged", null)}
+                />
+                All
               </label>
             </div>
           </div>

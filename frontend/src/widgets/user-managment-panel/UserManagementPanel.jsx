@@ -1,8 +1,5 @@
 // import { UserTable } from "@features/users";
 import ErrorState from "@shared/ui/error-state";
-import Spinner from "@shared/ui/spinner";
-import CreateToolbar from "@shared/ui/create-toolbar";
-import { UserPlus } from "lucide-react";
 import UserTable from "@entities/user/ui/user-table";
 import UserModalGroup from "@entities/user/ui/user-modal-group";
 import { useUserManagement } from "@features/users";
@@ -11,7 +8,6 @@ import UserInfoPanel from "@entities/user/ui/user-info-panel";
 
 const UserManagementPanel = () => {
   const {
-    isLoading,
     isError,
     data,
     error,
@@ -43,6 +39,12 @@ const UserManagementPanel = () => {
   const handleSearch = (data) => {
     setFilters((prev) => ({ ...prev, search: data.trim() }));
   };
+  const handleFilters = (filters) => {
+    if (filters) {
+      setFilters((prev) => ({ ...prev, ...filters }));
+    }
+  };
+
   const onCallbackHandler = (info, modal) => {
     setSelectedUser(info);
     setModals({ [modal]: true });
@@ -58,13 +60,6 @@ const UserManagementPanel = () => {
             details={error?.details}
           />
         )}
-        {/* {!data?.items?.length && (
-          <CreateToolbar
-            description={"Create New User"}
-            onOpen={() => setModals({ create: true })}
-            icon={<UserPlus size={18} />}
-          />
-        )} */}
         <UserInfoPanel
           total={data?.items?.length || 0}
           online={data?.items?.length && onlineUsers(data.items)}
@@ -74,6 +69,7 @@ const UserManagementPanel = () => {
           onSearch={handleSearch}
           filters={filters}
           setFilters={setFilters}
+          onFilter={handleFilters}
         />
 
         <UserTable

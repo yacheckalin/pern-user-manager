@@ -4,7 +4,7 @@ import Spinner from "@shared/ui/spinner";
 import UserFilter from "@features/user-filter/ui";
 import { useState, useEffect } from "react";
 import CreateUserButton from "@features/user-create";
-import { useDebounce } from "use-debounce";
+import { useDebouncedCallback } from "use-debounce";
 import SearchPanel from "@shared/ui/search-panel";
 
 const UserInfoPanel = ({
@@ -17,50 +17,52 @@ const UserInfoPanel = ({
   active,
   notActive,
   isLoading,
+  onFilter,
 }) => {
   const [showFilters, setShowFilters] = useState(false);
+  const [localFilters, setLocalFilters] = useState(filters);
 
-  // const [filters, setFilters] = useState({
-  //   role: "",
-  //   age: 18,
-  //   isActive: "",
-  //   hasActiveSession: "",
-  //   createdAt: "",
-  // });
+  useEffect(() => {
+    setLocalFilters(filters);
+  }, [filters]);
+
+  const [search, setSearch] = useState(localFilters.search ?? "");
 
   const handleFilterChange = (name, value) => {
-    setFilters((prev) => ({ ...prev, [name]: value }));
+    setLocalFilters((prev) => ({ ...prev, [name]: value }));
   };
 
-  // reset only filters (not search  etc...)
+  const debouncedSearch = useDebouncedCallback((val) => {
+    onSearch(val);
+  }, 600);
+
+  // reset filters
   const resetFilters = () => {
     const cleared = {
-      ...filters,
-      // role: "",
-      // age: 18,
-      // isActive: "",
-      // hasActiveSession: "",
-      // createdAt: "",
+      ...localFilters,
+      age: null,
+      activated: null,
+      logged: null,
+      createdAt: null,
     };
-    setFilters(cleared);
-    // onApplyFilters(cleared);
+    const filteredFilters = Object.fromEntries(
+      Object.entries(cleared).filter(
+        ([_, v]) => v !== null && v !== undefined && v !== "",
+      ),
+    );
+    setLocalFilters(cleared);
+    setFilters(filteredFilters);
   };
 
   const applyFilters = () => {
-    // onApplyFilters(filters); /
+    setFilters(localFilters);
+    onFilter({ ...localFilters });
     setShowFilters(false);
   };
 
-  const activeCount = Object.values(filters).filter(
-    (v) => v !== "" && v !== 18,
+  const activeCount = Object.values(localFilters).filter(
+    (v) => v != null && v !== "" && v !== undefined,
   ).length;
-
-  const [search, setSearch] = useState(filters.search);
-  const [query] = useDebounce(search, 600);
-
-  useEffect(() => {
-    onSearch(query);
-  }, [query, onSearch]);
 
   return (
     <div className="panel-container">
@@ -88,7 +90,10 @@ const UserInfoPanel = ({
           type="text"
           value={search}
           icon={<Search className="search-icon" size={18} />}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            debouncedSearch(e.target.value);
+          }}
         />
 
         <div className="filter-wrapper" style={{ position: "relative" }}>
@@ -105,7 +110,7 @@ const UserInfoPanel = ({
 
           <UserFilter
             showFilters={showFilters}
-            filters={filters}
+            filters={localFilters}
             handleFilterChange={handleFilterChange}
             applyFilters={applyFilters}
             resetFilters={resetFilters}
@@ -121,5 +126,4 @@ const UserInfoPanel = ({
     </div>
   );
 };
-
 export default UserInfoPanel;
