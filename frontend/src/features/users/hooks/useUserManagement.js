@@ -16,10 +16,11 @@ export const useUserManagement = () => {
     search: "",
     limit: 10,
     offset: 0,
-    activated: false,
-    age: "",
-    logged: "",
-    createdAt: ""
+
+    // activated: "",
+    // age: "",
+    // logged: "",
+    // createdAt: ""
   });
 
   const memoizedFilters = useMemo(() => filters, [filters]);
