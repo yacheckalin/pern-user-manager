@@ -2,6 +2,9 @@
 GET http://localhost:5000/api/v1/users
 Authorization: Bearer {{accessToken}}
 
+### Get users stattistics
+GET http://localhost:5000/api/v1/users/stats
+
 ### Search users
 GET http://localhost:5000/api/v1/users?createdAt=2026-04-29
 

@@ -91,6 +91,39 @@ class UserRepository {
   }
 
   /**
+   * Get User Statistics by User Id
+   * - active users
+   * - not active users
+   * - logged in
+   * - logged out
+   * 
+   * @param {*} id 
+   */
+  async getUsersStatistics() {
+    const query = `WITH users_with_sessions AS (
+    SELECT
+        u.is_active,
+        EXISTS (
+            SELECT 1
+            FROM app.refresh_tokens rt
+            WHERE rt.user_id = u.id
+              AND rt.revoked_at IS NULL
+              AND rt.expires_at > NOW()
+        ) AS has_active_session
+    FROM ${this.table} u 
+)
+SELECT
+    COUNT(*) FILTER (WHERE is_active IS TRUE) AS activated,
+    COUNT(*) FILTER (WHERE is_active IS FALSE) AS not_activated,
+    COUNT(*) FILTER (WHERE has_active_session IS FALSE) AS not_logged_in,
+    COUNT(*) FILTER (WHERE has_active_session IS TRUE) AS logged_in
+FROM users_with_sessions;`;
+
+    const { rows } = await this.pool.query(query);
+    return rows[0]
+  }
+
+  /**
    * Find user by id
    *
    * @param {*} id

@@ -24,6 +24,15 @@ class UserController {
     });
   });
 
+  getUsersStatistics = asyncHandler(async (req, res, next) => {
+    const result = await this.userService.getUsersStatistics();
+
+    res.status(HTTP_OK).json({
+      success: true,
+      data: result
+    })
+  })
+
   getAllTokensByUser = asyncHandler(async (req, res, next) => {
     const { id } = req.params;
     const results = await this.tokenService.getAllByUserId(id);

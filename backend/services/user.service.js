@@ -29,6 +29,11 @@ class UserService {
     return result;
   }
 
+  async getUsersStatistics() {
+
+    const result = await this.userRepository.getUsersStatistics();
+    return result;
+  }
   async getUser(id) {
     const user = await this.userRepository.findUserById(id);
     if (!user) {
