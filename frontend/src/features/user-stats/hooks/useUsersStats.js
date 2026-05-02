@@ -1,11 +1,12 @@
-import { getUserStatsByUserId } from "@features/user-stats";
-import { useQuery } from "@tanstack/react-query";
+import { getUserStats } from "@features/user-stats";
+import { USER_STALE_TIME } from "@features/users";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 
-export const useUsersStats = (filters) => {
+export const useUsersStats = () => {
   return useQuery({
-    queryKey: ["users/stats", filters],
-    queryFn: () =>
-      getUserStatsByUserId(filters).then((r) => ({ items: r.data, total: r.total })),
-    keepPreviousData: true,
+    queryKey: ["users-statistic"],
+    queryFn: () => getUserStats().then((r) => r.data),
+    placeholderData: keepPreviousData,
+    staleTime: USER_STALE_TIME
   });
 };
