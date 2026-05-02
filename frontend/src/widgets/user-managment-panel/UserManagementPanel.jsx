@@ -4,7 +4,7 @@ import UserTable from "@entities/user/ui/user-table";
 import UserModalGroup from "@entities/user/ui/user-modal-group";
 import { useUserManagement } from "@features/users";
 import { onlineUsers, notActive, activeUsers } from "@features/users";
-import UserInfoPanel from "@entities/user/ui/user-info-panel";
+import UserToolbar from "@entities/user/ui/user-toolbar";
 
 const UserManagementPanel = () => {
   const {
@@ -60,11 +60,12 @@ const UserManagementPanel = () => {
             details={error?.details}
           />
         )}
-        <UserInfoPanel
-          total={data?.items?.length || 0}
-          online={data?.items?.length && onlineUsers(data.items)}
+        <UserToolbar
+          total={data?.total || 0}
+          founded={data?.items?.length || 0}
           onCreate={(info) => onCallbackHandler(info, "create")}
           notActive={data?.items?.length && notActive(data.items)}
+          online={data?.items?.length && onlineUsers(data.items)}
           active={data?.items?.length && activeUsers(data.items)}
           onSearch={handleSearch}
           filters={filters}

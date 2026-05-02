@@ -1,17 +1,19 @@
-import "./UserInfoPanel.css";
+import "./UserToolbar.css";
 import { Filter, UserPlus, Search } from "lucide-react";
 import Spinner from "@shared/ui/spinner";
 import UserFilter from "@features/user-filter/ui";
-import { useState, useEffect } from "react";
+import { useState, useEffect, act } from "react";
 import CreateUserButton from "@features/user-create";
 import { useDebouncedCallback } from "use-debounce";
 import SearchPanel from "@shared/ui/search-panel";
+import UserStats from "@features/user-stats";
 
-const UserInfoPanel = ({
+const UserToolbar = ({
   filters,
   setFilters,
   total,
   online,
+  founded,
   onCreate,
   onSearch,
   active,
@@ -50,14 +52,20 @@ const UserInfoPanel = ({
         ([_, v]) => v !== null && v !== undefined && v !== "",
       ),
     );
+
     setLocalFilters(cleared);
     setFilters(filteredFilters);
     setShowFilters(false);
   };
 
   const applyFilters = () => {
-    setFilters(localFilters);
-    onFilter({ ...localFilters });
+    const filteredFilters = Object.fromEntries(
+      Object.entries(localFilters).filter(
+        ([_, v]) => v !== null && v !== undefined && v !== "",
+      ),
+    );
+    setFilters(filteredFilters);
+    onFilter({ ...filteredFilters });
     setShowFilters(false);
   };
 
@@ -67,22 +75,13 @@ const UserInfoPanel = ({
 
   return (
     <div className="panel-container">
-      <div className="panel-info">
-        <span className="count-badge">{total}</span>
-        <span className="text-muted">Users found</span>
-
-        <div className="mini-stats">
-          <span className="dot dot-success"></span> {online} Online
-        </div>
-        <div className="mini-stats active">
-          <span className="dot dot-active"></span>
-          {active} Active
-        </div>
-        <div className="mini-stats not-active">
-          <span className="dot dot-not-active"></span>
-          {notActive} Not Active Yet
-        </div>
-      </div>
+      <UserStats
+        total={total}
+        online={online}
+        active={active}
+        notActive={notActive}
+        founded={founded}
+      />
 
       <div className="panel-actions">
         <div className="spinner-overlay">{isLoading && <Spinner />}</div>
@@ -127,4 +126,4 @@ const UserInfoPanel = ({
     </div>
   );
 };
-export default UserInfoPanel;
+export default UserToolbar;

@@ -11,8 +11,8 @@ POST http://localhost:5000/api/v1/users
 Content-Type: application/json
 
 {
-  "username": "test32",
-  "email": "test32@tt.tt",
+  "username": "boom2",
+  "email": "boom@tt.tt",
   "password": "some_secret_password",
   "age": 18,
   "is_active": false
@@ -52,8 +52,8 @@ POST http://localhost:5000/api/v1/users/register
 Content-Type: application/json
 
 {
-  "username":"sos1122",
-  "email": "sos1122@sos.com",
+  "username":"sos",
+  "email": "sos@sos.com",
   "password": "password",
   "confirm_password": "password"
 }
