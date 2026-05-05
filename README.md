@@ -322,6 +322,7 @@ Base URL: `http://localhost:5000/users`
 **Available endpoints:**
 
 - `GET /api/v1/users` - Get all users
+- `GET /api/v1/users/stats` - Get Users Statistics (active, not active, logged in, not logged in)
 - `GET /api/v1/users/:id` - Get user by ID
 - `GET /api/v1/users/:id/tokens` - Get all valid tokens by user id
 - `POST /api/v1/users` - Create new user

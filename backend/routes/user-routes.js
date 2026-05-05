@@ -7,14 +7,12 @@ import { verifyAccess } from "../middleware/auth-handler.js";
 const router = express.Router();
 const userController = new UserController();
 
+router.get('/stats', userController.getUsersStatistics.bind(userController))
+
 router.get("/",
   validate(userSchemas.getUsers),
   userController.getAllUsers.bind(userController));
-router.get(
-  "/:id",
-  validate(userSchemas.id),
-  userController.getUser.bind(userController),
-);
+
 router.get(
   "/:id/tokens",
   validate(userSchemas.id),
@@ -61,6 +59,12 @@ router.post(
   "/:id/logout",
   validate(userSchemas.logoutUser),
   userController.logoutUser.bind(userController),
+);
+
+router.get(
+  '/:id',
+  validate(userSchemas.id),
+  userController.getUser.bind(userController),
 );
 
 export default router;

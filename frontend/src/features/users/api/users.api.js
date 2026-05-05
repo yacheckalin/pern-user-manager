@@ -12,6 +12,7 @@ export const getUsers = async ({
     params: { s: search, age, logged, activated, createdAt },
   });
   const total = parseInt(response.headers["x-total-count"] || 0);
+
   return {
     data: response.data,
     total,
