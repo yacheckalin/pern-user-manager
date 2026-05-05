@@ -1,11 +1,4 @@
-const SearchPanel = ({
-  onChange,
-  value,
-  icon,
-  placeholder,
-  type,
-  className,
-}) => (
+const Search = ({ onChange, value, icon, placeholder, type, className }) => (
   <div className="search-wrapper">
     {icon}
     <input
@@ -17,4 +10,4 @@ const SearchPanel = ({
     />
   </div>
 );
-export default SearchPanel;
+export default Search;

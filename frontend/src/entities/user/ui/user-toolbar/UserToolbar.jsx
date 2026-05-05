@@ -1,12 +1,10 @@
 import "./UserToolbar.css";
-import { Filter, UserPlus, Search } from "lucide-react";
-import Spinner from "@shared/ui/spinner";
+import { Filter, UserPlus } from "lucide-react";
 import UserFilter from "@features/user-filter/ui";
-import { useState, useEffect, act } from "react";
+import { useState, useEffect } from "react";
 import CreateUserButton from "@features/user-create";
-import { useDebouncedCallback } from "use-debounce";
-import SearchPanel from "@shared/ui/search-panel";
 import UserStats from "@features/user-stats";
+import SearchPanel from "../../../../features/user-search/ui";
 
 const UserToolbar = ({
   filters,
@@ -18,7 +16,7 @@ const UserToolbar = ({
   onSearch,
   active,
   notActive,
-  isLoading,
+  // isLoading,
   onFilter,
 }) => {
   const [showFilters, setShowFilters] = useState(false);
@@ -28,15 +26,15 @@ const UserToolbar = ({
     setLocalFilters(filters);
   }, [filters]);
 
-  const [search, setSearch] = useState(localFilters.search ?? "");
+  // const [search, setSearch] = useState(localFilters.search ?? "");
 
   const handleFilterChange = (name, value) => {
     setLocalFilters((prev) => ({ ...prev, [name]: value }));
   };
 
-  const debouncedSearch = useDebouncedCallback((val) => {
-    onSearch(val);
-  }, 600);
+  // const debouncedSearch = useDebouncedCallback((val) => {
+  //   onSearch(val);
+  // }, 600);
 
   // reset filters
   const resetFilters = () => {
@@ -84,17 +82,7 @@ const UserToolbar = ({
       />
 
       <div className="panel-actions">
-        <div className="spinner-overlay">{isLoading && <Spinner />}</div>
-        <SearchPanel
-          placeholder="Search ..."
-          type="text"
-          value={search}
-          icon={<Search className="search-icon" size={18} />}
-          onChange={(e) => {
-            setSearch(e.target.value);
-            debouncedSearch(e.target.value);
-          }}
-        />
+        <SearchPanel onSearch={onSearch} />
 
         <div className="filter-wrapper" style={{ position: "relative" }}>
           <button
