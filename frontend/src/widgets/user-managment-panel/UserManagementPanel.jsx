@@ -5,6 +5,7 @@ import UserModalGroup from "@entities/user/ui/user-modal-group";
 import { useUserManagement } from "@features/users";
 import { onlineUsers, notActive, activeUsers } from "@features/users";
 import UserToolbar from "@entities/user/ui/user-toolbar";
+import { useCallback } from "react";
 
 const UserManagementPanel = () => {
   const {
@@ -36,19 +37,19 @@ const UserManagementPanel = () => {
     logoutSessionMutation,
   } = useUserManagement();
 
-  const handleSearch = (data) => {
+  const handleSearch = useCallback((data) => {
     setFilters((prev) => ({ ...prev, search: data.trim() }));
-  };
-  const handleFilters = (filters) => {
+  }, []);
+  const handleFilters = useCallback((filters) => {
     if (filters) {
       setFilters((prev) => ({ ...prev, ...filters }));
     }
-  };
+  }, []);
 
-  const onCallbackHandler = (info, modal) => {
+  const onCallbackHandler = useCallback((info, modal) => {
     setSelectedUser(info);
     setModals({ [modal]: true });
-  };
+  }, []);
   return (
     <div className="page-container">
       <>

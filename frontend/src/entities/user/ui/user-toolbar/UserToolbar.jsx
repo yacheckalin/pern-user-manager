@@ -73,6 +73,10 @@ const UserToolbar = ({
     onCreate();
   }, [onCreate]);
 
+  const toggleFilters = useCallback(() => {
+    setShowFilters((prev) => !prev);
+  }, []);
+
   return (
     <div className="panel-container">
       <UserStats
@@ -89,7 +93,7 @@ const UserToolbar = ({
         <div className="filter-wrapper" style={{ position: "relative" }}>
           <button
             className={`btn-panel ${activeCount > 0 ? "active" : ""}`}
-            onClick={() => setShowFilters(!showFilters)}
+            onClick={toggleFilters}
           >
             <Filter size={18} />
             Filters
