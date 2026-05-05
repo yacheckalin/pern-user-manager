@@ -5,6 +5,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import CreateUserButton from "@features/user-create";
 import UserStats from "@features/user-stats";
 import SearchPanel from "@features/user-search";
+import FilterButton from "@shared/ui/filter-button";
 
 const UserToolbar = ({
   filters,
@@ -90,18 +91,12 @@ const UserToolbar = ({
       <div className="panel-actions">
         <SearchPanel onSearch={onSearch} isLoading={isLoading} />
 
-        <div className="filter-wrapper" style={{ position: "relative" }}>
-          <button
-            className={`btn-panel ${activeCount > 0 ? "active" : ""}`}
-            onClick={toggleFilters}
-          >
-            <Filter size={18} />
-            Filters
-            {activeCount > 0 && (
-              <span className="filter-badge">{activeCount}</span>
-            )}
-          </button>
-
+        <FilterButton
+          icon={<Filter size={18} />}
+          description={"Filters"}
+          onToggle={toggleFilters}
+          activeCount={activeCount}
+        >
           <UserFilter
             showFilters={showFilters}
             filters={localFilters}
@@ -109,7 +104,7 @@ const UserToolbar = ({
             applyFilters={applyFilters}
             resetFilters={resetFilters}
           />
-        </div>
+        </FilterButton>
 
         <CreateUserButton
           icon={<UserPlus size={18} />}
