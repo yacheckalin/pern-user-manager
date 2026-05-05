@@ -1,10 +1,10 @@
 import "./UserToolbar.css";
 import { Filter, UserPlus } from "lucide-react";
 import UserFilter from "@features/user-filter/ui";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import CreateUserButton from "@features/user-create";
 import UserStats from "@features/user-stats";
-import SearchPanel from "../../../../features/user-search/ui";
+import SearchPanel from "@features/user-search";
 
 const UserToolbar = ({
   filters,
@@ -16,7 +16,7 @@ const UserToolbar = ({
   onSearch,
   active,
   notActive,
-  // isLoading,
+  isLoading,
   onFilter,
 }) => {
   const [showFilters, setShowFilters] = useState(false);
@@ -26,15 +26,9 @@ const UserToolbar = ({
     setLocalFilters(filters);
   }, [filters]);
 
-  // const [search, setSearch] = useState(localFilters.search ?? "");
-
   const handleFilterChange = (name, value) => {
     setLocalFilters((prev) => ({ ...prev, [name]: value }));
   };
-
-  // const debouncedSearch = useDebouncedCallback((val) => {
-  //   onSearch(val);
-  // }, 600);
 
   // reset filters
   const resetFilters = () => {
@@ -67,9 +61,17 @@ const UserToolbar = ({
     setShowFilters(false);
   };
 
-  const activeCount = Object.values(localFilters).filter(
-    (v) => v != null && v !== "" && v !== undefined,
-  ).length;
+  const activeCount = useMemo(
+    () =>
+      Object.values(localFilters).filter(
+        (v) => v != null && v !== "" && v !== undefined,
+      ).length,
+    [localFilters],
+  );
+
+  const handleCreate = useCallback(() => {
+    onCreate();
+  }, [onCreate]);
 
   return (
     <div className="panel-container">
@@ -82,7 +84,7 @@ const UserToolbar = ({
       />
 
       <div className="panel-actions">
-        <SearchPanel onSearch={onSearch} />
+        <SearchPanel onSearch={onSearch} isLoading={isLoading} />
 
         <div className="filter-wrapper" style={{ position: "relative" }}>
           <button
@@ -108,7 +110,7 @@ const UserToolbar = ({
         <CreateUserButton
           icon={<UserPlus size={18} />}
           title="Add User"
-          onCallback={() => onCreate()}
+          onCallback={handleCreate}
         />
       </div>
     </div>
