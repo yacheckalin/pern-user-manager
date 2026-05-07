@@ -85,7 +85,9 @@ class UserRepository {
           )
           SELECT *
           FROM users_with_sessions
-          ${whereClause}`;
+          ${whereClause}
+          ORDER BY id ASC
+          `;
 
     const countQuery = `
     SELECT COUNT(DISTINCT u.id) as total
