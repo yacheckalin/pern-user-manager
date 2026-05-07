@@ -54,7 +54,14 @@ class UserRepository {
 
     //TODO: add sorting conditions here
     //TODO: add pagination conditions here
-    let limitPage = `LIMIT ${limit ?? MAX_PAGE_SIZE}`
+    const maxPage = limit ?? MAX_PAGE_SIZE;
+    let limitPage = `LIMIT ${maxPage}`;
+
+    if (cursor) {
+      conditions.push(`(u.id > $${idx}) `);
+      params.push(cursor)
+      idx++;
+    }
 
     const whereClause = logged
       ? ` WHERE has_active_session = ${logged.toString()}`
@@ -87,9 +94,13 @@ class UserRepository {
       this.pool.query(countQuery), // without pagination
     ]);
 
+    let newCursor = dataResult.rows.length ? dataResult.rows[dataResult.rows.length - 1].id : null;
+
     return {
       items: User.fromDatabaseArray(dataResult.rows),
       total: countResult.rows[0].total,
+      cursor: newCursor,
+      limit: maxPage
     };
   }
 
