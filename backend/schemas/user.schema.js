@@ -84,7 +84,7 @@ const userSchemas = {
     s: Joi.string().allow('', null).max(50),
     activated: Joi.boolean().optional(),
     // page: Joi.number().integer().min(1).default(1),
-    cursor: Joi.number().integer().optional(),
+    cursor: Joi.string().optional(),
     limit: Joi.number().integer().min(1).max(100).default(10),
     age: Joi.number().integer().min(13).max(150).default(13).optional(),
     logged: Joi.boolean().default(false).optional(),

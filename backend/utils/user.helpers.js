@@ -20,3 +20,10 @@ export const sanitizeUpdateUserPassword = (data) => ({
   new_password: typeof data.new_password == 'string' ? validator.trim(data.new_password) : data.new_password,
   confirm_password: typeof data.confirm_password == 'string' ? validator.trim(data.confirm_password) : data.confirm_password
 })
+
+export const encodeCursor = (data) => Buffer.from(JSON.stringify(data)).toString('base64');
+
+export const decodeCursor = (data) => {
+  const decoded = JSON.parse(Buffer.from(data, 'base64').toString('utf8'));
+  return { ...decoded }
+}

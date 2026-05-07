@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 import logger from "../logger.js";
 import { MAX_PAGE_SIZE } from "../constants/app.constants.js";
+import { encodeCursor, decodeCursor } from '../utils/user.helpers.js'
 
 class UserRepository {
   constructor(pool) {
@@ -53,13 +54,14 @@ class UserRepository {
     }
 
     //TODO: add sorting conditions here
-    //TODO: add pagination conditions here
     const maxPage = limit ?? MAX_PAGE_SIZE;
     let limitPage = `LIMIT ${maxPage}`;
 
     if (cursor) {
+      const { id: cursorPointer } = decodeCursor(cursor);
+
       conditions.push(`(u.id > $${idx}) `);
-      params.push(cursor)
+      params.push(cursorPointer)
       idx++;
     }
 
@@ -94,13 +96,13 @@ class UserRepository {
       this.pool.query(countQuery), // without pagination
     ]);
 
-    let newCursor = dataResult.rows.length ? dataResult.rows[dataResult.rows.length - 1].id : null;
+    let newCursor = dataResult.rows.length ? dataResult.rows[dataResult.rows.length - 1].id : null
 
     return {
       items: User.fromDatabaseArray(dataResult.rows),
       total: countResult.rows[0].total,
-      cursor: newCursor,
-      limit: maxPage
+      cursor: newCursor ? encodeCursor({ id: newCursor }) : null,
+      limit: maxPage,
     };
   }
 

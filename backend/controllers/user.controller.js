@@ -25,7 +25,7 @@ class UserController {
         total,
         totalPages: Math.ceil(total / limit),
         limit,
-        cursor
+        cursor,
       }
     });
   });
