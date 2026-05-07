@@ -1,5 +1,6 @@
 import User from "../models/user.model.js";
 import logger from "../logger.js";
+import { MAX_PAGE_SIZE } from "../constants/app.constants.js";
 
 class UserRepository {
   constructor(pool) {
@@ -12,7 +13,7 @@ class UserRepository {
    *
    * @returns User[]
    */
-  async findAll({ search, activated, age, logged, createdAt }) {
+  async findAll({ search, activated, age, logged, createdAt, limit, cursor }) {
     const conditions = [];
     const params = [];
     let idx = 1;
@@ -53,6 +54,7 @@ class UserRepository {
 
     //TODO: add sorting conditions here
     //TODO: add pagination conditions here
+    let limitPage = `LIMIT ${limit ?? MAX_PAGE_SIZE}`
 
     const whereClause = logged
       ? ` WHERE has_active_session = ${logged.toString()}`
@@ -70,11 +72,12 @@ class UserRepository {
                   AND rt.revoked_at IS NULL
                   AND rt.expires_at > NOW()
               ) as has_active_session
-            FROM ${this.table} u ${where}
+            FROM ${this.table} u ${where} ${limitPage}
           )
           SELECT *
           FROM users_with_sessions
           ${whereClause}`;
+
     const countQuery = `
     SELECT COUNT(DISTINCT u.id) as total
     FROM ${this.table} u`;

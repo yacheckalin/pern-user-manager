@@ -6,7 +6,7 @@ export const API_PREFIX = '/api'
 
 // Pagination
 export const DEFAULT_PAGE_SIZE = 2;
-export const MAX_PAGE_SIZE = 10;
+export const MAX_PAGE_SIZE = 2;
 
 // Time constants (in milliseconds)
 export const ONE_SECOND = 100;
