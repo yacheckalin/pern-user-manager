@@ -121,7 +121,13 @@ describe("UserController - Unit Tests", () => {
           lastLogin: null,
         },
       ];
-      mockUserService.getAllUsers.mockResolvedValue({ items: mockUsers, total: 3 });
+      const mockMeta = {
+        cursor: undefined,
+        limit: 3,
+        total: 3,
+        totalPages: 1
+      }
+      mockUserService.getAllUsers.mockResolvedValue({ items: mockUsers, total: 3, limit: 3, meta: mockMeta });
 
       await userController.getAllUsers(req, res, next);
 
@@ -129,6 +135,7 @@ describe("UserController - Unit Tests", () => {
       expect(res.json).toHaveBeenCalledWith({
         success: true,
         data: mockUsers,
+        meta: { ...mockMeta }
       });
     });
 

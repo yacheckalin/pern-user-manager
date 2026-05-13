@@ -17,10 +17,16 @@ class UserController {
 
   getAllUsers = asyncHandler(async (req, res, next) => {
     const { s: search, ...query } = req.query;
-    const { items, total } = await this.userService.getAllUsers({ search, ...query });
+    const { items, total, cursor, limit } = await this.userService.getAllUsers({ search, ...query });
     res.status(HTTP_OK).set("x-total-count", total).json({
       success: true,
       data: items,
+      meta: {
+        total,
+        totalPages: Math.ceil(total / limit),
+        limit,
+        cursor,
+      }
     });
   });
 
